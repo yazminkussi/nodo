@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Trash2, CalendarDays, UserRound } from 'lucide-react';
+import { Plus, Trash2, CalendarDays, UserRound, Filter } from 'lucide-react';
 import { useNodoStore } from '../store/useNodoStore';
-import { HORARIOS, nextDays, todayISO, formatFechaLarga } from '../data/mockData';
+import { HORARIOS, nextDays, todayISO, formatFechaLarga, ROLES_ADMIN } from '../data/mockData';
 import SpaceIcon from './SpaceIcon';
 import { StatusBadge } from './StatusBadge';
 
@@ -14,6 +14,12 @@ export default function ReservationManager() {
   const addReservation = useNodoStore((s) => s.addReservation);
   const isSlotTaken = useNodoStore((s) => s.isSlotTaken);
   const addToast = useNodoStore((s) => s.addToast);
+  const adminRole = useNodoStore((s) => s.adminRole);
+
+  const categoriasPermitidas = ROLES_ADMIN[adminRole]?.categorias;
+  const espaciosVisibles = categoriasPermitidas
+    ? espacios.filter((e) => categoriasPermitidas.includes(e.categoria))
+    : espacios;
 
   const dias = nextDays(7);
   const hoy = todayISO();
@@ -57,7 +63,14 @@ export default function ReservationManager() {
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-lg font-extrabold tracking-tight text-nodo-navy">Control de Reservas</h2>
-          <p className="text-xs text-slate-500">Grilla visual con detección de superposición de turnos.</p>
+          <p className="text-xs text-slate-500">
+            Grilla visual con detección de superposición de turnos.
+            {categoriasPermitidas && (
+              <span className="ml-1 inline-flex items-center gap-1 font-bold text-nodo-teal">
+                <Filter size={11} /> Solo {categoriasPermitidas.join(' y ')}
+              </span>
+            )}
+          </p>
         </div>
         <button
           onClick={() => setFormOpen(true)}
@@ -115,7 +128,7 @@ export default function ReservationManager() {
               </tr>
             </thead>
             <tbody>
-              {espacios.map((esp) => (
+              {espaciosVisibles.map((esp) => (
                 <tr key={esp.id}>
                   <td className="sticky left-0 z-10 border-b border-r border-nodo-border bg-white px-3 py-2.5">
                     <div className="flex items-center gap-2">
@@ -227,7 +240,7 @@ export default function ReservationManager() {
                 className="mb-3 w-full rounded-xl bg-white px-3 py-2.5 text-sm text-slate-700 ring-1 ring-nodo-border focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
               >
                 <option value="">Seleccionar espacio…</option>
-                {espacios.map((e) => (
+                {espaciosVisibles.map((e) => (
                   <option key={e.id} value={e.id}>{e.nombre}</option>
                 ))}
               </select>

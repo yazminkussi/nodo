@@ -117,19 +117,100 @@ export const formatFechaCorta = (iso: string): string => {
   return new Date(y, m - 1, d).toLocaleDateString('es-AR', { day: 'numeric', month: 'short' });
 };
 
-/* ---------------------------------- club ---------------------------------- */
+/* ---------------------------------- comunidades (multi-tenant) ---------------------------------- */
 
-export const clubInfo = {
-  nombre: 'Club Social y Deportivo La Unión',
-  institucion: 'Centro Cultural y Deportivo',
-  direccion: 'Av. Rivadavia 3456, Villa Crespo',
-  ciudad: 'Ciudad de Buenos Aires',
-  cuit: '30-70998877-4',
-  telefono: '11 4824-3000',
-  plan: 'Plan 250 Socios',
-  cuentaBanco: 'Cuenta corriente N° 3445-9 / Banco Nación',
-  email: 'contacto@clubunion.com.ar',
+export type Comunidad = {
+  id: string;
+  nombre: string;
+  institucion: string;
+  tipo: string;
+  direccion: string;
+  ciudad: string;
+  cuit: string;
+  telefono: string;
+  plan: string;
+  cuentaBanco: string;
+  email: string;
+  logo: string | null;
 };
+
+export const comunidadesIniciales: Comunidad[] = [
+  {
+    id: 'la-union',
+    nombre: 'Club Social y Deportivo La Unión',
+    institucion: 'Centro Cultural y Deportivo',
+    tipo: 'Club Social y Deportivo',
+    direccion: 'Av. Rivadavia 3456, Villa Crespo',
+    ciudad: 'Ciudad de Buenos Aires',
+    cuit: '30-70998877-4',
+    telefono: '11 4824-3000',
+    plan: 'Plan 250 Socios',
+    cuentaBanco: 'Cuenta corriente N° 3445-9 / Banco Nación',
+    email: 'contacto@clubunion.com.ar',
+    logo: null,
+  },
+  {
+    id: 'el-progreso',
+    nombre: 'Club Social y Deportivo El Progreso',
+    institucion: 'Club Social y Deportivo',
+    tipo: 'Club Social y Deportivo',
+    direccion: 'Av. San Martín 2340, Boedo',
+    ciudad: 'Ciudad de Buenos Aires',
+    cuit: '30-71557822-1',
+    telefono: '11 4931-4420',
+    plan: 'Plan 400+ Socios',
+    cuentaBanco: 'Cuenta corriente N° 5210-2 / Banco Provincia',
+    email: 'contacto@elprogreso.com.ar',
+    logo: null,
+  },
+  {
+    id: 'cc-palermo',
+    nombre: 'Centro Cultural Palermo',
+    institucion: 'Centro Cultural',
+    tipo: 'Centro Cultural',
+    direccion: 'Thames 1740, Palermo',
+    ciudad: 'Ciudad de Buenos Aires',
+    cuit: '30-71409933-8',
+    telefono: '11 4777-3902',
+    plan: 'Plan 100 Socios',
+    cuentaBanco: 'Cuenta corriente N° 7701-5 / Banco Santander',
+    email: 'hola@centroculturalpalermo.ar',
+    logo: null,
+  },
+];
+
+export const clubInfo: Comunidad = comunidadesIniciales[0];
+
+/* ---------------------------------- roles de administración ---------------------------------- */
+
+export const ROLES_ADMIN = {
+  superadmin: {
+    id: 'superadmin',
+    etiqueta: 'SuperAdmin / Tesorero',
+    descripcion: 'Facturación, métricas y personalización de la comunidad.',
+    icono: 'shield',
+    secciones: ['resumen', 'socios', 'reservas', 'publicidades', 'planes', 'personalizacion'],
+    categorias: null,
+  },
+  deportes: {
+    id: 'deportes',
+    etiqueta: 'Admin de Deportes',
+    descripcion: 'Gestión de canchas, espacios deportivos y horarios.',
+    icono: 'trophy',
+    secciones: ['resumen', 'reservas'],
+    categorias: ['Deportivo'],
+  },
+  talleres: {
+    id: 'talleres',
+    etiqueta: 'Admin de Talleres / Cultura',
+    descripcion: 'Inscripciones a talleres y actividades culturales.',
+    icono: 'palette',
+    secciones: ['resumen', 'reservas'],
+    categorias: ['Cultural'],
+  },
+} as const;
+
+export type AdminRoleKey = keyof typeof ROLES_ADMIN;
 
 /* ---------------------------------- socios ---------------------------------- */
 

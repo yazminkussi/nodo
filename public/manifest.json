@@ -28,6 +28,12 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    },
+    {
+      "src": "/imagenes/nodo_logo.png",
+      "sizes": "667x667",
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }

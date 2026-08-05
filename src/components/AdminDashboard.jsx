@@ -1,26 +1,41 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LayoutDashboard, Users, CalendarRange, Store, Building2 } from 'lucide-react';
+import { LayoutDashboard, Users, CalendarRange, Store, Building2, Palette } from 'lucide-react';
 import { Header, SectionNav } from './Navbar';
 import StatsOverview from './StatsOverview';
 import MemberTable from './MemberTable';
 import ReservationManager from './ReservationManager';
 import AdsManager from './AdsManager';
 import B2BOverview from './B2BOverview';
-import { useNodoStore } from '../store/useNodoStore';
+import CommunitySettings from './CommunitySettings';
+import AdminRoleSwitcher from './AdminRoleSwitcher';
+import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
+import { ROLES_ADMIN } from '../data/mockData';
 
-const secciones = [
+const seccionesBase = [
   { key: 'resumen', label: 'Panel', icon: LayoutDashboard },
   { key: 'socios', label: 'Socios', icon: Users },
   { key: 'reservas', label: 'Reservas', icon: CalendarRange },
   { key: 'publicidades', label: 'Publicidades', icon: Store },
   { key: 'planes', label: 'Planes NODO', icon: Building2 },
+  { key: 'personalizacion', label: 'Personalización', icon: Palette },
 ];
 
 export default function AdminDashboard() {
-  const [seccion, setSeccion] = useState('resumen');
   const members = useNodoStore((s) => s.members);
+  const adminRole = useNodoStore((s) => s.adminRole);
+  const comunidad = useComunidadActual();
   const morosos = members.filter((m) => !m.cuotaAlDia);
+
+  const permitidas = useMemo(() => ROLES_ADMIN[adminRole]?.secciones || [], [adminRole]);
+  const secciones = seccionesBase.filter((s) => permitidas.includes(s.key));
+  const [seccion, setSeccion] = useState('resumen');
+
+  useEffect(() => {
+    if (!permitidas.includes(seccion)) setSeccion('resumen');
+  }, [seccion, permitidas]);
+
+  const rol = ROLES_ADMIN[adminRole];
 
   return (
     <div className="min-h-screen bg-nodo-bg pb-16">
@@ -28,20 +43,27 @@ export default function AdminDashboard() {
       <div className="pt-16">
         <SectionNav sections={secciones} active={seccion} onChange={setSeccion} />
 
-        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
-          <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white p-4 shadow-card ring-1 ring-nodo-border">
+        <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white p-4 shadow-card ring-1 ring-nodo-border">
             <div>
               <h1 className="text-lg font-extrabold tracking-tight text-nodo-navy">Panel de Administración</h1>
               <p className="text-xs text-slate-500">
-                Bienvenido Carlos · Club Social y Deportivo La Unión · Plan 250 Socios
+                Bienvenido Carlos · {comunidad.nombre} · {comunidad.plan}
               </p>
             </div>
-            {morosos.length > 0 && (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1.5 text-xs font-extrabold text-nodo-red ring-1 ring-inset ring-red-200">
-                {morosos.length} socios morosos · enviá recordatorios por WhatsApp
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-cyan-50 px-3 py-1.5 text-xs font-extrabold text-nodo-teal ring-1 ring-inset ring-cyan-200">
+                {rol?.etiqueta}
               </span>
-            )}
+              {morosos.length > 0 && (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1.5 text-xs font-extrabold text-nodo-red ring-1 ring-inset ring-red-200">
+                  {morosos.length} socios morosos · enviá recordatorios por WhatsApp
+                </span>
+              )}
+            </div>
           </div>
+
+          <AdminRoleSwitcher />
 
           <AnimatePresence mode="wait">
             <motion.main
@@ -62,6 +84,7 @@ export default function AdminDashboard() {
               {seccion === 'reservas' && <ReservationManager />}
               {seccion === 'publicidades' && <AdsManager />}
               {seccion === 'planes' && <B2BOverview />}
+              {seccion === 'personalizacion' && <CommunitySettings />}
             </motion.main>
           </AnimatePresence>
         </div>

@@ -5,7 +5,7 @@
    - API/redes externas: solo red.
 */
 
-const CACHE_VERSION = 'nodo-v1';
+const CACHE_VERSION = 'nodo-v2';
 const APP_SHELL_CACHE = `${CACHE_VERSION}-shell`;
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 
@@ -13,6 +13,7 @@ const APP_SHELL = [
   '/',
   '/index.html',
   '/manifest.json',
+  '/imagenes/nodo_logo.png',
   '/icons/icon-192.png',
   '/icons/icon-512.png',
   '/icons/icon-maskable-512.png',

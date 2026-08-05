@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { BadgeCheck, CalendarClock, ScanLine, Sparkles } from 'lucide-react';
-import { useNodoStore, useProximaReserva } from '../store/useNodoStore';
+import { useNodoStore, useProximaReserva, useComunidadActual } from '../store/useNodoStore';
 import { StatusBadge } from './StatusBadge';
 import { QrSvg } from '../utils/qr';
 import { formatFechaLarga } from '../data/mockData';
@@ -11,6 +11,7 @@ const iniciales = (nombre, apellido) =>
 
 export default function DigitalCard() {
   const socio = useNodoStore((s) => s.members.find((m) => m.id === s.socioActualId));
+  const comunidad = useComunidadActual();
   const proxima = useProximaReserva(socio?.id);
 
   if (!socio) return null;
@@ -42,7 +43,7 @@ export default function DigitalCard() {
         <div className="relative flex items-start justify-between">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">
-              Club Social y Deportivo La Unión
+              {comunidad.nombre}
             </p>
             <p className="mt-1 text-xl font-extrabold tracking-tight sm:text-2xl">Carnet Digital</p>
           </div>

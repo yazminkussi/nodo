@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Pin, Megaphone } from 'lucide-react';
-import { useNodoStore } from '../store/useNodoStore';
+import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
 import { formatFechaCorta } from '../data/mockData';
 
 const colorCategoria = {
@@ -12,6 +12,7 @@ const colorCategoria = {
 
 export default function Feed() {
   const novedades = useNodoStore((s) => s.novedades);
+  const comunidad = useComunidadActual();
   const orden = [...novedades].sort((a, b) => b.fecha.localeCompare(a.fecha));
 
   return (
@@ -19,7 +20,7 @@ export default function Feed() {
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-extrabold tracking-tight text-nodo-navy">Novedades y Comunidad</h2>
         <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-500 ring-1 ring-inset ring-nodo-border">
-          <Megaphone size={13} /> Oficial del club
+          <Megaphone size={13} /> Oficial de {comunidad.nombre}
         </span>
       </div>
 

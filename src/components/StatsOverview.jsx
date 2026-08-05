@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Users, Wallet, TrendingUp, CalendarCheck2 } from 'lucide-react';
-import { useNodoStore } from '../store/useNodoStore';
-import { formatARS, HORARIOS, todayISO, clubInfo } from '../data/mockData';
+import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
+import { formatARS, HORARIOS, todayISO } from '../data/mockData';
 
 function Contador({ valor, format = (n) => n.toLocaleString('es-AR') }) {
   const [mostrado, setMostrado] = useState(0);
@@ -28,6 +28,7 @@ export default function StatsOverview() {
   const members = useNodoStore((s) => s.members);
   const reservations = useNodoStore((s) => s.reservations);
   const espacios = useNodoStore((s) => s.espacios);
+  const comunidad = useComunidadActual();
 
   const total = members.length;
   const alDia = members.filter((m) => m.cuotaAlDia).length;
@@ -44,7 +45,7 @@ export default function StatsOverview() {
     {
       titulo: 'Socios activos',
       valor: <Contador valor={total} />,
-      detalle: `Plan ${clubInfo.plan.replace('Plan ', '')}`,
+      detalle: `Plan ${comunidad.plan.replace('Plan ', '')}`,
       icon: Users,
       color: 'from-nodo-navy to-nodo-navy-2',
     },

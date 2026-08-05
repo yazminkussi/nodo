@@ -1,12 +1,13 @@
 import { motion } from 'framer-motion';
 import { Check, MessageSquareX, Sheet, FileX2, Rocket, ArrowRight } from 'lucide-react';
-import { planesB2B, valueProps, formatARS, clubInfo } from '../data/mockData';
-import { useNodoStore } from '../store/useNodoStore';
+import { planesB2B, valueProps, formatARS } from '../data/mockData';
+import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
 
 const iconosProps = [MessageSquareX, Sheet, FileX2];
 
 export default function B2BOverview() {
   const addToast = useNodoStore((s) => s.addToast);
+  const comunidad = useComunidadActual();
 
   return (
     <section className="mx-auto max-w-7xl space-y-10 px-4 sm:px-6">
@@ -94,7 +95,7 @@ export default function B2BOverview() {
           ))}
         </div>
         <p className="mt-5 text-center text-xs text-slate-400">
-          Precios expresados en pesos argentinos. {clubInfo.ciudad} · IVA incluido · Sin permanencia.
+          Precios expresados en pesos argentinos. {comunidad.ciudad} · IVA incluido · Sin permanencia.
         </p>
       </div>
     </section>

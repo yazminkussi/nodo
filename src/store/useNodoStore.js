@@ -6,6 +6,7 @@ import {
   reservasIniciales,
   publicidadesIniciales,
   novedadesIniciales,
+  comunidadesIniciales,
   todayISO,
   nextHour,
 } from '../data/mockData';
@@ -18,6 +19,19 @@ export const useNodoStore = create(
       /* ---- vista actual ---- */
       role: 'socio',
       setRole: (role) => set({ role }),
+
+      /* ---- administrador activo (multi-rol) ---- */
+      adminRole: 'superadmin',
+      setAdminRole: (adminRole) => set({ adminRole }),
+
+      /* ---- comunidad / inquilino activo (multi-tenant) ---- */
+      comunidades: comunidadesIniciales,
+      comunidadActualId: comunidadesIniciales[0].id,
+      setComunidadActual: (comunidadActualId) => set({ comunidadActualId }),
+      updateComunidad: (id, patch) =>
+        set((state) => ({
+          comunidades: state.comunidades.map((c) => (c.id === id ? { ...c, ...patch } : c)),
+        })),
 
       /* ---- socio cuyo carnet se muestra ---- */
       socioActualId: 2,
@@ -84,9 +98,12 @@ export const useNodoStore = create(
     }),
     {
       name: 'nodo-store',
-      version: 1,
+      version: 2,
       partialize: (state) => ({
         role: state.role,
+        adminRole: state.adminRole,
+        comunidades: state.comunidades,
+        comunidadActualId: state.comunidadActualId,
         members: state.members,
         reservations: state.reservations,
         ads: state.ads,
@@ -95,6 +112,9 @@ export const useNodoStore = create(
     }
   )
 );
+
+export const useComunidadActual = () =>
+  useNodoStore((s) => s.comunidades.find((c) => c.id === s.comunidadActualId) || s.comunidades[0]);
 
 export const useProximaReserva = (socioId) => {
   const reservations = useNodoStore((s) => s.reservations);

@@ -1,16 +1,16 @@
 import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, MessageCircle, Eye, RefreshCcw, UserPlus } from 'lucide-react';
-import { useNodoStore } from '../store/useNodoStore';
+import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
 import { StatusBadge } from './StatusBadge';
 import { formatARS } from '../data/mockData';
 
 const iniciales = (a, b) => `${a.charAt(0)}${b.charAt(0)}`.toUpperCase();
 
-const waLink = (socio) => {
+const waLink = (socio, comunidadNombre) => {
   const numero = socio.celular.replace(/\D/g, '');
   const texto = encodeURIComponent(
-    `Hola ${socio.nombre} 👋, te escribimos desde el Club Social y Deportivo La Unión. Tu cuota social figura como pendiente. Podés ponerte al día desde la app NODO o respondernos este mensaje. ¡Gracias!`
+    `Hola ${socio.nombre} 👋, te escribimos desde ${comunidadNombre}. Tu cuota social figura como pendiente. Podés ponerte al día desde la app NODO o respondernos este mensaje. ¡Gracias!`
   );
   return `https://wa.me/${numero}?text=${texto}`;
 };
@@ -21,6 +21,7 @@ export default function MemberTable() {
   const addToast = useNodoStore((s) => s.addToast);
   const setSocioActual = useNodoStore((s) => s.setSocioActual);
   const setRole = useNodoStore((s) => s.setRole);
+  const comunidad = useComunidadActual();
 
   const [busqueda, setBusqueda] = useState('');
   const [filtro, setFiltro] = useState('todos');
@@ -157,7 +158,7 @@ export default function MemberTable() {
                           <Eye size={16} />
                         </button>
                         <a
-                          href={waLink(m)}
+                          href={waLink(m, comunidad.nombre)}
                           target="_blank"
                           rel="noreferrer"
                           title="Recordatorio por WhatsApp"
