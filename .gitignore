@@ -26,3 +26,6 @@ pnpm-debug.log*
 # Env
 .env
 .env.local
+
+# Fuentes de diseño (solo locales)
+imagenes/*.ai
