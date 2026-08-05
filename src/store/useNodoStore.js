@@ -3,6 +3,8 @@ import { persist } from 'zustand/middleware';
 import {
   sociosIniciales,
   espaciosIniciales,
+  actividadesIniciales,
+  inscripcionesIniciales,
   reservasIniciales,
   publicidadesIniciales,
   novedadesIniciales,
@@ -10,6 +12,8 @@ import {
   driveItemsIniciales,
   todayISO,
   nextHour,
+  horaAmin,
+  minAstring,
 } from '../data/mockData';
 
 let toastId = 0;
@@ -49,15 +53,61 @@ export const useNodoStore = create(
           ),
         })),
 
-      /* ---- espacios (fijos en el demo) ---- */
+      /* ---- espacios (CRUD V3) ---- */
       espacios: espaciosIniciales,
+      addEspacio: (espacio) =>
+        set((state) => ({ espacios: [...state.espacios, { ...espacio, id: Date.now() }] })),
+      updateEspacio: (id, patch) =>
+        set((state) => ({
+          espacios: state.espacios.map((e) => (e.id === id ? { ...e, ...patch } : e)),
+        })),
+      removeEspacio: (id) =>
+        set((state) => ({ espacios: state.espacios.filter((e) => e.id !== id) })),
+
+      /* ---- actividades (CRUD V3) ---- */
+      actividades: actividadesIniciales,
+      addActividad: (actividad) =>
+        set((state) => ({ actividades: [...state.actividades, { ...actividad, id: Date.now() }] })),
+      updateActividad: (id, patch) =>
+        set((state) => ({
+          actividades: state.actividades.map((a) => (a.id === id ? { ...a, ...patch } : a)),
+        })),
+      removeActividad: (id) =>
+        set((state) => ({ actividades: state.actividades.filter((a) => a.id !== id) })),
+
+      /* ---- inscripciones a actividades ---- */
+      inscripciones: inscripcionesIniciales,
+      addInscripcion: ({ actividadId, socioId, socioNombre }) => {
+        const inscripcion = {
+          id: Date.now(),
+          actividadId,
+          socioId,
+          socioNombre,
+          fecha: todayISO(),
+          estado: 'activa',
+        };
+        set((state) => ({ inscripciones: [...state.inscripciones, inscripcion] }));
+        return inscripcion;
+      },
+      cancelInscripcion: (id) =>
+        set((state) => ({
+          inscripciones: state.inscripciones.map((i) =>
+            i.id === id ? { ...i, estado: 'cancelada' } : i
+          ),
+        })),
+      isInscripto: (actividadId, socioId) =>
+        get().inscripciones.some(
+          (i) => i.actividadId === actividadId && i.socioId === socioId && i.estado === 'activa'
+        ),
+      inscriptosDe: (actividadId) =>
+        get().inscripciones.filter((i) => i.actividadId === actividadId && i.estado === 'activa'),
 
       /* ---- novedades ---- */
       novedades: novedadesIniciales,
 
       /* ---- reservas ---- */
       reservations: reservasIniciales,
-      addReservation: ({ espacioId, socioId, socioNombre, fecha, inicio, concepto }) => {
+      addReservation: ({ espacioId, socioId, socioNombre, fecha, inicio, concepto, duracion = 1 }) => {
         const reserva = {
           id: Date.now(),
           espacioId,
@@ -65,7 +115,7 @@ export const useNodoStore = create(
           socioNombre,
           fecha: fecha || todayISO(),
           inicio,
-          fin: `${String(Number(inicio.split(':')[0]) + 1).padStart(2, '0')}:00`,
+          fin: minAstring(horaAmin(inicio) + duracion * 60),
           estado: 'confirmada',
           concepto: concepto || undefined,
         };
@@ -110,13 +160,16 @@ export const useNodoStore = create(
     }),
     {
       name: 'nodo-store',
-      version: 2,
+      version: 3,
       partialize: (state) => ({
         role: state.role,
         adminRole: state.adminRole,
         comunidades: state.comunidades,
         comunidadActualId: state.comunidadActualId,
         members: state.members,
+        espacios: state.espacios,
+        actividades: state.actividades,
+        inscripciones: state.inscripciones,
         reservations: state.reservations,
         ads: state.ads,
         driveItems: state.driveItems,

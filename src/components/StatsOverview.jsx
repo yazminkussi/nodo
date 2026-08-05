@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Users, Wallet, TrendingUp, CalendarCheck2 } from 'lucide-react';
 import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
-import { formatARS, HORARIOS, todayISO } from '../data/mockData';
+import { formatARS, todayISO, slotsDeHorario, diaActivo } from '../data/mockData';
 
 function Contador({ valor, format = (n) => n.toLocaleString('es-AR') }) {
   const [mostrado, setMostrado] = useState(0);
@@ -37,9 +37,12 @@ export default function StatsOverview() {
   const recaudacion = members.filter((m) => m.cuotaAlDia).reduce((acc, m) => acc + m.plan, 0);
 
   const hoy = todayISO();
-  const slotsTotales = espacios.length * HORARIOS.length;
+  const slotsTotales = espacios.reduce((acc, e) => {
+    if (!diaActivo(e.horario.dias, hoy)) return acc;
+    return acc + slotsDeHorario(e.horario).length;
+  }, 0);
   const reservasHoy = reservations.filter((r) => r.fecha === hoy).length;
-  const ocupacion = slotsTotales ? Math.round((reservasHoy / slotsTotales) * 100) : 0;
+  const ocupacion = slotsTotales ? Math.min(100, Math.round((reservasHoy / slotsTotales) * 100)) : 0;
 
   const tarjetas = [
     {
@@ -66,7 +69,7 @@ export default function StatsOverview() {
     {
       titulo: 'Ocupación de espacios',
       valor: <Contador valor={ocupacion} format={(n) => `${n}%`} />,
-      detalle: `${reservasHoy} reservas hoy`,
+      detalle: `${reservasHoy} reservas hoy · ${slotsTotales} turnos`,
       icon: CalendarCheck2,
       color: 'from-nodo-amber to-orange-500',
     },

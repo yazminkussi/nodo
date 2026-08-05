@@ -19,15 +19,68 @@ export type Socio = {
   localidad: string;
 };
 
+export type EspacioIcono =
+  | 'futbol'
+  | 'ceramica'
+  | 'gimnasio'
+  | 'sum'
+  | 'ensayo'
+  | 'padel'
+  | 'pileta'
+  | 'parrilla'
+  | 'aula'
+  | 'ajedrez'
+  | 'yoga'
+  | 'danza'
+  | 'teatro'
+  | 'taekwondo';
+
+export type CategoriaEspacio = 'Deportivo' | 'Cultural' | 'Recreativo';
+
+export type HorarioConfig = {
+  apertura: string;
+  cierre: string;
+  duracionTurno: number;
+  dias: number[];
+};
+
 export type Espacio = {
   id: number;
   nombre: string;
   descripcion: string;
   capacidad: number;
   precioHora: number;
-  icono: 'futbol' | 'ceramica' | 'gimnasio' | 'sum' | 'ensayo';
+  icono: EspacioIcono;
   color: string;
-  categoria: 'Deportivo' | 'Cultural' | 'Recreativo';
+  categoria: CategoriaEspacio;
+  disponible: boolean;
+  horario: HorarioConfig;
+};
+
+export type Actividad = {
+  id: number;
+  nombre: string;
+  descripcion: string;
+  categoria: CategoriaEspacio;
+  instructor: string;
+  cupoMaximo: number;
+  dias: number[];
+  inicio: string;
+  duracion: number;
+  costoMensual: number;
+  color: string;
+  icono: EspacioIcono;
+  espacioId?: number;
+  activa: boolean;
+};
+
+export type Inscripcion = {
+  id: number;
+  actividadId: number;
+  socioId: number;
+  socioNombre: string;
+  fecha: string;
+  estado: 'activa' | 'cancelada';
 };
 
 export type Reserva = {
@@ -102,6 +155,59 @@ export const HORARIOS = [
 export const nextHour = (): string => {
   const h = new Date().getHours() + 1;
   return `${String(Math.max(9, Math.min(20, h))).padStart(2, '0')}:00`;
+};
+
+/* ---------------------------------- horarios dinámicos (V3) ---------------------------------- */
+
+export const DIAS_SEMANA = [
+  { n: 1, corto: 'Lun', largo: 'Lunes' },
+  { n: 2, corto: 'Mar', largo: 'Martes' },
+  { n: 3, corto: 'Mié', largo: 'Miércoles' },
+  { n: 4, corto: 'Jue', largo: 'Jueves' },
+  { n: 5, corto: 'Vie', largo: 'Viernes' },
+  { n: 6, corto: 'Sáb', largo: 'Sábado' },
+  { n: 0, corto: 'Dom', largo: 'Domingo' },
+];
+
+export const HORARIO_DEFECTO: HorarioConfig = {
+  apertura: '09:00',
+  cierre: '22:00',
+  duracionTurno: 1,
+  dias: [1, 2, 3, 4, 5, 6],
+};
+
+export const horaAmin = (hhmm: string): number => {
+  const [h, m] = hhmm.split(':').map(Number);
+  return h * 60 + (m || 0);
+};
+
+export const minAstring = (min: number): string =>
+  `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`;
+
+export const slotsDeHorario = (h: HorarioConfig): string[] => {
+  const paso = Math.max(30, h.duracionTurno * 60);
+  const inicio = horaAmin(h.apertura);
+  const fin = horaAmin(h.cierre);
+  const slots: string[] = [];
+  for (let m = inicio; m < fin; m += paso) slots.push(minAstring(m));
+  return slots;
+};
+
+export const diaActivo = (dias: number[], iso: string): boolean =>
+  dias.includes(new Date(`${iso}T12:00:00`).getDay());
+
+export const nombreDias = (dias: number[]): string => {
+  const cortos = DIAS_SEMANA.filter((d) => dias.includes(d.n)).map((d) => d.corto);
+  if (cortos.length === 7) return 'Todos los días';
+  if (cortos.length === 0) return 'Sin días';
+  return cortos.join(' · ');
+};
+
+export const duracionLabel = (hs: number): string => {
+  const entero = Math.floor(hs);
+  const minutos = Math.round((hs - entero) * 60);
+  if (entero === 0) return `${minutos} min`;
+  return minutos ? `${entero} h ${minutos} min` : `${entero} h`;
 };
 
 export const formatARS = (n: number): string =>
@@ -201,7 +307,7 @@ export const ROLES_ADMIN = {
     etiqueta: 'Admin de Deportes',
     descripcion: 'Gestión de canchas, espacios deportivos y horarios.',
     icono: 'trophy',
-    secciones: ['resumen', 'reservas', 'drive'],
+    secciones: ['resumen', 'reservas', 'drive', 'personalizacion'],
     categorias: ['Deportivo'],
   },
   talleres: {
@@ -209,7 +315,7 @@ export const ROLES_ADMIN = {
     etiqueta: 'Admin de Talleres / Cultura',
     descripcion: 'Inscripciones a talleres y actividades culturales.',
     icono: 'palette',
-    secciones: ['resumen', 'reservas', 'drive'],
+    secciones: ['resumen', 'reservas', 'drive', 'personalizacion'],
     categorias: ['Cultural'],
   },
 } as const;
@@ -401,6 +507,8 @@ export const espaciosIniciales: Espacio[] = [
     icono: 'futbol',
     color: '#059669',
     categoria: 'Deportivo',
+    disponible: true,
+    horario: HORARIO_DEFECTO,
   },
   {
     id: 2,
@@ -411,6 +519,8 @@ export const espaciosIniciales: Espacio[] = [
     icono: 'ceramica',
     color: '#0D9488',
     categoria: 'Cultural',
+    disponible: true,
+    horario: { ...HORARIO_DEFECTO, apertura: '10:00', cierre: '21:00', dias: [1, 2, 3, 4, 5] },
   },
   {
     id: 3,
@@ -421,6 +531,8 @@ export const espaciosIniciales: Espacio[] = [
     icono: 'gimnasio',
     color: '#06B6D4',
     categoria: 'Deportivo',
+    disponible: true,
+    horario: HORARIO_DEFECTO,
   },
   {
     id: 4,
@@ -431,6 +543,8 @@ export const espaciosIniciales: Espacio[] = [
     icono: 'sum',
     color: '#1E293B',
     categoria: 'Recreativo',
+    disponible: true,
+    horario: { ...HORARIO_DEFECTO, duracionTurno: 3, dias: [1, 2, 3, 4, 5, 6, 0] },
   },
   {
     id: 5,
@@ -441,7 +555,185 @@ export const espaciosIniciales: Espacio[] = [
     icono: 'ensayo',
     color: '#7C3AED',
     categoria: 'Cultural',
+    disponible: true,
+    horario: { ...HORARIO_DEFECTO, cierre: '23:00', dias: [1, 2, 3, 4, 5, 0] },
   },
+  {
+    id: 6,
+    nombre: 'Cancha de Pádel',
+    descripcion: 'Canchas cubiertas con vidrio templado y alquiler de paletas.',
+    capacidad: 8,
+    precioHora: 12000,
+    icono: 'padel',
+    color: '#0EA5E9',
+    categoria: 'Deportivo',
+    disponible: true,
+    horario: { ...HORARIO_DEFECTO, cierre: '23:00' },
+  },
+  {
+    id: 7,
+    nombre: 'Pileta climatizada',
+    descripcion: 'Pileta techada de 25 m. Natación libre y escuelita.',
+    capacidad: 30,
+    precioHora: 9000,
+    icono: 'pileta',
+    color: '#06B6D4',
+    categoria: 'Deportivo',
+    disponible: true,
+    horario: { ...HORARIO_DEFECTO, apertura: '07:00', cierre: '21:00' },
+  },
+  {
+    id: 8,
+    nombre: 'Parrilla y Quincho',
+    descripcion: 'Quincho techado con parrilla, mesadas y heladera.',
+    capacidad: 25,
+    precioHora: 10000,
+    icono: 'parrilla',
+    color: '#F97316',
+    categoria: 'Recreativo',
+    disponible: true,
+    horario: { ...HORARIO_DEFECTO, duracionTurno: 3, dias: [5, 6, 0] },
+  },
+  {
+    id: 9,
+    nombre: 'Aula de Talleres',
+    descripcion: 'Aula equipada con tablero, proyector y bancos.',
+    capacidad: 20,
+    precioHora: 7000,
+    icono: 'aula',
+    color: '#8B5CF6',
+    categoria: 'Cultural',
+    disponible: true,
+    horario: HORARIO_DEFECTO,
+  },
+];
+
+/* ---------------------------------- actividades (V3) ---------------------------------- */
+
+export const actividadesIniciales: Actividad[] = [
+  {
+    id: 1,
+    nombre: 'Taekwondo',
+    descripcion: 'Arte marcial para todas las edades. Dojo acondicionado.',
+    categoria: 'Deportivo',
+    instructor: 'Sandra Ríos',
+    cupoMaximo: 20,
+    dias: [2, 4],
+    inicio: '18:00',
+    duracion: 1.5,
+    costoMensual: 6000,
+    color: '#EF4444',
+    icono: 'taekwondo',
+    espacioId: 3,
+    activa: true,
+  },
+  {
+    id: 2,
+    nombre: 'Yoga & Meditación',
+    descripcion: 'Hatha yoga y meditación guiada en el SUM o al aire libre.',
+    categoria: 'Deportivo',
+    instructor: 'Carla Ruiz',
+    cupoMaximo: 12,
+    dias: [1, 3],
+    inicio: '09:00',
+    duracion: 1,
+    costoMensual: 5000,
+    color: '#059669',
+    icono: 'yoga',
+    espacioId: 4,
+    activa: true,
+  },
+  {
+    id: 3,
+    nombre: 'Folclore y Danzas',
+    descripcion: 'Zambas, chacareras y grupo de proyección folclórica.',
+    categoria: 'Cultural',
+    instructor: 'Marta Ibáñez',
+    cupoMaximo: 18,
+    dias: [5],
+    inicio: '19:00',
+    duracion: 2,
+    costoMensual: 4000,
+    color: '#7C3AED',
+    icono: 'danza',
+    espacioId: 2,
+    activa: true,
+  },
+  {
+    id: 4,
+    nombre: 'Ajedrez',
+    descripcion: 'Escuela de ajedrez y torneos internos quincenales.',
+    categoria: 'Cultural',
+    instructor: 'Hugo Pereyra',
+    cupoMaximo: 16,
+    dias: [3],
+    inicio: '17:00',
+    duracion: 1.5,
+    costoMensual: 3500,
+    color: '#1E293B',
+    icono: 'ajedrez',
+    espacioId: 9,
+    activa: true,
+  },
+  {
+    id: 5,
+    nombre: 'Teatro comunitario',
+    descripcion: 'Improvisación, expresión corporal y montaje anual.',
+    categoria: 'Cultural',
+    instructor: 'Nadia Quiroga',
+    cupoMaximo: 14,
+    dias: [4],
+    inicio: '19:30',
+    duracion: 2,
+    costoMensual: 4500,
+    color: '#EC4899',
+    icono: 'teatro',
+    espacioId: 9,
+    activa: true,
+  },
+  {
+    id: 6,
+    nombre: 'Natación infantil',
+    descripcion: 'Escuelita de natación para menores de 12 años.',
+    categoria: 'Deportivo',
+    instructor: 'Ramiro Vega',
+    cupoMaximo: 25,
+    dias: [2, 4, 6],
+    inicio: '16:00',
+    duracion: 1,
+    costoMensual: 7000,
+    color: '#06B6D4',
+    icono: 'pileta',
+    espacioId: 7,
+    activa: true,
+  },
+  {
+    id: 7,
+    nombre: 'Pádel recreativo',
+    descripcion: 'Clínicas mensuales y torneos de parejas mixtas.',
+    categoria: 'Deportivo',
+    instructor: 'Diego Correa',
+    cupoMaximo: 16,
+    dias: [1, 5],
+    inicio: '20:00',
+    duracion: 1.5,
+    costoMensual: 6500,
+    color: '#0EA5E9',
+    icono: 'padel',
+    espacioId: 6,
+    activa: true,
+  },
+];
+
+export const inscripcionesIniciales: Inscripcion[] = [
+  { id: 1, actividadId: 1, socioId: 6, socioNombre: 'Sofía Almeida', fecha: todayISO(), estado: 'activa' },
+  { id: 2, actividadId: 1, socioId: 10, socioNombre: 'Carla Ruiz', fecha: todayISO(), estado: 'activa' },
+  { id: 3, actividadId: 2, socioId: 2, socioNombre: 'Julieta Méndez', fecha: todayISO(), estado: 'activa' },
+  { id: 4, actividadId: 2, socioId: 8, socioNombre: 'Lucía Benítez', fecha: todayISO(), estado: 'activa' },
+  { id: 5, actividadId: 3, socioId: 12, socioNombre: 'Nadia Quiroga', fecha: todayISO(), estado: 'activa' },
+  { id: 6, actividadId: 4, socioId: 3, socioNombre: 'Roberto Fernández', fecha: todayISO(), estado: 'activa' },
+  { id: 7, actividadId: 4, socioId: 1, socioNombre: 'Carlos Kussi', fecha: todayISO(), estado: 'activa' },
+  { id: 8, actividadId: 6, socioId: 10, socioNombre: 'Carla Ruiz', fecha: todayISO(), estado: 'activa' },
 ];
 
 /* ---------------------------------- reservas ---------------------------------- */

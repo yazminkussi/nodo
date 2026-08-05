@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { CalendarRange, Users } from 'lucide-react';
+import { CalendarRange, Users, Clock } from 'lucide-react';
 import { useNodoStore } from '../store/useNodoStore';
-import { formatARS } from '../data/mockData';
+import { formatARS, nombreDias } from '../data/mockData';
 import SpaceIcon from './SpaceIcon';
 import BookingModal from './BookingModal';
 
@@ -13,7 +13,9 @@ export default function BookingPanel() {
   const [filtro, setFiltro] = useState('Todos');
   const [seleccionado, setSeleccionado] = useState(null);
 
-  const visibles = espacios.filter((e) => filtro === 'Todos' || e.categoria === filtro);
+  const visibles = espacios
+    .filter((e) => e.disponible)
+    .filter((e) => filtro === 'Todos' || e.categoria === filtro);
 
   return (
     <section className="mx-auto max-w-5xl px-4 sm:px-6">
@@ -69,6 +71,9 @@ export default function BookingPanel() {
               </span>
               <span className="font-extrabold text-nodo-teal">{formatARS(esp.precioHora)}<span className="font-medium text-slate-400"> / h</span></span>
             </div>
+            <p className="flex items-center gap-1 text-[11px] font-bold text-slate-400">
+              <Clock size={12} /> {nombreDias(esp.horario.dias)} · {esp.horario.apertura} a {esp.horario.cierre}
+            </p>
             <span className="rounded-lg bg-cyan-50 py-2 text-center text-xs font-bold text-nodo-teal transition-colors group-hover:bg-nodo-cyan group-hover:text-white">
               Reservar ahora
             </span>

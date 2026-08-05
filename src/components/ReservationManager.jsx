@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Trash2, CalendarDays, UserRound, Filter } from 'lucide-react';
+import { Plus, Trash2, CalendarDays, UserRound, Filter, CalendarX2 } from 'lucide-react';
 import { useNodoStore } from '../store/useNodoStore';
-import { HORARIOS, nextDays, todayISO, formatFechaLarga, ROLES_ADMIN } from '../data/mockData';
+import { nextDays, todayISO, formatFechaLarga, ROLES_ADMIN, slotsDeHorario, diaActivo } from '../data/mockData';
 import SpaceIcon from './SpaceIcon';
 import { StatusBadge } from './StatusBadge';
 
@@ -28,6 +28,18 @@ export default function ReservationManager() {
   const [formOpen, setFormOpen] = useState(false);
   const [form, setForm] = useState({ socioId: '', espacioId: '', inicio: '' });
 
+  const slotsDelDia = useMemo(() => {
+    const set = new Set();
+    espaciosVisibles.forEach((e) => {
+      if (!diaActivo(e.horario.dias, dia)) return;
+      slotsDeHorario(e.horario).forEach((s) => set.add(s));
+    });
+    return [...set].sort();
+  }, [espaciosVisibles, dia]);
+
+  const esSlotDe = (esp, slot) =>
+    diaActivo(esp.horario.dias, dia) && slotsDeHorario(esp.horario).includes(slot);
+
   const reservasDelDia = useMemo(
     () => reservations.filter((r) => r.fecha === dia),
     [reservations, dia]
@@ -35,6 +47,11 @@ export default function ReservationManager() {
 
   const reservaDeCelda = (espacioId, inicio) =>
     reservasDelDia.find((r) => r.espacioId === espacioId && r.inicio === inicio);
+
+  const espacioForm = espacios.find((e) => e.id === Number(form.espacioId));
+  const slotsForm = espacioForm && diaActivo(espacioForm.horario.dias, dia)
+    ? slotsDeHorario(espacioForm.horario)
+    : [];
 
   const crearReserva = () => {
     const socio = members.find((m) => m.id === Number(form.socioId));
@@ -52,6 +69,7 @@ export default function ReservationManager() {
       socioNombre: `${socio.nombre} ${socio.apellido}`,
       fecha: dia,
       inicio: form.inicio,
+      duracion: espacioForm.horario.duracionTurno,
     });
     addToast(`Reserva creada para ${socio.nombre} ${socio.apellido}.`, 'success');
     setFormOpen(false);
@@ -64,7 +82,7 @@ export default function ReservationManager() {
         <div>
           <h2 className="text-lg font-extrabold tracking-tight text-nodo-navy">Control de Reservas</h2>
           <p className="text-xs text-slate-500">
-            Grilla visual con detección de superposición de turnos.
+            Grilla sincronizada con los horarios configurados por espacio.
             {categoriasPermitidas && (
               <span className="ml-1 inline-flex items-center gap-1 font-bold text-nodo-teal">
                 <Filter size={11} /> Solo {categoriasPermitidas.join(' y ')}
@@ -112,6 +130,9 @@ export default function ReservationManager() {
           <span className="flex items-center gap-1 text-[11px] font-semibold text-slate-400">
             <span className="h-2.5 w-2.5 rounded-sm bg-nodo-surface ring-1 ring-nodo-border" /> Libre
           </span>
+          <span className="flex items-center gap-1 text-[11px] font-semibold text-slate-400">
+            <span className="h-2.5 w-2.5 rounded-sm bg-slate-50" /> Cerrado
+          </span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[820px] border-collapse text-xs">
@@ -120,7 +141,7 @@ export default function ReservationManager() {
                 <th className="sticky left-0 z-10 w-44 border-b border-r border-nodo-border bg-white px-3 py-2.5 text-left text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
                   Espacio
                 </th>
-                {HORARIOS.map((h) => (
+                {slotsDelDia.map((h) => (
                   <th key={h} className="border-b border-nodo-border bg-white px-1 py-2.5 text-center text-[10px] font-bold text-slate-400">
                     {h}
                   </th>
@@ -138,7 +159,16 @@ export default function ReservationManager() {
                       <span className="whitespace-nowrap text-[11px] font-bold text-nodo-navy">{esp.nombre}</span>
                     </div>
                   </td>
-                  {HORARIOS.map((h) => {
+                  {slotsDelDia.map((h) => {
+                    if (!esSlotDe(esp, h)) {
+                      return (
+                        <td key={h} className="border-b border-nodo-border p-0.5">
+                          <span className="flex h-8 w-full items-center justify-center rounded-md bg-slate-50 text-slate-300">
+                            <CalendarX2 size={11} />
+                          </span>
+                        </td>
+                      );
+                    }
                     const reserva = reservaDeCelda(esp.id, h);
                     const esHoyPasado = dia === hoy && Number(h.split(':')[0]) <= new Date().getHours();
                     return (
@@ -236,7 +266,7 @@ export default function ReservationManager() {
               <label className="mb-1 block text-xs font-bold text-slate-500">Espacio</label>
               <select
                 value={form.espacioId}
-                onChange={(e) => setForm({ ...form, espacioId: e.target.value })}
+                onChange={(e) => setForm({ ...form, espacioId: e.target.value, inicio: '' })}
                 className="mb-3 w-full rounded-xl bg-white px-3 py-2.5 text-sm text-slate-700 ring-1 ring-nodo-border focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
               >
                 <option value="">Seleccionar espacio…</option>
@@ -245,28 +275,34 @@ export default function ReservationManager() {
                 ))}
               </select>
               <label className="mb-1 block text-xs font-bold text-slate-500">Horario</label>
-              <div className="mb-4 grid grid-cols-6 gap-2">
-                {HORARIOS.map((h) => {
-                  const ocupado = form.espacioId && isSlotTaken(Number(form.espacioId), dia, h);
-                  const activo = form.inicio === h;
-                  return (
-                    <button
-                      key={h}
-                      disabled={ocupado}
-                      onClick={() => setForm({ ...form, inicio: h })}
-                      className={`rounded-lg py-1.5 text-xs font-bold transition-colors ${
-                        activo
-                          ? 'bg-nodo-green text-white'
-                          : ocupado
-                            ? 'cursor-not-allowed bg-slate-100 text-slate-300 line-through'
-                            : 'bg-cyan-50 text-nodo-teal ring-1 ring-inset ring-cyan-200 hover:bg-nodo-cyan hover:text-white'
-                      }`}
-                    >
-                      {h}
-                    </button>
-                  );
-                })}
-              </div>
+              {espacioForm && !diaActivo(espacioForm.horario.dias, dia) ? (
+                <p className="mb-4 rounded-xl bg-slate-50 px-3 py-2.5 text-xs font-bold text-slate-400">
+                  Este espacio no abre ese día. Elegí otro espacio o fecha.
+                </p>
+              ) : (
+                <div className="mb-4 grid grid-cols-6 gap-2">
+                  {slotsForm.map((h) => {
+                    const ocupado = form.espacioId && isSlotTaken(Number(form.espacioId), dia, h);
+                    const activo = form.inicio === h;
+                    return (
+                      <button
+                        key={h}
+                        disabled={ocupado}
+                        onClick={() => setForm({ ...form, inicio: h })}
+                        className={`rounded-lg py-1.5 text-xs font-bold transition-colors ${
+                          activo
+                            ? 'bg-nodo-green text-white'
+                            : ocupado
+                              ? 'cursor-not-allowed bg-slate-100 text-slate-300 line-through'
+                              : 'bg-cyan-50 text-nodo-teal ring-1 ring-inset ring-cyan-200 hover:bg-nodo-cyan hover:text-white'
+                        }`}
+                      >
+                        {h}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
               <button
                 onClick={crearReserva}
                 className="w-full rounded-xl bg-nodo-green px-4 py-3 text-sm font-extrabold text-white shadow-card transition hover:bg-nodo-green-dark"

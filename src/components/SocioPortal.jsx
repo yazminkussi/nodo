@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { IdCard, CalendarDays, Newspaper } from 'lucide-react';
+import { IdCard, CalendarDays, Newspaper, Sparkles } from 'lucide-react';
 import { Header, SectionNav } from './Navbar';
 import DigitalCard from './DigitalCard';
 import BookingPanel from './BookingPanel';
 import Feed from './Feed';
 import AdBanner from './AdBanner';
+import ActivitiesPanel from './ActivitiesPanel';
 
 const secciones = [
   { key: 'carnet', label: 'Carnet Digital', icon: IdCard },
   { key: 'reservas', label: 'Reservas', icon: CalendarDays },
+  { key: 'talleres', label: 'Talleres', icon: Sparkles },
   { key: 'novedades', label: 'Novedades', icon: Newspaper },
 ];
 
@@ -38,6 +40,7 @@ export default function SocioPortal() {
               </>
             )}
             {seccion === 'reservas' && <BookingPanel />}
+            {seccion === 'talleres' && <ActivitiesPanel />}
             {seccion === 'novedades' && (
               <>
                 <Feed />

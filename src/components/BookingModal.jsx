@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, CalendarCheck, CheckCircle2, Download, UserRound } from 'lucide-react';
+import { X, CalendarCheck, CheckCircle2, Download, UserRound, CalendarX2 } from 'lucide-react';
 import { useNodoStore } from '../store/useNodoStore';
-import { HORARIOS, nextDays, todayISO, formatARS, formatFechaLarga } from '../data/mockData';
+import { nextDays, todayISO, formatARS, formatFechaLarga, slotsDeHorario, diaActivo, nombreDias, horaAmin, minAstring } from '../data/mockData';
 import { QrSvg } from '../utils/qr';
 import SpaceIcon from './SpaceIcon';
 import { StatusBadge } from './StatusBadge';
@@ -18,6 +18,12 @@ export default function BookingModal({ espacio, onClose }) {
   const [fecha, setFecha] = useState(dias[0]);
   const [inicio, setInicio] = useState(null);
   const [confirmado, setConfirmado] = useState(null);
+
+  const diaCerrado = !diaActivo(espacio.horario.dias, fecha);
+  const slots = useMemo(
+    () => (diaCerrado ? [] : slotsDeHorario(espacio.horario)),
+    [espacio, diaCerrado]
+  );
 
   useEffect(() => {
     const onKey = (e) => e.key === 'Escape' && onClose();
@@ -43,10 +49,13 @@ export default function BookingModal({ espacio, onClose }) {
       socioNombre: `${socio.nombre} ${socio.apellido}`,
       fecha,
       inicio,
+      duracion: espacio.horario.duracionTurno,
     });
     setConfirmado(reserva);
     addToast('Reserva confirmada. Te esperamos en el club.', 'success');
   };
+
+  const finReserva = (ini) => minAstring(horaAmin(ini) + espacio.horario.duracionTurno * 60);
 
   return (
     <AnimatePresence>
@@ -76,6 +85,9 @@ export default function BookingModal({ espacio, onClose }) {
                 <h3 className="font-extrabold text-nodo-navy">{confirmado ? 'Reserva confirmada' : `Reservar · ${espacio.nombre}`}</h3>
                 <p className="text-xs text-slate-500">
                   {formatARS(espacio.precioHora)} / hora · {espacio.capacidad} personas
+                </p>
+                <p className="text-[11px] font-bold text-nodo-teal">
+                  {nombreDias(espacio.horario.dias)} · {espacio.horario.apertura} a {espacio.horario.cierre}
                 </p>
               </div>
             </div>
@@ -110,7 +122,7 @@ export default function BookingModal({ espacio, onClose }) {
                       <span className="font-semibold text-slate-500">Fecha:</span> {formatFechaLarga(fecha)}
                     </p>
                     <p className="text-slate-600">
-                      <span className="font-semibold text-slate-500">Horario:</span> {inicio} a {String(Number(inicio.split(':')[0]) + 1).padStart(2, '0')}:00 hs
+                      <span className="font-semibold text-slate-500">Horario:</span> {inicio} a {finReserva(inicio)} hs
                     </p>
                     <p className="text-xs text-slate-400">Mostrá este pase en la entrada del espacio para ingresar.</p>
                   </div>
@@ -139,6 +151,7 @@ export default function BookingModal({ espacio, onClose }) {
                   const [, m, dd] = d.split('-');
                   const activo = d === fecha;
                   const esHoy = d === hoy;
+                  const cerrado = !diaActivo(espacio.horario.dias, d);
                   const diaSemana = new Date(`${d}T12:00:00`).toLocaleDateString('es-AR', { weekday: 'short' });
                   return (
                     <button
@@ -146,40 +159,49 @@ export default function BookingModal({ espacio, onClose }) {
                       onClick={() => setFecha(d)}
                       className={`flex min-w-[64px] flex-col items-center rounded-xl px-3 py-2 transition-colors ${
                         activo ? 'bg-nodo-navy text-white shadow-card' : 'bg-slate-50 text-slate-500 ring-1 ring-inset ring-nodo-border hover:bg-slate-100'
-                      }`}
+                      } ${cerrado && !activo ? 'opacity-45' : ''}`}
                     >
                       <span className="text-[10px] font-semibold uppercase">{diaSemana}</span>
                       <span className="text-lg font-extrabold leading-none">{dd}</span>
                       <span className="text-[10px] font-semibold uppercase">{m}</span>
                       {esHoy && <span className="text-[9px] font-bold text-nodo-cyan">Hoy</span>}
+                      {cerrado && <span className="text-[8px] font-bold text-slate-400">Cerrado</span>}
                     </button>
                   );
                 })}
               </div>
 
               <p className="mb-2 mt-4 text-xs font-bold uppercase tracking-widest text-slate-400">Elegí el horario</p>
-              <div className="grid grid-cols-4 gap-2">
-                {HORARIOS.map((slot) => {
-                  const ocupado = slotDeshabilitado(slot);
-                  const activo = inicio === slot;
-                  return (
-                    <button
-                      key={slot}
-                      disabled={ocupado}
-                      onClick={() => setInicio(slot)}
-                      className={`rounded-lg px-2 py-2 text-sm font-bold transition-colors ${
-                        activo
-                          ? 'bg-nodo-green text-white shadow-card'
-                          : ocupado
-                            ? 'cursor-not-allowed bg-slate-100 text-slate-300 line-through'
-                            : 'bg-cyan-50 text-nodo-teal ring-1 ring-inset ring-cyan-200 hover:bg-nodo-cyan hover:text-white'
-                      }`}
-                    >
-                      {slot}
-                    </button>
-                  );
-                })}
-              </div>
+              {diaCerrado ? (
+                <div className="flex flex-col items-center gap-2 rounded-2xl border-2 border-dashed border-nodo-border bg-nodo-surface px-4 py-8 text-center">
+                  <CalendarX2 size={26} className="text-slate-300" />
+                  <p className="text-sm font-bold text-slate-500">Este espacio no abre ese día</p>
+                  <p className="text-xs text-slate-400">{nombreDias(espacio.horario.dias)} · {espacio.horario.apertura} a {espacio.horario.cierre}</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-4 gap-2">
+                  {slots.map((slot) => {
+                    const ocupado = slotDeshabilitado(slot);
+                    const activo = inicio === slot;
+                    return (
+                      <button
+                        key={slot}
+                        disabled={ocupado}
+                        onClick={() => setInicio(slot)}
+                        className={`rounded-lg px-2 py-2 text-sm font-bold transition-colors ${
+                          activo
+                            ? 'bg-nodo-green text-white shadow-card'
+                            : ocupado
+                              ? 'cursor-not-allowed bg-slate-100 text-slate-300 line-through'
+                              : 'bg-cyan-50 text-nodo-teal ring-1 ring-inset ring-cyan-200 hover:bg-nodo-cyan hover:text-white'
+                        }`}
+                      >
+                        {slot}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
 
               <button
                 disabled={!inicio}
