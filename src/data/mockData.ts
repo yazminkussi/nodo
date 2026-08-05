@@ -126,6 +126,7 @@ export type Comunidad = {
   tipo: string;
   direccion: string;
   ciudad: string;
+  barrio: string;
   cuit: string;
   telefono: string;
   plan: string;
@@ -142,6 +143,7 @@ export const comunidadesIniciales: Comunidad[] = [
     tipo: 'Club Social y Deportivo',
     direccion: 'Av. Rivadavia 3456, Villa Crespo',
     ciudad: 'Ciudad de Buenos Aires',
+    barrio: 'Villa Crespo',
     cuit: '30-70998877-4',
     telefono: '11 4824-3000',
     plan: 'Plan 250 Socios',
@@ -156,6 +158,7 @@ export const comunidadesIniciales: Comunidad[] = [
     tipo: 'Club Social y Deportivo',
     direccion: 'Av. San Martín 2340, Boedo',
     ciudad: 'Ciudad de Buenos Aires',
+    barrio: 'Boedo',
     cuit: '30-71557822-1',
     telefono: '11 4931-4420',
     plan: 'Plan 400+ Socios',
@@ -170,6 +173,7 @@ export const comunidadesIniciales: Comunidad[] = [
     tipo: 'Centro Cultural',
     direccion: 'Thames 1740, Palermo',
     ciudad: 'Ciudad de Buenos Aires',
+    barrio: 'Palermo',
     cuit: '30-71409933-8',
     telefono: '11 4777-3902',
     plan: 'Plan 100 Socios',
@@ -189,7 +193,7 @@ export const ROLES_ADMIN = {
     etiqueta: 'SuperAdmin / Tesorero',
     descripcion: 'Facturación, métricas y personalización de la comunidad.',
     icono: 'shield',
-    secciones: ['resumen', 'socios', 'reservas', 'publicidades', 'planes', 'personalizacion'],
+    secciones: ['resumen', 'socios', 'reservas', 'publicidades', 'planes', 'drive', 'personalizacion'],
     categorias: null,
   },
   deportes: {
@@ -197,7 +201,7 @@ export const ROLES_ADMIN = {
     etiqueta: 'Admin de Deportes',
     descripcion: 'Gestión de canchas, espacios deportivos y horarios.',
     icono: 'trophy',
-    secciones: ['resumen', 'reservas'],
+    secciones: ['resumen', 'reservas', 'drive'],
     categorias: ['Deportivo'],
   },
   talleres: {
@@ -205,7 +209,7 @@ export const ROLES_ADMIN = {
     etiqueta: 'Admin de Talleres / Cultura',
     descripcion: 'Inscripciones a talleres y actividades culturales.',
     icono: 'palette',
-    secciones: ['resumen', 'reservas'],
+    secciones: ['resumen', 'reservas', 'drive'],
     categorias: ['Cultural'],
   },
 } as const;
@@ -623,4 +627,104 @@ export const valueProps = [
   { titulo: 'Adiós al WhatsApp', detalle: 'Fin a los grupos caóticos de mensajes para anotarse o saber quién paga.' },
   { titulo: 'Adiós al Excel', detalle: 'Cuotas, socios y morosidad siempre actualizados, sin planillas sueltas.' },
   { titulo: 'Adiós a las carpetas', detalle: 'Reservas y comunicados en una única plataforma digital para toda la comunidad.' },
+];
+
+/* ---------------------------------- NODO Drive (módulo interno de administración) ---------------------------------- */
+
+export type DriveFolder = {
+  id: string;
+  nombre: string;
+  descripcion: string;
+  color: string;
+  icono: 'scroll' | 'sheet' | 'receipt' | 'template';
+};
+
+export type DriveSheetContent = {
+  columnas: string[];
+  filas: (string | number)[][];
+};
+
+export type DriveItem = {
+  id: number;
+  carpetaId: string;
+  tipo: 'archivo' | 'sheet' | 'doc';
+  nombre: string;
+  fecha: string;
+  autor: string;
+  mime?: string;
+  tamano?: number;
+  dataUrl?: string;
+  contenido?: DriveSheetContent | string;
+};
+
+export const driveFolders: DriveFolder[] = [
+  {
+    id: 'actas',
+    nombre: 'Actas y Asambleas',
+    descripcion: 'Minutas y actas de reuniones.',
+    color: '#7C3AED',
+    icono: 'scroll',
+  },
+  {
+    id: 'balances',
+    nombre: 'Balances y Planillas',
+    descripcion: 'Cuotas, presupuestos y balances.',
+    color: '#0D9488',
+    icono: 'sheet',
+  },
+  {
+    id: 'comprobantes',
+    nombre: 'Comprobantes',
+    descripcion: 'Facturas, recibos y pagos.',
+    color: '#F59E0B',
+    icono: 'receipt',
+  },
+  {
+    id: 'plantillas',
+    nombre: 'Plantillas de Comunicación',
+    descripcion: 'Modelos para comunicados y notas.',
+    color: '#06B6D4',
+    icono: 'template',
+  },
+];
+
+export const driveItemsIniciales: DriveItem[] = [
+  {
+    id: 1,
+    carpetaId: 'actas',
+    tipo: 'doc',
+    nombre: 'Acta - Asamblea General Ordinaria 2026',
+    fecha: d0,
+    autor: 'Yazmín Kussi',
+    contenido:
+      '<h2>Acta · Asamblea General Ordinaria 2026</h2><p>El día 25 de julio de 2026, con la presencia de 47 socias y socios, se realizó la Asamblea General Ordinaria en el SUM.</p><ul><li>Se aprobó la memoria y balance del ejercicio 2025.</li><li>Se renovó parcialmente la comisión directiva.</li><li>Se fijó el reajuste de cuota social desde agosto.</li></ul><p>Sin más temas para tratar, se levanta la sesión.</p>',
+  },
+  {
+    id: 2,
+    carpetaId: 'balances',
+    tipo: 'sheet',
+    nombre: 'Planilla de Cuotas Sociales',
+    fecha: d0,
+    autor: 'Yazmín Kussi',
+    contenido: {
+      columnas: ['N° Socio', 'Nombre', 'Categoría', 'Cuota', 'Estado'],
+      filas: [
+        ['0142', 'Julieta Méndez', 'Activo', '18000', 'Al día'],
+        ['0087', 'Roberto Fernández', 'Honorario', '15000', 'Al día'],
+        ['0198', 'Diego Correa', 'Activo', '18000', 'Moroso'],
+        ['0110', 'Jorge Paredes', 'Activo', '18000', 'Moroso'],
+        ['0315', 'Sofía Almeida', 'Juvenil', '12000', 'Al día'],
+      ],
+    },
+  },
+  {
+    id: 3,
+    carpetaId: 'plantillas',
+    tipo: 'doc',
+    nombre: 'Plantilla - Comunicado de cuota',
+    fecha: d0,
+    autor: 'Yazmín Kussi',
+    contenido:
+      '<h2>Comunicado oficial</h2><p>Estimada comunidad:</p><p>Les informamos que la cuota social del mes se encuentra disponible para el pago. Pueden abonarla en administración o ponerse al día desde la app NODO.</p><p>[Nombre de la institución]</p>',
+  },
 ];

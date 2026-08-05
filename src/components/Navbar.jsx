@@ -78,6 +78,8 @@ export function CommunityBadge() {
   const [abierto, setAbierto] = useState(false);
   const ref = useRef(null);
 
+  const barrio = comunidad.barrio || comunidad.direccion?.split(', ')[1] || '';
+
   useEffect(() => {
     const onClick = (e) => {
       if (ref.current && !ref.current.contains(e.target)) setAbierto(false);
@@ -126,7 +128,7 @@ export function CommunityBadge() {
             {comunidad.nombre}
           </span>
           <span className="block truncate text-[10px] font-semibold text-slate-400">
-            {comunidad.tipo} · {comunidad.plan}
+            {barrio || comunidad.tipo} · {comunidad.plan}
           </span>
         </span>
         <ChevronDown
@@ -177,7 +179,7 @@ export function CommunityBadge() {
                         {c.nombre}
                       </span>
                       <span className="block text-[11px] font-semibold text-slate-500">
-                        {c.tipo} · {c.plan}
+                        {c.tipo} · {c.barrio || c.direccion?.split(', ')[1] || ''} · {c.plan}
                       </span>
                     </span>
                     {activa && <span className="ml-auto h-2 w-2 shrink-0 rounded-full bg-nodo-green" />}

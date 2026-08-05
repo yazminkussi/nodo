@@ -37,6 +37,7 @@ export default function CommunitySettings() {
     tipo: comunidad.tipo,
     direccion: comunidad.direccion,
     ciudad: comunidad.ciudad,
+    barrio: comunidad.barrio,
     cuit: comunidad.cuit,
     telefono: comunidad.telefono,
     email: comunidad.email,
@@ -186,7 +187,7 @@ export default function CommunitySettings() {
                   {form.nombre || comunidad.nombre}
                 </span>
                 <span className="block text-[11px] font-semibold text-slate-400">
-                  {form.tipo || comunidad.tipo} · {comunidad.plan}
+                  {form.tipo || comunidad.tipo} · {form.barrio || comunidad.barrio} · {comunidad.plan}
                 </span>
               </span>
             </div>
@@ -205,6 +206,7 @@ export default function CommunitySettings() {
               <Campo label="Plan NODO" value={comunidad.plan} onChange={() => {}} />
               <Campo label="Dirección" value={form.direccion} onChange={(v) => setForm({ ...form, direccion: v })} />
               <Campo label="Ciudad" value={form.ciudad} onChange={(v) => setForm({ ...form, ciudad: v })} />
+              <Campo label="Barrio" value={form.barrio || ''} onChange={(v) => setForm({ ...form, barrio: v })} />
               <Campo label="CUIT" value={form.cuit} onChange={(v) => setForm({ ...form, cuit: v })} />
               <Campo label="Teléfono" value={form.telefono} onChange={(v) => setForm({ ...form, telefono: v })} />
               <div className="sm:col-span-2">

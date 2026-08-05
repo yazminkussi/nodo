@@ -7,6 +7,7 @@ import {
   publicidadesIniciales,
   novedadesIniciales,
   comunidadesIniciales,
+  driveItemsIniciales,
   todayISO,
   nextHour,
 } from '../data/mockData';
@@ -87,6 +88,17 @@ export const useNodoStore = create(
       addAd: (ad) => set((state) => ({ ads: [...state.ads, { id: Date.now(), ...ad }] })),
       removeAd: (id) => set((state) => ({ ads: state.ads.filter((a) => a.id !== id) })),
 
+      /* ---- NODO Drive (documentos internos) ---- */
+      driveItems: driveItemsIniciales,
+      addDriveItem: (item) =>
+        set((state) => ({ driveItems: [...state.driveItems, { ...item, id: item.id ?? Date.now() }] })),
+      updateDriveItem: (id, patch) =>
+        set((state) => ({
+          driveItems: state.driveItems.map((i) => (i.id === id ? { ...i, ...patch } : i)),
+        })),
+      removeDriveItem: (id) =>
+        set((state) => ({ driveItems: state.driveItems.filter((i) => i.id !== id) })),
+
       /* ---- toasts ---- */
       toasts: [],
       addToast: (mensaje, tipo = 'success') => {
@@ -107,6 +119,7 @@ export const useNodoStore = create(
         members: state.members,
         reservations: state.reservations,
         ads: state.ads,
+        driveItems: state.driveItems,
         socioActualId: state.socioActualId,
       }),
     }

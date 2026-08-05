@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LayoutDashboard, Users, CalendarRange, Store, Building2, Palette } from 'lucide-react';
+import { LayoutDashboard, Users, CalendarRange, Store, Building2, Palette, FolderOpen } from 'lucide-react';
 import { Header, SectionNav } from './Navbar';
 import StatsOverview from './StatsOverview';
 import MemberTable from './MemberTable';
@@ -8,6 +8,7 @@ import ReservationManager from './ReservationManager';
 import AdsManager from './AdsManager';
 import B2BOverview from './B2BOverview';
 import CommunitySettings from './CommunitySettings';
+import NodoDrive from './NodoDrive';
 import AdminRoleSwitcher from './AdminRoleSwitcher';
 import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
 import { ROLES_ADMIN } from '../data/mockData';
@@ -18,6 +19,7 @@ const seccionesBase = [
   { key: 'reservas', label: 'Reservas', icon: CalendarRange },
   { key: 'publicidades', label: 'Publicidades', icon: Store },
   { key: 'planes', label: 'Planes NODO', icon: Building2 },
+  { key: 'drive', label: 'Drive Interno', icon: FolderOpen },
   { key: 'personalizacion', label: 'Personalización', icon: Palette },
 ];
 
@@ -84,6 +86,7 @@ export default function AdminDashboard() {
               {seccion === 'reservas' && <ReservationManager />}
               {seccion === 'publicidades' && <AdsManager />}
               {seccion === 'planes' && <B2BOverview />}
+              {seccion === 'drive' && <NodoDrive />}
               {seccion === 'personalizacion' && <CommunitySettings />}
             </motion.main>
           </AnimatePresence>

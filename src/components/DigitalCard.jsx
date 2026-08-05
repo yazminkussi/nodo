@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { BadgeCheck, CalendarClock, ScanLine, Sparkles } from 'lucide-react';
+import { BadgeCheck, CalendarClock, ScanLine, Sparkles, MapPin } from 'lucide-react';
 import { useNodoStore, useProximaReserva, useComunidadActual } from '../store/useNodoStore';
 import { StatusBadge } from './StatusBadge';
 import { QrSvg } from '../utils/qr';
@@ -40,14 +40,26 @@ export default function DigitalCard() {
         <div className="pointer-events-none absolute -right-20 -top-24 h-56 w-56 rounded-full bg-nodo-cyan/20 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-24 -left-16 h-56 w-56 rounded-full bg-nodo-teal/20 blur-3xl" />
 
-        <div className="relative flex items-start justify-between">
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">
+        <div className="relative flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="truncate text-[11px] font-semibold uppercase tracking-widest text-slate-400">
               {comunidad.nombre}
+            </p>
+            <p className="truncate text-[10px] font-semibold text-slate-500">
+              {comunidad.barrio} · {comunidad.ciudad}
             </p>
             <p className="mt-1 text-xl font-extrabold tracking-tight sm:text-2xl">Carnet Digital</p>
           </div>
-          <NodoLogo className="h-9 w-9 opacity-90" />
+          <div className="flex shrink-0 items-center gap-2">
+            {comunidad.logo && (
+              <img
+                src={comunidad.logo}
+                alt={`Logo de ${comunidad.nombre}`}
+                className="h-9 w-9 rounded-full bg-white object-contain p-0.5 ring-1 ring-white/20"
+              />
+            )}
+            <NodoLogo className="h-9 w-9 opacity-90" />
+          </div>
         </div>
 
         <div className="relative mt-5 flex flex-col items-center gap-5 sm:flex-row sm:items-stretch">
@@ -66,12 +78,15 @@ export default function DigitalCard() {
                 <p className="text-sm text-slate-300">
                   Socio N° <span className="font-mono font-bold text-white">{socio.numero}</span>
                 </p>
-                <p className="text-xs text-slate-400">{socio.categoria} · {socio.localidad}</p>
+                <p className="text-xs text-slate-400">{socio.categoria}</p>
               </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
               <StatusBadge estado={socio.cuotaAlDia ? 'alDia' : 'moroso'} />
+              <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset ring-white/20">
+                <MapPin size={13} className="text-nodo-amber" /> {socio.localidad}
+              </span>
               <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset ring-white/20">
                 <BadgeCheck size={13} className="text-nodo-cyan" /> {socio.categoria}
               </span>
