@@ -7,6 +7,7 @@
 export type Socio = {
   id: number;
   numero: string;
+  dni: string;
   nombre: string;
   apellido: string;
   email: string;
@@ -213,6 +214,19 @@ export const duracionLabel = (hs: number): string => {
 export const formatARS = (n: number): string =>
   new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(n);
 
+/* Devuelve el nro de meses adeudados aproximados a partir de la última cuota
+   pagada ("DD/MM/AAAA"). Mínimo 1 cuando la cuota no está al día. */
+export const mesesAdeudados = (socio: { cuotaAlDia: boolean; ultimaCuota: string }): number => {
+  if (socio.cuotaAlDia) return 0;
+  const partes = (socio.ultimaCuota || '').split('/');
+  if (partes.length !== 3) return 1;
+  const [dd, mm, yyyy] = partes.map(Number);
+  const ultima = new Date(yyyy, mm - 1, dd);
+  const hoy = new Date();
+  let meses = (hoy.getFullYear() - ultima.getFullYear()) * 12 + (hoy.getMonth() - ultima.getMonth());
+  return Math.max(1, meses);
+};
+
 export const formatFechaLarga = (iso: string): string => {
   const [y, m, d] = iso.split('-').map(Number);
   return new Date(y, m - 1, d).toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -299,7 +313,7 @@ export const ROLES_ADMIN = {
     etiqueta: 'SuperAdmin / Tesorero',
     descripcion: 'Facturación, métricas y personalización de la comunidad.',
     icono: 'shield',
-    secciones: ['resumen', 'socios', 'reservas', 'publicidades', 'planes', 'drive', 'personalizacion'],
+    secciones: ['resumen', 'acceso', 'socios', 'reservas', 'publicidades', 'planes', 'drive', 'personalizacion'],
     categorias: null,
   },
   deportes: {
@@ -307,7 +321,7 @@ export const ROLES_ADMIN = {
     etiqueta: 'Admin de Deportes',
     descripcion: 'Gestión de canchas, espacios deportivos y horarios.',
     icono: 'trophy',
-    secciones: ['resumen', 'reservas', 'drive', 'personalizacion'],
+    secciones: ['resumen', 'acceso', 'reservas', 'drive', 'personalizacion'],
     categorias: ['Deportivo'],
   },
   talleres: {
@@ -315,7 +329,7 @@ export const ROLES_ADMIN = {
     etiqueta: 'Admin de Talleres / Cultura',
     descripcion: 'Inscripciones a talleres y actividades culturales.',
     icono: 'palette',
-    secciones: ['resumen', 'reservas', 'drive', 'personalizacion'],
+    secciones: ['resumen', 'acceso', 'reservas', 'drive', 'personalizacion'],
     categorias: ['Cultural'],
   },
 } as const;
@@ -328,6 +342,7 @@ export const sociosIniciales: Socio[] = [
   {
     id: 1,
     numero: '0001',
+    dni: '14123456',
     nombre: 'Carlos',
     apellido: 'Kussi',
     email: 'carlos.kussi@clubunion.com.ar',
@@ -342,6 +357,7 @@ export const sociosIniciales: Socio[] = [
   {
     id: 2,
     numero: '0142',
+    dni: '33987654',
     nombre: 'Julieta',
     apellido: 'Méndez',
     email: 'julieta.mendez@gmail.com',
@@ -356,6 +372,7 @@ export const sociosIniciales: Socio[] = [
   {
     id: 3,
     numero: '0087',
+    dni: '12590011',
     nombre: 'Roberto',
     apellido: 'Fernández',
     email: 'roberto.fernandez@gmail.com',
@@ -370,6 +387,7 @@ export const sociosIniciales: Socio[] = [
   {
     id: 4,
     numero: '0231',
+    dni: '34567890',
     nombre: 'Mariana',
     apellido: 'López',
     email: 'mariana.lopez@hotmail.com',
@@ -384,6 +402,7 @@ export const sociosIniciales: Socio[] = [
   {
     id: 5,
     numero: '0198',
+    dni: '33774155',
     nombre: 'Diego',
     apellido: 'Correa',
     email: 'diego.correa@gmail.com',
@@ -398,6 +417,7 @@ export const sociosIniciales: Socio[] = [
   {
     id: 6,
     numero: '0315',
+    dni: '40222888',
     nombre: 'Sofía',
     apellido: 'Almeida',
     email: 'sofi.almeida@icloud.com',
@@ -412,6 +432,7 @@ export const sociosIniciales: Socio[] = [
   {
     id: 7,
     numero: '0110',
+    dni: '31555999',
     nombre: 'Jorge',
     apellido: 'Paredes',
     email: 'jorge.paredes@yahoo.com.ar',
@@ -426,6 +447,7 @@ export const sociosIniciales: Socio[] = [
   {
     id: 8,
     numero: '0276',
+    dni: '35774123',
     nombre: 'Lucía',
     apellido: 'Benítez',
     email: 'lucia.benitez@gmail.com',
@@ -440,6 +462,7 @@ export const sociosIniciales: Socio[] = [
   {
     id: 9,
     numero: '0044',
+    dni: '26111222',
     nombre: 'Martín',
     apellido: 'Ocampo',
     email: 'martin.ocampo@gmail.com',
@@ -454,6 +477,7 @@ export const sociosIniciales: Socio[] = [
   {
     id: 10,
     numero: '0342',
+    dni: '40999333',
     nombre: 'Carla',
     apellido: 'Ruiz',
     email: 'carla.ruiz@gmail.com',
@@ -468,6 +492,7 @@ export const sociosIniciales: Socio[] = [
   {
     id: 11,
     numero: '0009',
+    dni: '18060777',
     nombre: 'Antonio',
     apellido: 'Sosa',
     email: 'antonio.sosa@gmail.com',
@@ -482,6 +507,7 @@ export const sociosIniciales: Socio[] = [
   {
     id: 12,
     numero: '0258',
+    dni: '38999877',
     nombre: 'Nadia',
     apellido: 'Quiroga',
     email: 'nadia.quiroga@gmail.com',
@@ -1003,8 +1029,8 @@ export const driveItemsIniciales: DriveItem[] = [
       filas: [
         ['0142', 'Julieta Méndez', 'Activo', '18000', 'Al día'],
         ['0087', 'Roberto Fernández', 'Honorario', '15000', 'Al día'],
-        ['0198', 'Diego Correa', 'Activo', '18000', 'Moroso'],
-        ['0110', 'Jorge Paredes', 'Activo', '18000', 'Moroso'],
+        ['0198', 'Diego Correa', 'Activo', '18000', 'Adeuda'],
+        ['0110', 'Jorge Paredes', 'Activo', '18000', 'Adeuda'],
         ['0315', 'Sofía Almeida', 'Juvenil', '12000', 'Al día'],
       ],
     },

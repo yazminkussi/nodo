@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LayoutDashboard, Users, CalendarRange, Store, Building2, Palette, FolderOpen } from 'lucide-react';
+import { LayoutDashboard, Users, CalendarRange, Store, Building2, Palette, FolderOpen, QrCode } from 'lucide-react';
 import { Header, SectionNav } from './Navbar';
 import StatsOverview from './StatsOverview';
 import MemberTable from './MemberTable';
@@ -10,11 +10,13 @@ import B2BOverview from './B2BOverview';
 import CommunitySettings from './CommunitySettings';
 import NodoDrive from './NodoDrive';
 import AdminRoleSwitcher from './AdminRoleSwitcher';
+import QrAccessControl from './qr/QrAccessControl';
 import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
 import { ROLES_ADMIN } from '../data/mockData';
 
 const seccionesBase = [
   { key: 'resumen', label: 'Panel', icon: LayoutDashboard },
+  { key: 'acceso', label: 'Escanear QR', icon: QrCode },
   { key: 'socios', label: 'Socios', icon: Users },
   { key: 'reservas', label: 'Reservas', icon: CalendarRange },
   { key: 'publicidades', label: 'Publicidades', icon: Store },
@@ -59,7 +61,7 @@ export default function AdminDashboard() {
               </span>
               {morosos.length > 0 && (
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1.5 text-xs font-extrabold text-nodo-red ring-1 ring-inset ring-red-200">
-                  {morosos.length} socios morosos · enviá recordatorios por WhatsApp
+                  {morosos.length} socios adeudan · enviá recordatorios por WhatsApp
                 </span>
               )}
             </div>
@@ -82,6 +84,7 @@ export default function AdminDashboard() {
                   <ReservationManager />
                 </>
               )}
+              {seccion === 'acceso' && <QrAccessControl />}
               {seccion === 'socios' && <MemberTable />}
               {seccion === 'reservas' && <ReservationManager />}
               {seccion === 'publicidades' && <AdsManager />}

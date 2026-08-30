@@ -62,7 +62,7 @@ export default function StatsOverview() {
     {
       titulo: 'Cuotas al día',
       valor: <Contador valor={pctAlDia} format={(n) => `${n}%`} />,
-      detalle: `${alDia} al día · ${morosos} morosos`,
+      detalle: `${alDia} al día · ${morosos} adeudan`,
       icon: TrendingUp,
       color: 'from-cyan-500 to-nodo-teal',
     },

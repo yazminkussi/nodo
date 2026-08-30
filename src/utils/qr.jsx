@@ -1,84 +1,102 @@
-/* Generador de QR visual determinístico para el prototipo.
-   No es un QR real: produce una matriz estable a partir de un string,
-   con los patrones de localización de un QR estándar para que se vea
-   y se escanee visualmente como tal en la demo. */
+/* Generador de QR real y escaneable usando la librería `qrcode`.
+   El carnet y los pases de reserva usan este componente para que el código
+   pueda leerse con el escáner de acceso (useQrScanner). */
 
-function hashString(str) {
-  let h = 5381;
-  for (let i = 0; i < str.length; i++) {
-    h = (h * 33) ^ str.charCodeAt(i);
+import { useEffect, useRef } from 'react';
+import QRCode from 'qrcode';
+
+const LOGO = '/imagenes/nodo_logo.png';
+
+function cargarImagen(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('No se pudo cargar el logo.'));
+    img.src = src;
+    img.crossOrigin = 'anonymous';
+  });
+}
+
+function roundedRectPath(ctx, x, y, w, h, r) {
+  if (typeof ctx.roundRect === 'function') {
+    ctx.beginPath();
+    ctx.roundRect(x, y, w, h, r);
+    return;
   }
-  return h >>> 0;
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
 }
 
-function mulberry32(seed) {
-  return function () {
-    seed |= 0;
-    seed = (seed + 0x6d2b79f5) | 0;
-    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
+function dibujarConLogo(canvas, img) {
+  const ctx = canvas.getContext('2d');
+  const lado = Math.round(canvas.width * 0.2);
+  const x = (canvas.width - lado) / 2;
+  const y = (canvas.height - lado) / 2;
+  const radio = lado * 0.28;
+
+  ctx.save();
+  roundedRectPath(ctx, x - 2, y - 2, lado + 4, lado + 4, radio);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fill();
+  ctx.restore();
+
+  const ins = lado * 0.16;
+  ctx.save();
+  roundedRectPath(ctx, x + ins, y + ins, lado - ins * 2, lado - ins * 2, (radio * 2) / 3);
+  ctx.clip();
+  ctx.drawImage(img, x + ins, y + ins, lado - ins * 2, lado - ins * 2);
+  ctx.restore();
 }
 
-const SIZE = 25;
-const F = 7;
+function QrCanvas({ value, size = 168, color = '#0F172A', bg = '#FFFFFF', logo = LOGO, className = '' }) {
+  const ref = useRef(null);
 
-function inFinder(r, c) {
-  return (r < F && c < F) || (r < F && c >= SIZE - F) || (r >= SIZE - F && c < F);
-}
+  useEffect(() => {
+    let cancelado = false;
+    const canvas = ref.current;
+    if (!canvas || !value) return undefined;
 
-function finderCell(r, c) {
-  const x = r % F;
-  const y = c % F;
-  if (x === 0 || x === 6 || y === 0 || y === 6) return true;
-  return x >= 2 && x <= 4 && y >= 2 && y <= 4;
-}
+    QRCode.toCanvas(canvas, value, {
+      errorCorrectionLevel: 'H',
+      margin: logo ? 1 : 2,
+      width: size,
+      color: { dark: color, light: bg },
+    })
+      .then(() => (logo ? cargarImagen(logo) : null))
+      .then((img) => {
+        if (!cancelado && img) dibujarConLogo(canvas, img);
+      })
+      .catch(() => {
+        /* si falla la generación, el canvas queda en blanco */
+      });
 
-export function generateQrMatrix(payload) {
-  const rand = mulberry32(hashString(payload));
-  const grid = Array.from({ length: SIZE }, () => Array(SIZE).fill(false));
+    return () => {
+      cancelado = true;
+    };
+  }, [value, size, color, bg, logo]);
 
-  for (let r = 0; r < SIZE; r++) {
-    for (let c = 0; c < SIZE; c++) {
-      if (inFinder(r, c)) {
-        grid[r][c] = finderCell(r, c);
-      } else {
-        grid[r][c] = rand() > 0.48;
-      }
-    }
-  }
-
-  for (let i = 8; i < SIZE - 8; i++) {
-    if (!inFinder(6, i)) grid[6][i] = i % 2 === 0;
-    if (!inFinder(i, 6)) grid[i][6] = i % 2 === 0;
-  }
-
-  return grid;
-}
-
-export function QrSvg({ value, size = 168, color = '#0F172A', bg = '#FFFFFF', className = '' }) {
-  const grid = generateQrMatrix(value);
-  const cell = size / SIZE;
-  const rects = [];
-  for (let r = 0; r < SIZE; r++) {
-    for (let c = 0; c < SIZE; c++) {
-      if (grid[r][c]) {
-        rects.push(`M${(c * cell).toFixed(2)},${(r * cell).toFixed(2)}h${cell.toFixed(2)}v${cell.toFixed(2)}h${(-cell).toFixed(2)}z`);
-      }
-    }
-  }
   return (
-    <svg
-      viewBox={`0 0 ${size} ${size}`}
+    <canvas
+      ref={ref}
       width={size}
       height={size}
       role="img"
       aria-label="Código QR del carnet"
       className={className}
-      style={{ background: bg, borderRadius: 8 }}
-    >
-      <path d={rects.join('')} fill={color} />
-    </svg>
+    />
   );
+}
+
+export function QrCode(props) {
+  return <QrCanvas {...props} />;
+}
+
+export function QrSvg(props) {
+  /* Se mantiene el nombre original para compatibilidad con pases de reserva. */
+  return <QrCanvas {...props} />;
 }

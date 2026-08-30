@@ -47,7 +47,7 @@ export default function MemberTable() {
     toggleCuotaStatus(m.id);
     addToast(
       m.cuotaAlDia
-        ? `${m.nombre} ${m.apellido} pasó a estado Moroso.`
+        ? `${m.nombre} ${m.apellido} pasó a estado Adeuda.`
         : `${m.nombre} ${m.apellido} marcado como Al día. 🎉`,
       m.cuotaAlDia ? 'error' : 'success'
     );
@@ -65,7 +65,7 @@ export default function MemberTable() {
         <div>
           <h2 className="text-lg font-extrabold tracking-tight text-nodo-navy">Gestión de Socios</h2>
           <p className="text-xs text-slate-500">
-            {alDia} al día · {morosos} morosos · {members.length} en total
+            {alDia} al día · {morosos} adeudan · {members.length} en total
           </p>
         </div>
         <button
@@ -90,7 +90,7 @@ export default function MemberTable() {
           {[
             { key: 'todos', label: 'Todos' },
             { key: 'alDia', label: 'Al día' },
-            { key: 'morosos', label: 'Morosos' },
+            { key: 'morosos', label: 'Adeudan' },
           ].map((f) => (
             <button
               key={f.key}
@@ -168,7 +168,7 @@ export default function MemberTable() {
                         </a>
                         <button
                           onClick={() => cambiarEstado(m)}
-                          title={m.cuotaAlDia ? 'Marcar como moroso' : 'Marcar como al día'}
+                          title={m.cuotaAlDia ? 'Marcar como adeuda' : 'Marcar como al día'}
                           className="rounded-lg p-2 text-nodo-amber transition hover:bg-amber-50"
                         >
                           <RefreshCcw size={16} />

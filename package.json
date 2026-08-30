@@ -12,8 +12,11 @@
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.112.4",
     "framer-motion": "^11.11.0",
+    "html5-qrcode": "^2.3.8",
     "lucide-react": "^0.451.0",
+    "qrcode": "^1.5.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "zustand": "^4.5.5"

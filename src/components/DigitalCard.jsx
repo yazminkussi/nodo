@@ -1,9 +1,11 @@
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { BadgeCheck, CalendarClock, ScanLine, Sparkles, MapPin } from 'lucide-react';
+import { BadgeCheck, CalendarClock, ScanLine, Sparkles, MapPin, RefreshCw, Wallet } from 'lucide-react';
 import { useNodoStore, useProximaReserva, useComunidadActual } from '../store/useNodoStore';
 import { StatusBadge } from './StatusBadge';
 import { QrSvg } from '../utils/qr';
-import { formatFechaLarga } from '../data/mockData';
+import { createQrPayload } from '../utils/qrPayload';
+import { formatFechaLarga, formatARS, mesesAdeudados } from '../data/mockData';
 import NodoLogo from './Navbar';
 
 const iniciales = (nombre, apellido) =>
@@ -13,10 +15,26 @@ export default function DigitalCard() {
   const socio = useNodoStore((s) => s.members.find((m) => m.id === s.socioActualId));
   const comunidad = useComunidadActual();
   const proxima = useProximaReserva(socio?.id);
+  const [qrPayload, setQrPayload] = useState(null);
+
+  const socioId = socio?.id;
+  const communityId = comunidad?.id;
+
+  useEffect(() => {
+    let activo = true;
+    if (socioId != null && communityId != null) {
+      createQrPayload({ memberId: socioId, communityId: communityId }).then((payload) => {
+        if (activo) setQrPayload(payload);
+      });
+    }
+    return () => {
+      activo = false;
+    };
+  }, [socioId, communityId, socio?.numero]);
 
   if (!socio) return null;
 
-  const qrPayload = `NODO|${socio.numero}|${socio.nombre} ${socio.apellido}|${socio.categoria}|${socio.cuotaAlDia ? 'AL_DIA' : 'MOROSO'}`;
+  const meses = mesesAdeudados(socio);
 
   return (
     <motion.section
@@ -84,6 +102,12 @@ export default function DigitalCard() {
 
             <div className="flex flex-wrap items-center gap-2">
               <StatusBadge estado={socio.cuotaAlDia ? 'alDia' : 'moroso'} />
+              {!socio.cuotaAlDia && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset ring-white/20">
+                  <Wallet size={13} className="text-red-300" /> Adeuda {meses} {meses === 1 ? 'mes' : 'meses'} ·{' '}
+                  {formatARS(socio.plan * meses)}
+                </span>
+              )}
               <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset ring-white/20">
                 <MapPin size={13} className="text-nodo-amber" /> {socio.localidad}
               </span>
@@ -110,10 +134,16 @@ export default function DigitalCard() {
 
           <div className="flex shrink-0 flex-col items-center gap-2">
             <div className="rounded-xl bg-white p-3">
-              <QrSvg value={qrPayload} size={128} className="block" />
+              <QrSvg value={qrPayload || `NODO|v1|pending`} size={132} />
             </div>
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">
-              Mostrar al ingresar
+            <p className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-widest text-slate-400">
+              {qrPayload ? (
+                <>
+                  <RefreshCw size={11} /> Vigente 15 min · Mostrar al ingresar
+                </>
+              ) : (
+                <span className="animate-pulse">Generando tu QR…</span>
+              )}
             </p>
           </div>
         </div>

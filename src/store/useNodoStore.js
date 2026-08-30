@@ -38,6 +38,20 @@ export const useNodoStore = create(
           comunidades: state.comunidades.map((c) => (c.id === id ? { ...c, ...patch } : c)),
         })),
 
+      /* ---- sincronización de marca remota (Supabase Realtime) ----
+         Aplica la configuración de nube (logo público + nombre) sobre una
+         comunidad. Se dispara desde el hook useComunidadRealtime cuando un
+         Admin actualiza el logo/nombre en otro dispositivo. */
+      aplicarMarcaRemota: (id, { logo, logoEtag = null, nombre }) =>
+        set((state) => ({
+          comunidades: state.comunidades.map((c) =>
+            c.id === id
+              ? { ...c, ...(logo !== undefined ? { logo, logoEtag } : {}), ...(nombre ? { nombre } : {}) }
+              : c
+          ),
+          _marcaRev: (state._marcaRev || 0) + 1,
+        })),
+
       /* ---- socio cuyo carnet se muestra ---- */
       socioActualId: 2,
       setSocioActual: (socioActualId) => set({ socioActualId }),
@@ -52,6 +66,18 @@ export const useNodoStore = create(
               : m
           ),
         })),
+      registrarPago: (id) =>
+        set((state) => ({
+          members: state.members.map((m) => {
+            if (m.id !== id) return m;
+            const hoy = new Date();
+            const ultimaCuota = `${String(hoy.getDate()).padStart(2, '0')}/${String(
+              hoy.getMonth() + 1
+            ).padStart(2, '0')}/${hoy.getFullYear()}`;
+            return { ...m, cuotaAlDia: true, ultimaCuota };
+          }),
+        })),
+      membersByNumero: (socioId) => get().members.find((m) => m.id === socioId),
 
       /* ---- espacios (CRUD V3) ---- */
       espacios: espaciosIniciales,
@@ -149,6 +175,20 @@ export const useNodoStore = create(
       removeDriveItem: (id) =>
         set((state) => ({ driveItems: state.driveItems.filter((i) => i.id !== id) })),
 
+      /* ---- registros de acceso (QR / control de ingreso) ---- */
+      registrosAcceso: [],
+      addRegistroAcceso: (reg) =>
+        set((state) => {
+          // Deduplica: evita contar dos veces el mismo ingreso cuando llega
+          // por Realtime (echo del propio dispositivo) y por la acción local.
+          const clave = [reg.timestamp, reg.numeroSocio, reg.resultado, reg.comunidadId].join('|');
+          if (state.registrosAcceso.some((r) => [r.timestamp, r.numeroSocio, r.resultado, r.comunidadId].join('|') === clave)) {
+            return state;
+          }
+          return { registrosAcceso: [reg, ...state.registrosAcceso].slice(0, 300) };
+        }),
+      clearRegistrosAcceso: () => set({ registrosAcceso: [] }),
+
       /* ---- toasts ---- */
       toasts: [],
       addToast: (mensaje, tipo = 'success') => {
@@ -160,7 +200,8 @@ export const useNodoStore = create(
     }),
     {
       name: 'nodo-store',
-      version: 3,
+      version: 4,
+      merge: (persisted, current) => ({ ...current, ...persisted }),
       partialize: (state) => ({
         role: state.role,
         adminRole: state.adminRole,
@@ -174,6 +215,7 @@ export const useNodoStore = create(
         ads: state.ads,
         driveItems: state.driveItems,
         socioActualId: state.socioActualId,
+        registrosAcceso: state.registrosAcceso,
       }),
     }
   )

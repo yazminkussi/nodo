@@ -1,10 +1,12 @@
 import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Upload, ImageOff, Trash2, Save, Palette, Info, ShieldCheck, Building2, Sparkles, Clock } from 'lucide-react';
+import { Upload, ImageOff, Trash2, Save, Palette, Info, ShieldCheck, Building2, Sparkles, Clock, Cloud, CloudOff, Loader2 } from 'lucide-react';
 import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
 import { NodoLogo } from './Navbar';
 import { redimensionarLogo } from '../utils/image';
 import { ROLES_ADMIN } from '../data/mockData';
+import { supabaseDisponible } from '../lib/supabaseClient';
+import { sincronizarLogo, sincronizarNombre, limpiarLogo } from '../lib/brandService';
 import SpaceManager from './SpaceManager';
 import ActivityManager from './ActivityManager';
 import ScheduleManager from './ScheduleManager';
@@ -36,6 +38,7 @@ function BrandSettings() {
 
   const fileRef = useRef(null);
   const [arrastrando, setArrastrando] = useState(false);
+  const [subiendo, setSubiendo] = useState(false);
   const [form, setForm] = useState(() => ({
     nombre: comunidad.nombre,
     institucion: comunidad.institucion,
@@ -50,18 +53,50 @@ function BrandSettings() {
 
   const aplicarLogo = async (file) => {
     if (!file) return;
+    setSubiendo(true);
     try {
       const dataUrl = await redimensionarLogo(file);
       updateComunidad(comunidad.id, { logo: dataUrl });
-      addToast('Logo de la comunidad actualizado.', 'success');
+      addToast('Logo aplicado al instante en este dispositivo.', 'success');
+
+      if (supabaseDisponible) {
+        const res = await sincronizarLogo({ comunidadId: comunidad.id, dataUrl });
+        if (res.ok && res.logoUrl) {
+          // Usamos la URL pública (cache-busteada) para que otras PWAs la vean fresca.
+          const etag = res.config?.logo_etag || Date.now();
+          const sep = res.logoUrl.includes('?') ? '&' : '?';
+          updateComunidad(comunidad.id, {
+            logo: `${res.logoUrl}${sep}v=${encodeURIComponent(etag)}`,
+            logoEtag: etag,
+          });
+          addToast('Logo sincronizado en la nube · visible en todos los dispositivos.', 'success');
+        } else {
+          addToast('El logo se guardó localmente. Supabase no pudo sincronizarlo.', 'error');
+        }
+      }
     } catch (err) {
       addToast(err.message, 'error');
+    } finally {
+      setSubiendo(false);
     }
   };
 
-  const guardar = () => {
+  const quitarLogo = async () => {
+    updateComunidad(comunidad.id, { logo: null, logoEtag: null });
+    addToast('Logo restaurado a la versión estándar.', 'info');
+    if (supabaseDisponible) {
+      await limpiarLogo(comunidad.id);
+    }
+  };
+
+  const guardar = async () => {
     updateComunidad(comunidad.id, form);
     addToast('Datos de la comunidad guardados.', 'success');
+
+    if (supabaseDisponible) {
+      const res = await sincronizarNombre({ comunidadId: comunidad.id, nombre: form.nombre });
+      if (!res.ok) addToast('El nombre no pudo sincronizarse con la nube.', 'error');
+    }
   };
 
   return (
@@ -119,14 +154,17 @@ function BrandSettings() {
 
           {comunidad.logo && (
             <button
-              onClick={() => {
-                updateComunidad(comunidad.id, { logo: null });
-                addToast('Logo restaurado a la versión estándar.', 'info');
-              }}
-              className="mt-3 inline-flex items-center gap-1.5 rounded-xl bg-red-50 px-3.5 py-2 text-xs font-bold text-nodo-red ring-1 ring-inset ring-red-200 transition hover:bg-red-100"
+              onClick={quitarLogo}
+              disabled={subiendo}
+              className="mt-3 inline-flex items-center gap-1.5 rounded-xl bg-red-50 px-3.5 py-2 text-xs font-bold text-nodo-red ring-1 ring-inset ring-red-200 transition hover:bg-red-100 disabled:opacity-50"
             >
               <Trash2 size={13} /> Quitar logo personalizado
             </button>
+          )}
+          {subiendo && (
+            <p className="mt-2 flex items-center gap-1.5 text-xs font-bold text-nodo-teal">
+              <Loader2 size={13} className="animate-spin" /> Sincronizando logo en la nube…
+            </p>
           )}
         </div>
 
@@ -249,6 +287,21 @@ export default function CommunitySettings() {
         </div>
         <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-extrabold text-nodo-green-dark ring-1 ring-inset ring-emerald-200">
           <ShieldCheck size={13} /> {ROLES_ADMIN[adminRole].etiqueta}
+        </span>
+        <span
+          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-extrabold ring-1 ring-inset ${
+            supabaseDisponible
+              ? 'bg-cyan-50 text-nodo-teal ring-cyan-200'
+              : 'bg-amber-50 text-nodo-amber ring-amber-200'
+          }`}
+          title={
+            supabaseDisponible
+              ? 'Los cambios de logo y nombre se sincronizan en vivo a todos los dispositivos y PWAs instaladas.'
+              : 'Sin Supabase: los cambios se guardan solo en este dispositivo.'
+          }
+        >
+          {supabaseDisponible ? <Cloud size={13} /> : <CloudOff size={13} />}
+          {supabaseDisponible ? 'Sincronización en vivo activa' : 'Modo demo · sin sincronización en vivo'}
         </span>
       </div>
 

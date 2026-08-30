@@ -17,11 +17,11 @@ export function StatusBadge({ estado, className = '' }) {
       </span>
     );
   }
-  if (estado === 'moroso') {
+  if (estado === 'moroso' || estado === 'adeuda') {
     return (
       <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset ${estilos.moroso} ${className}`}>
         <AlertTriangle size={13} strokeWidth={2.5} />
-        Moroso
+        Adeuda
       </span>
     );
   }
