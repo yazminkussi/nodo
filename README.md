@@ -12,7 +12,7 @@ Proyecto **Trabajo Anual — UMAI**. Autora: **Yazmín Laila Kussi**.
 
 ## App en vivo
 
-- **Producción:** https://nodo-bog5j88iu-yazminkussi-8286s-projects.vercel.app
+- **Producción:** https://nodo-yazminkussi-8286s-projects.vercel.app
 - Cada `push` a `main` despliega automáticamente en Vercel. Cada rama genera un _preview_ propio.
 
 ## Estado del proyecto
