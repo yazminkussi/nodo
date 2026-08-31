@@ -1,17 +1,19 @@
-import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { X, Loader2, UserPlus, Save } from 'lucide-react';
+import { useState } from 'react';
+import { UserPlus, Save } from 'lucide-react';
+import Modal from './ui/Modal';
+import Button from './ui/Button';
+import Field from './ui/Field';
 
 const CATEGORIAS = ['Activo', 'Adherente', 'Juvenil', 'Honorario'];
 const COLORES = [
-  '#0D9488',
-  '#0F172A',
-  '#059669',
-  '#06B6D4',
-  '#7C3AED',
-  '#F59E0B',
-  '#EF4444',
-  '#EC4899',
+  '#5E52C4',
+  '#32328E',
+  '#2E8B5E',
+  '#E8A33D',
+  '#C56A46',
+  '#7C74D6',
+  '#C0453B',
+  '#4B8FB0',
 ];
 
 const vacio = {
@@ -25,7 +27,7 @@ const vacio = {
   plan: 18000,
   localidad: '',
   cuotaAlDia: true,
-  color: '#0D9488',
+  color: '#5E52C4',
 };
 
 export default function SocioFormModal({ socio, onGuardar, onCerrar }) {
@@ -33,12 +35,6 @@ export default function SocioFormModal({ socio, onGuardar, onCerrar }) {
   const [datos, setDatos] = useState(socio ? { ...vacio, ...socio } : vacio);
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState('');
-
-  useEffect(() => {
-    const onKey = (e) => e.key === 'Escape' && onCerrar();
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onCerrar]);
 
   const set = (campo) => (e) => {
     const valor = e.target.type === 'number' ? Number(e.target.value) : e.target.value;
@@ -79,135 +75,88 @@ export default function SocioFormModal({ socio, onGuardar, onCerrar }) {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-end justify-center bg-nodo-navy/60 backdrop-blur-sm sm:items-center sm:p-4"
-      onClick={onCerrar}
-      role="dialog"
-      aria-modal="true"
-    >
-      <motion.form
-        initial={{ opacity: 0, y: 40, scale: 0.97 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: 40, scale: 0.97 }}
-        transition={{ type: 'spring', stiffness: 320, damping: 30 }}
-        onClick={(e) => e.stopPropagation()}
-        onSubmit={enviar}
-        className="w-full max-w-lg overflow-hidden rounded-t-3xl bg-white shadow-lift sm:rounded-3xl"
-      >
-        <div className="flex items-center justify-between border-b border-line px-5 py-4">
-          <h3 className="flex items-center gap-2 font-extrabold text-ink">
-            {editando ? <Save size={18} /> : <UserPlus size={18} />}
-            {editando ? `Editar socio N° ${socio.numero}` : 'Alta de socio'}
-          </h3>
-          <button
-            type="button"
-            onClick={onCerrar}
-            className="rounded-full p-2 text-ink-faint transition hover:bg-sand hover:text-ink-soft"
-            aria-label="Cerrar"
+    <Modal
+      title={editando ? `Editar socio N° ${socio.numero}` : 'Alta de socio'}
+      icon={editando ? Save : UserPlus}
+      onClose={onCerrar}
+      footer={
+        <>
+          <Button type="button" variant="ghost" className="flex-1" onClick={onCerrar}>
+            Cancelar
+          </Button>
+          <Button
+            type="submit"
+            form="socio-form"
+            variant="lav"
+            loading={guardando}
+            className="flex-[2]"
           >
-            <X size={18} />
-          </button>
-        </div>
+            {!guardando && (editando ? 'Guardar cambios' : 'Dar de alta')}
+          </Button>
+        </>
+      }
+    >
+      <form
+        id="socio-form"
+        onSubmit={enviar}
+        className="grid max-h-[65vh] gap-3 overflow-y-auto p-5 sm:grid-cols-2"
+      >
+        <Field label="N° de socio" value={datos.numero} onChange={set('numero')} required />
+        <Field label="DNI" value={datos.dni} onChange={set('dni')} />
+        <Field label="Nombre" value={datos.nombre} onChange={set('nombre')} required />
+        <Field label="Apellido" value={datos.apellido} onChange={set('apellido')} required />
+        <Field label="Email" type="email" value={datos.email} onChange={set('email')} />
+        <Field label="Celular" value={datos.celular} onChange={set('celular')} />
+        <Field label="Localidad / barrio" value={datos.localidad} onChange={set('localidad')} />
+        <Field label="Cuota mensual ($)" type="number" value={datos.plan} onChange={set('plan')} />
 
-        <div className="grid max-h-[70vh] gap-3 overflow-y-auto p-5 sm:grid-cols-2">
-          <Campo label="N° de socio" value={datos.numero} onChange={set('numero')} required />
-          <Campo label="DNI" value={datos.dni} onChange={set('dni')} />
-          <Campo label="Nombre" value={datos.nombre} onChange={set('nombre')} required />
-          <Campo label="Apellido" value={datos.apellido} onChange={set('apellido')} required />
-          <Campo label="Email" type="email" value={datos.email} onChange={set('email')} />
-          <Campo label="Celular" value={datos.celular} onChange={set('celular')} />
-          <Campo label="Localidad / barrio" value={datos.localidad} onChange={set('localidad')} />
-          <Campo
-            label="Cuota mensual ($)"
-            type="number"
-            value={datos.plan}
-            onChange={set('plan')}
+        <label className="block text-xs font-bold text-ink-soft">
+          Categoría
+          <select
+            value={datos.categoria}
+            onChange={set('categoria')}
+            className="mt-1 w-full rounded-xl border border-line bg-cloud px-3 py-2.5 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-lav"
+          >
+            {CATEGORIAS.map((c) => (
+              <option key={c}>{c}</option>
+            ))}
+          </select>
+        </label>
+
+        <label className="flex items-center gap-2 self-end pb-2 text-sm font-semibold text-ink-soft">
+          <input
+            type="checkbox"
+            checked={datos.cuotaAlDia}
+            onChange={(e) => setDatos((d) => ({ ...d, cuotaAlDia: e.target.checked }))}
+            className="h-4 w-4 rounded border-line text-lav focus:ring-lav"
           />
-          <label className="text-xs font-bold text-ink-soft">
-            Categoría
-            <select
-              value={datos.categoria}
-              onChange={set('categoria')}
-              className="mt-1 w-full rounded-xl border-0 bg-paper px-3 py-2.5 text-sm text-ink ring-1 ring-inset ring-line focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
-            >
-              {CATEGORIAS.map((c) => (
-                <option key={c}>{c}</option>
-              ))}
-            </select>
-          </label>
-          <label className="flex items-center gap-2 self-end pb-2 text-sm font-semibold text-ink-soft">
-            <input
-              type="checkbox"
-              checked={datos.cuotaAlDia}
-              onChange={(e) => setDatos((d) => ({ ...d, cuotaAlDia: e.target.checked }))}
-              className="h-4 w-4 rounded border-line text-lav focus:ring-nodo-cyan"
-            />
-            Cuota al día
-          </label>
-          <div className="sm:col-span-2">
-            <p className="mb-1.5 text-xs font-bold text-ink-soft">Color del carnet</p>
-            <div className="flex flex-wrap gap-2">
-              {COLORES.map((c) => (
-                <button
-                  key={c}
-                  type="button"
-                  onClick={() => setDatos((d) => ({ ...d, color: c }))}
-                  className={`h-7 w-7 rounded-full ring-2 ring-offset-2 transition ${
-                    datos.color === c ? 'ring-nodo-navy' : 'ring-transparent'
-                  }`}
-                  style={{ background: c }}
-                  aria-label={`Color ${c}`}
-                />
-              ))}
-            </div>
+          Cuota al día
+        </label>
+
+        <div className="sm:col-span-2">
+          <p className="mb-1.5 text-xs font-bold text-ink-soft">Color del carnet</p>
+          <div className="flex flex-wrap gap-2">
+            {COLORES.map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => setDatos((d) => ({ ...d, color: c }))}
+                className={`h-7 w-7 rounded-full ring-2 ring-offset-2 transition ${
+                  datos.color === c ? 'ring-lav-deep' : 'ring-transparent'
+                }`}
+                style={{ background: c }}
+                aria-label={`Color ${c}`}
+              />
+            ))}
           </div>
         </div>
 
         {error && (
-          <p className="mx-5 mb-2 rounded-lg bg-crit-soft px-3 py-2 text-xs font-semibold text-crit">
+          <p className="rounded-lg bg-crit-soft px-3 py-2 text-xs font-semibold text-crit sm:col-span-2">
             {error}
           </p>
         )}
-
-        <div className="flex gap-2 border-t border-line p-4">
-          <button
-            type="button"
-            onClick={onCerrar}
-            className="flex-1 rounded-xl bg-sand px-4 py-3 text-sm font-bold text-ink-soft transition hover:bg-slate-200"
-          >
-            Cancelar
-          </button>
-          <button
-            type="submit"
-            disabled={guardando}
-            className="flex flex-[2] items-center justify-center gap-2 rounded-xl bg-lav-deep px-4 py-3 text-sm font-extrabold text-white transition hover:bg-lav-deep disabled:opacity-60"
-          >
-            {guardando ? (
-              <Loader2 size={16} className="animate-spin" />
-            ) : editando ? (
-              'Guardar cambios'
-            ) : (
-              'Dar de alta'
-            )}
-          </button>
-        </div>
-      </motion.form>
-    </motion.div>
-  );
-}
-
-function Campo({ label, type = 'text', ...props }) {
-  return (
-    <label className="text-xs font-bold text-ink-soft">
-      {label}
-      <input
-        {...props}
-        type={type}
-        className="mt-1 w-full rounded-xl border-0 bg-paper px-3 py-2.5 text-sm text-ink ring-1 ring-inset ring-line placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
-      />
-    </label>
+      </form>
+    </Modal>
   );
 }

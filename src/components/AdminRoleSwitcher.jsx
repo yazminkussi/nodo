@@ -17,7 +17,7 @@ export default function AdminRoleSwitcher() {
   const addToast = useNodoStore((s) => s.addToast);
 
   return (
-    <div className="rounded-2xl bg-white p-4 shadow-card ring-1 ring-line">
+    <div className="rounded-2xl border border-line bg-cloud p-4 shadow-card">
       <p className="mb-3 text-[10px] font-extrabold uppercase tracking-widest text-ink-faint">
         Rol de administración activo
       </p>
@@ -46,14 +46,16 @@ export default function AdminRoleSwitcher() {
                 />
               )}
               <span
-                className={`relative flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${activo ? 'bg-nodo-cyan/20 text-lav' : 'bg-white text-lav'}`}
+                className={`relative flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${activo ? 'bg-white/15 text-cream' : 'bg-lav-soft text-lav'}`}
               >
                 <Icon size={16} strokeWidth={2.2} />
               </span>
               <span className="relative min-w-0">
-                <span className="block text-sm font-extrabold leading-tight">{r.etiqueta}</span>
+                <span className="block font-display text-sm font-bold leading-tight">
+                  {r.etiqueta}
+                </span>
                 <span
-                  className={`mt-0.5 block text-[11px] font-semibold leading-snug ${activo ? 'text-slate-300' : 'text-ink-soft'}`}
+                  className={`mt-0.5 block text-[11px] font-semibold leading-snug ${activo ? 'text-cream/70' : 'text-ink-soft'}`}
                 >
                   {r.descripcion}
                 </span>
