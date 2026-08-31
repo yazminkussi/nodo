@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Pencil, Trash2, Users, Clock, CalendarDays, Power, X } from 'lucide-react';
 import { useNodoStore } from '../store/useNodoStore';
+import { useReservasData } from '../hooks/useReservasData';
 import {
   ROLES_ADMIN,
   formatARS,
@@ -13,26 +14,22 @@ import SpaceIcon, { ICONOS_ESPACIO } from './SpaceIcon';
 
 const categorias = ['Deportivo', 'Cultural', 'Recreativo'];
 const colores = [
-  '#059669',
-  '#0D9488',
-  '#06B6D4',
-  '#7C3AED',
-  '#1E293B',
-  '#F97316',
-  '#EF4444',
-  '#0EA5E9',
-  '#8B5CF6',
+  '#5E52C4',
+  '#32328E',
+  '#2E8B5E',
+  '#4B8FB0',
+  '#E8A33D',
+  '#C56A46',
+  '#7C74D6',
+  '#C0453B',
 ];
 
 const campo =
-  'w-full rounded-xl bg-white px-3 py-2.5 text-sm text-ink ring-1 ring-line focus:outline-none focus:ring-2 focus:ring-nodo-cyan';
+  'w-full rounded-xl border border-line bg-cloud px-3 py-2.5 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-lav';
 const etiqueta = 'mb-1 block text-xs font-bold text-ink-soft';
 
 export default function SpaceManager() {
-  const espacios = useNodoStore((s) => s.espacios);
-  const addEspacio = useNodoStore((s) => s.addEspacio);
-  const updateEspacio = useNodoStore((s) => s.updateEspacio);
-  const removeEspacio = useNodoStore((s) => s.removeEspacio);
+  const { espacios, addEspacio, updateEspacio, removeEspacio } = useReservasData();
   const addToast = useNodoStore((s) => s.addToast);
   const adminRole = useNodoStore((s) => s.adminRole);
 
@@ -64,19 +61,23 @@ export default function SpaceManager() {
     setModal(esp.id);
   };
 
-  const guardar = () => {
+  const guardar = async () => {
     if (!form.nombre.trim()) {
       addToast('El nombre del espacio es obligatorio.', 'error');
       return;
     }
-    if (modal === 'nuevo') {
-      addEspacio(form);
-      addToast(`Espacio ${form.nombre} creado.`, 'success');
-    } else {
-      updateEspacio(modal, form);
-      addToast(`Espacio ${form.nombre} actualizado.`, 'success');
+    try {
+      if (modal === 'nuevo') {
+        await addEspacio(form);
+        addToast(`Espacio ${form.nombre} creado.`, 'success');
+      } else {
+        await updateEspacio(modal, form);
+        addToast(`Espacio ${form.nombre} actualizado.`, 'success');
+      }
+      setModal(null);
+    } catch {
+      addToast('No se pudo guardar el espacio.', 'error');
     }
-    setModal(null);
   };
 
   return (
@@ -95,7 +96,7 @@ export default function SpaceManager() {
         </div>
         <button
           onClick={abrirNuevo}
-          className="inline-flex items-center gap-2 rounded-xl bg-nodo-green px-4 py-2.5 text-sm font-bold text-white shadow-card transition hover:bg-nodo-green-dark"
+          className="inline-flex items-center gap-2 rounded-xl bg-lav-deep px-4 py-2.5 text-sm font-bold text-white shadow-card transition hover:bg-lav"
         >
           <Plus size={16} /> Nuevo espacio
         </button>
@@ -181,7 +182,7 @@ export default function SpaceManager() {
                     removeEspacio(esp.id);
                     addToast(`Espacio ${esp.nombre} eliminado.`, 'info');
                   }}
-                  className="flex items-center justify-center gap-1.5 rounded-xl bg-crit-soft px-3 py-2 text-xs font-bold text-crit ring-1 ring-inset ring-red-200 transition hover:bg-red-100"
+                  className="flex items-center justify-center gap-1.5 rounded-xl bg-crit-soft px-3 py-2 text-xs font-bold text-crit ring-1 ring-inset ring-crit/20 transition hover:brightness-95"
                 >
                   <Trash2 size={13} /> Quitar
                 </button>
@@ -343,7 +344,7 @@ export default function SpaceManager() {
 
               <button
                 onClick={guardar}
-                className="w-full rounded-xl bg-nodo-green px-4 py-3 text-sm font-extrabold text-white shadow-card transition hover:bg-nodo-green-dark"
+                className="w-full rounded-xl bg-lav-deep px-4 py-3 text-sm font-extrabold text-white shadow-card transition hover:bg-lav"
               >
                 {modal === 'nuevo' ? 'Crear espacio' : 'Guardar cambios'}
               </button>

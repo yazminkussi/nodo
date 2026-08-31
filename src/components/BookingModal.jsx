@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, CalendarCheck, CheckCircle2, Download, UserRound, CalendarX2 } from 'lucide-react';
 import { useNodoStore } from '../store/useNodoStore';
+import { useSesion } from '../store/useSesion';
+import { useReservasData } from '../hooks/useReservasData';
 import {
   nextDays,
   todayISO,
@@ -18,10 +20,14 @@ import SpaceIcon from './SpaceIcon';
 import { StatusBadge } from './StatusBadge';
 
 export default function BookingModal({ espacio, onClose }) {
-  const socio = useNodoStore((s) => s.members.find((m) => m.id === s.socioActualId));
-  const isSlotTaken = useNodoStore((s) => s.isSlotTaken);
-  const addReservation = useNodoStore((s) => s.addReservation);
+  const socioDemo = useNodoStore((s) => s.members.find((m) => m.id === s.socioActualId));
+  const miSocio = useSesion((s) => s.miSocio);
+  const estado = useSesion((s) => s.estado);
+  const socio = estado === 'activo' ? miSocio : socioDemo;
+  const { isSlotTaken, addReservation } = useReservasData();
   const addToast = useNodoStore((s) => s.addToast);
+  const [guardando, setGuardando] = useState(false);
+  const [error, setError] = useState('');
 
   const dias = nextDays(7);
   const hoy = todayISO();
@@ -51,18 +57,26 @@ export default function BookingModal({ espacio, onClose }) {
     return isSlotTaken(espacio.id, fecha, slot);
   };
 
-  const confirmar = () => {
-    if (!inicio) return;
-    const reserva = addReservation({
-      espacioId: espacio.id,
-      socioId: socio.id,
-      socioNombre: `${socio.nombre} ${socio.apellido}`,
-      fecha,
-      inicio,
-      duracion: espacio.horario.duracionTurno,
-    });
-    setConfirmado(reserva);
-    addToast('Reserva confirmada. Te esperamos en el club.', 'success');
+  const confirmar = async () => {
+    if (!inicio || !socio) return;
+    setError('');
+    setGuardando(true);
+    try {
+      const reserva = await addReservation({
+        espacioId: espacio.id,
+        socioId: estado === 'activo' ? socio.id : undefined,
+        socioNombre: `${socio.nombre} ${socio.apellido}`,
+        fecha,
+        inicio,
+        duracion: espacio.horario.duracionTurno,
+      });
+      setConfirmado(reserva);
+      addToast('Reserva confirmada. Te esperamos en el club.', 'success');
+    } catch (e) {
+      setError(e?.message || 'No se pudo confirmar la reserva.');
+    } finally {
+      setGuardando(false);
+    }
   };
 
   const finReserva = (ini) => minAstring(horaAmin(ini) + espacio.horario.duracionTurno * 60);
@@ -119,7 +133,7 @@ export default function BookingModal({ espacio, onClose }) {
           {confirmado ? (
             <div className="p-5">
               <div className="relative overflow-hidden rounded-2xl border-2 border-dashed border-nodo-teal/50 bg-gradient-to-br from-cyan-50 to-emerald-50 p-5">
-                <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-nodo-green/20 blur-2xl" />
+                <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-lav-deep/20 blur-2xl" />
                 <div className="relative flex items-center gap-2 text-ok">
                   <CheckCircle2 size={20} strokeWidth={2.5} />
                   <p className="text-sm font-extrabold">Pase de ingreso digital</p>
@@ -231,10 +245,10 @@ export default function BookingModal({ espacio, onClose }) {
                         onClick={() => setInicio(slot)}
                         className={`rounded-lg px-2 py-2 text-sm font-bold transition-colors ${
                           activo
-                            ? 'bg-nodo-green text-white shadow-card'
+                            ? 'bg-lav text-cream shadow-card'
                             : ocupado
-                              ? 'cursor-not-allowed bg-sand text-slate-300 line-through'
-                              : 'bg-lav-soft text-lav ring-1 ring-inset ring-lav/25 hover:bg-nodo-cyan hover:text-white'
+                              ? 'cursor-not-allowed bg-sand text-ink-faint line-through'
+                              : 'bg-lav-soft text-lav-deep ring-1 ring-inset ring-lav/25 hover:bg-lav hover:text-cream'
                         }`}
                       >
                         {slot}
@@ -244,13 +258,28 @@ export default function BookingModal({ espacio, onClose }) {
                 </div>
               )}
 
+              {error && (
+                <p className="mt-3 rounded-lg bg-crit-soft px-3 py-2 text-xs font-semibold text-crit">
+                  {error}
+                </p>
+              )}
+              {!socio && (
+                <p className="mt-3 rounded-lg bg-sun-soft px-3 py-2 text-xs font-semibold text-[#97621b]">
+                  Necesitás una ficha de socio vinculada para reservar.
+                </p>
+              )}
+
               <button
-                disabled={!inicio}
+                disabled={!inicio || guardando || !socio}
                 onClick={confirmar}
-                className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-nodo-green px-4 py-3.5 text-sm font-extrabold text-white shadow-card transition hover:bg-nodo-green-dark disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-ink-faint"
+                className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-lav-deep px-4 py-3.5 text-sm font-extrabold text-cream shadow-card transition hover:bg-lav disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <CalendarCheck size={17} />
-                {inicio ? `Confirmar reserva · ${inicio} hs` : 'Seleccioná un horario'}
+                {guardando
+                  ? 'Confirmando…'
+                  : inicio
+                    ? `Confirmar reserva · ${inicio} hs`
+                    : 'Seleccioná un horario'}
               </button>
             </div>
           )}

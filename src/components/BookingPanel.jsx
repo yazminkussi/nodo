@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { CalendarRange, Users, Clock } from 'lucide-react';
-import { useNodoStore } from '../store/useNodoStore';
+import { CalendarRange, Users, Clock, Loader2 } from 'lucide-react';
+import { useReservasData } from '../hooks/useReservasData';
 import { formatARS, nombreDias } from '../data/mockData';
 import SpaceIcon from './SpaceIcon';
 import BookingModal from './BookingModal';
@@ -9,7 +9,7 @@ import BookingModal from './BookingModal';
 const categorias = ['Todos', 'Deportivo', 'Cultural', 'Recreativo'];
 
 export default function BookingPanel() {
-  const espacios = useNodoStore((s) => s.espacios);
+  const { espacios, cargando } = useReservasData();
   const [filtro, setFiltro] = useState('Todos');
   const [seleccionado, setSeleccionado] = useState(null);
 
@@ -20,11 +20,19 @@ export default function BookingPanel() {
   return (
     <section className="mx-auto max-w-5xl px-4 sm:px-6">
       <div className="mb-4 flex items-center justify-between gap-3">
-        <h2 className="text-lg font-extrabold tracking-tight text-ink">Reservá tu espacio</h2>
-        <span className="hidden items-center gap-1.5 rounded-full bg-sand px-3 py-1 text-xs font-bold text-ink-soft ring-1 ring-inset ring-line sm:inline-flex">
+        <h2 className="font-display text-xl font-bold tracking-tight text-ink">
+          Reservá tu espacio
+        </h2>
+        <span className="hidden items-center gap-1.5 rounded-lg bg-sand px-3 py-1 text-xs font-bold text-ink-soft sm:inline-flex">
           <CalendarRange size={13} /> Sin doble reservas
         </span>
       </div>
+
+      {cargando && espacios.length === 0 && (
+        <p className="flex items-center justify-center gap-2 py-10 text-sm text-ink-faint">
+          <Loader2 size={16} className="animate-spin" /> Cargando espacios…
+        </p>
+      )}
 
       <div className="mb-4 flex flex-wrap gap-2">
         {categorias.map((c) => (
@@ -33,8 +41,8 @@ export default function BookingPanel() {
             onClick={() => setFiltro(c)}
             className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors ${
               filtro === c
-                ? 'bg-lav-deep text-white shadow-card'
-                : 'bg-white text-ink-soft ring-1 ring-inset ring-line hover:bg-paper'
+                ? 'bg-lav-deep text-cream'
+                : 'border border-line bg-cloud text-ink-soft hover:bg-sand'
             }`}
           >
             {c}
@@ -52,7 +60,7 @@ export default function BookingPanel() {
             whileHover={{ y: -3 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => setSeleccionado(esp)}
-            className="group flex flex-col gap-3 rounded-2xl bg-white p-4 text-left shadow-card ring-1 ring-line transition-shadow hover:shadow-lift"
+            className="group flex flex-col gap-3 rounded-2xl border border-line bg-cloud p-4 text-left shadow-card transition-shadow hover:shadow-lift"
           >
             <div className="flex items-center justify-between">
               <div
@@ -66,7 +74,7 @@ export default function BookingPanel() {
               </span>
             </div>
             <div>
-              <h3 className="font-extrabold text-ink">{esp.nombre}</h3>
+              <h3 className="font-display font-bold text-ink">{esp.nombre}</h3>
               <p className="mt-0.5 text-xs text-ink-soft">{esp.descripcion}</p>
             </div>
             <div className="mt-auto flex items-center justify-between border-t border-line pt-3 text-xs font-semibold text-ink-soft">
@@ -82,7 +90,7 @@ export default function BookingPanel() {
               <Clock size={12} /> {nombreDias(esp.horario.dias)} · {esp.horario.apertura} a{' '}
               {esp.horario.cierre}
             </p>
-            <span className="rounded-lg bg-lav-soft py-2 text-center text-xs font-bold text-lav transition-colors group-hover:bg-nodo-cyan group-hover:text-white">
+            <span className="rounded-lg bg-lav-soft py-2 text-center text-xs font-bold text-lav-deep transition-colors group-hover:bg-lav group-hover:text-cream">
               Reservar ahora
             </span>
           </motion.button>

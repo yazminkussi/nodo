@@ -1,18 +1,18 @@
 import { useEffect, useMemo, useState } from 'react';
 import { CalendarDays, Save, Building2, Sparkles, ListChecks } from 'lucide-react';
 import { useNodoStore } from '../store/useNodoStore';
+import { useReservasData } from '../hooks/useReservasData';
 import { ROLES_ADMIN, nombreDias, slotsDeHorario, duracionLabel } from '../data/mockData';
 import SpaceIcon from './SpaceIcon';
 import DiasActivosPicker from './DiasActivosPicker';
 
 const campo =
-  'w-full rounded-xl bg-white px-3 py-2.5 text-sm text-ink ring-1 ring-line focus:outline-none focus:ring-2 focus:ring-nodo-cyan';
+  'w-full rounded-xl bg-white px-3 py-2.5 text-sm text-ink ring-1 ring-line focus:outline-none focus:ring-2 focus:ring-lav';
 const etiqueta = 'mb-1 block text-xs font-bold text-ink-soft';
 
 export default function ScheduleManager() {
-  const espacios = useNodoStore((s) => s.espacios);
+  const { espacios, updateEspacio } = useReservasData();
   const actividades = useNodoStore((s) => s.actividades);
-  const updateEspacio = useNodoStore((s) => s.updateEspacio);
   const updateActividad = useNodoStore((s) => s.updateActividad);
   const addToast = useNodoStore((s) => s.addToast);
   const adminRole = useNodoStore((s) => s.adminRole);
@@ -82,7 +82,7 @@ export default function ScheduleManager() {
             className={`flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition ${
               tipo === 'espacios'
                 ? 'bg-lav-deep text-white shadow-card'
-                : 'bg-white text-ink-soft ring-1 ring-inset ring-line hover:bg-paper'
+                : 'border border-line bg-cloud text-ink-soft hover:bg-paper'
             }`}
           >
             <Building2 size={14} /> Espacios
@@ -95,7 +95,7 @@ export default function ScheduleManager() {
             className={`flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition ${
               tipo === 'actividades'
                 ? 'bg-lav-deep text-white shadow-card'
-                : 'bg-white text-ink-soft ring-1 ring-inset ring-line hover:bg-paper'
+                : 'border border-line bg-cloud text-ink-soft hover:bg-paper'
             }`}
           >
             <Sparkles size={14} /> Actividades
@@ -117,7 +117,7 @@ export default function ScheduleManager() {
                   className={`flex w-full items-center gap-2.5 rounded-xl p-3 text-left transition ${
                     selEspacio === e.id
                       ? 'bg-lav-deep text-white shadow-card'
-                      : 'bg-white text-ink-soft ring-1 ring-inset ring-line hover:bg-paper'
+                      : 'border border-line bg-cloud text-ink-soft hover:bg-paper'
                   }`}
                 >
                   <span
@@ -245,7 +245,7 @@ export default function ScheduleManager() {
                   className={`flex w-full items-center gap-2.5 rounded-xl p-3 text-left transition ${
                     selActividad === a.id
                       ? 'bg-lav-deep text-white shadow-card'
-                      : 'bg-white text-ink-soft ring-1 ring-inset ring-line hover:bg-paper'
+                      : 'border border-line bg-cloud text-ink-soft hover:bg-paper'
                   }`}
                 >
                   <span
