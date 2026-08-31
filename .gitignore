@@ -34,3 +34,6 @@ brand/
 
 # Vercel
 .vercel
+
+# Archivos de trabajo temporales
+scratch_*
