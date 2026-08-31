@@ -46,6 +46,33 @@ function formatearFecha(iso) {
   return `${d}/${m}/${y}`;
 }
 
+/** Vincula (si corresponde) la ficha de socio con la cuenta actual por email. */
+export async function reclamarSocio() {
+  if (!supabaseDisponible) return [];
+  const { data, error } = await supabase.rpc('reclamar_socio');
+  if (error) {
+    console.warn('NODO: no se pudo reclamar la ficha de socio.', error.message);
+    return [];
+  }
+  return data ?? [];
+}
+
+/** Ficha de socio de la cuenta actual en una comunidad (o null). */
+export async function miSocioDe(comunidadId) {
+  if (!supabaseDisponible || !comunidadId) return null;
+  const { data, error } = await supabase
+    .from('socios')
+    .select('*')
+    .eq('comunidad_id', comunidadId)
+    .not('perfil_id', 'is', null)
+    .maybeSingle();
+  if (error) {
+    console.warn('NODO: no se pudo cargar la ficha de socio propia.', error.message);
+    return null;
+  }
+  return data ? filaASocio(data) : null;
+}
+
 export async function listarSocios(comunidadId) {
   if (!supabaseDisponible) return [];
   const { data, error } = await supabase

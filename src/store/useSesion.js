@@ -10,6 +10,7 @@
 import { create } from 'zustand';
 import { supabase, supabaseDisponible } from '../lib/supabaseClient';
 import { cargarPerfil, cargarMembresias } from '../lib/api/sesion';
+import { reclamarSocio, miSocioDe } from '../lib/api/socios';
 import { salir as salirAuth } from '../lib/authService';
 
 export const useSesion = create((set, get) => ({
@@ -18,6 +19,7 @@ export const useSesion = create((set, get) => ({
   perfil: null,
   membresias: [],
   comunidadActivaId: null,
+  miSocio: null, // ficha de socio de la cuenta en la comunidad activa
 
   /** Se llama una vez al montar la app. */
   init: async () => {
@@ -44,27 +46,36 @@ export const useSesion = create((set, get) => ({
         perfil: null,
         membresias: [],
         comunidadActivaId: null,
+        miSocio: null,
       });
       return;
     }
     set({ session, estado: 'activo' });
+    // Vincula la ficha de socio por email (si corresponde) antes de leer roles.
+    await reclamarSocio();
+    await get()._cargarContexto();
+  },
+
+  _cargarContexto: async () => {
     const [perfil, membresias] = await Promise.all([cargarPerfil(), cargarMembresias()]);
     const comunidadActivaId = get().comunidadActivaId || membresias[0]?.comunidad?.id || null;
-    set({ perfil, membresias, comunidadActivaId });
+    const miSocio = comunidadActivaId ? await miSocioDe(comunidadActivaId) : null;
+    set({ perfil, membresias, comunidadActivaId, miSocio });
   },
 
-  /** Recarga perfil + membresías (p. ej. después de correr el seed). */
+  /** Recarga perfil + membresías + ficha propia (p. ej. después de correr el seed). */
   refrescar: async () => {
     if (get().estado !== 'activo') return;
-    const [perfil, membresias] = await Promise.all([cargarPerfil(), cargarMembresias()]);
-    set((s) => ({
-      perfil,
-      membresias,
-      comunidadActivaId: s.comunidadActivaId || membresias[0]?.comunidad?.id || null,
-    }));
+    await reclamarSocio();
+    await get()._cargarContexto();
   },
 
-  setComunidadActiva: (comunidadActivaId) => set({ comunidadActivaId }),
+  setComunidadActiva: async (comunidadActivaId) => {
+    set({ comunidadActivaId });
+    if (get().estado === 'activo') {
+      set({ miSocio: await miSocioDe(comunidadActivaId) });
+    }
+  },
 
   /** Escape hatch: explorar la app con datos locales aunque Supabase esté
       configurado (útil para demos sin conexión). Sólo dura la sesión del navegador. */
@@ -81,6 +92,7 @@ export const useSesion = create((set, get) => ({
       perfil: null,
       membresias: [],
       comunidadActivaId: null,
+      miSocio: null,
     });
   },
 }));
