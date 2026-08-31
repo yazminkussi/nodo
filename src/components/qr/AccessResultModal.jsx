@@ -100,7 +100,7 @@ export default function AccessResultModal({ resultado, onClose, onRegistrarPago,
           </div>
 
           {(esPermitido || esDenegado) && resultado.socio && (
-            <div className="mx-5 mb-5 rounded-2xl bg-white/95 p-4 text-slate-700 shadow-card">
+            <div className="mx-5 mb-5 rounded-2xl bg-white/95 p-4 text-ink shadow-card">
               <div className="flex items-center gap-3">
                 <div
                   className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-sm font-extrabold text-white"
@@ -109,10 +109,10 @@ export default function AccessResultModal({ resultado, onClose, onRegistrarPago,
                   {iniciales(resultado.socio.nombre, resultado.socio.apellido)}
                 </div>
                 <div className="min-w-0">
-                  <p className="truncate font-extrabold text-nodo-navy">
+                  <p className="truncate font-extrabold text-ink">
                     {resultado.socio.nombre} {resultado.socio.apellido}
                   </p>
-                  <p className="text-xs font-semibold text-slate-500">
+                  <p className="text-xs font-semibold text-ink-soft">
                     Socio N° <span className="font-mono font-bold">{resultado.socio.numero}</span> ·{' '}
                     {resultado.socio.categoria}
                   </p>
@@ -120,8 +120,8 @@ export default function AccessResultModal({ resultado, onClose, onRegistrarPago,
                 <span
                   className={`ml-auto inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-extrabold ring-1 ring-inset ${
                     esPermitido
-                      ? 'bg-emerald-50 text-nodo-green-dark ring-emerald-200'
-                      : 'bg-red-50 text-nodo-red ring-red-200'
+                      ? 'bg-ok-soft text-ok ring-emerald-200'
+                      : 'bg-crit-soft text-crit ring-red-200'
                   }`}
                 >
                   <BadgeCheck size={13} />
@@ -130,42 +130,40 @@ export default function AccessResultModal({ resultado, onClose, onRegistrarPago,
               </div>
 
               {esDenegado && (
-                <div className="mt-3 rounded-xl bg-red-50 p-3 ring-1 ring-inset ring-red-100">
-                  <div className="flex items-center gap-2 text-nodo-red">
+                <div className="mt-3 rounded-xl bg-crit-soft p-3 ring-1 ring-inset ring-red-100">
+                  <div className="flex items-center gap-2 text-crit">
                     <Wallet size={16} />
                     <p className="text-sm font-extrabold">
                       Cuota adeudada · {resultado.meses} {resultado.meses === 1 ? 'mes' : 'meses'}
                     </p>
                   </div>
-                  <p className="mt-1 text-xs text-slate-600">
+                  <p className="mt-1 text-xs text-ink-soft">
                     Debe abonar{' '}
-                    <span className="font-extrabold text-nodo-red">
-                      {formatARS(resultado.monto)}
-                    </span>{' '}
+                    <span className="font-extrabold text-crit">{formatARS(resultado.monto)}</span>{' '}
                     (cuota mensual). Último pago: {resultado.socio.ultimaCuota}.
                   </p>
                 </div>
               )}
 
               {esPermitido && resultado.reserva ? (
-                <div className="mt-3 flex items-center gap-2.5 rounded-xl bg-cyan-50 p-3 ring-1 ring-inset ring-cyan-100">
-                  <CalendarClock size={17} className="shrink-0 text-nodo-teal" />
+                <div className="mt-3 flex items-center gap-2.5 rounded-xl bg-lav-soft p-3 ring-1 ring-inset ring-cyan-100">
+                  <CalendarClock size={17} className="shrink-0 text-lav" />
                   <div className="text-xs">
-                    <p className="font-bold text-nodo-teal">Reserva activa hoy</p>
-                    <p className="text-slate-600">
+                    <p className="font-bold text-lav">Reserva activa hoy</p>
+                    <p className="text-ink-soft">
                       {resultado.reserva.espacioNombre} · {resultado.reserva.hora} hs
                     </p>
                   </div>
                 </div>
               ) : (
                 esPermitido && (
-                  <p className="mt-3 text-center text-xs font-semibold text-slate-400">
+                  <p className="mt-3 text-center text-xs font-semibold text-ink-faint">
                     Sin reservas activas para hoy.
                   </p>
                 )
               )}
 
-              <p className="mt-3 flex items-center justify-center gap-1.5 text-[11px] font-semibold text-slate-400">
+              <p className="mt-3 flex items-center justify-center gap-1.5 text-[11px] font-semibold text-ink-faint">
                 <UserRound size={12} /> Verificado por {resultado.escaneadoPor} · {hora} hs ·{' '}
                 {resultado.metodo === 'manual' ? 'ingreso manual' : 'QR'}
               </p>
@@ -176,7 +174,7 @@ export default function AccessResultModal({ resultado, onClose, onRegistrarPago,
             {esPermitido && (
               <button
                 onClick={onClose}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3.5 text-sm font-extrabold text-nodo-green-dark shadow-card transition hover:bg-emerald-50"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3.5 text-sm font-extrabold text-ok shadow-card transition hover:bg-ok-soft"
               >
                 Ingreso registrado <ArrowRight size={16} />
               </button>
@@ -186,7 +184,7 @@ export default function AccessResultModal({ resultado, onClose, onRegistrarPago,
               <>
                 <button
                   onClick={() => onRegistrarPago(resultado.socio)}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3.5 text-sm font-extrabold text-nodo-red shadow-card transition hover:bg-red-50"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3.5 text-sm font-extrabold text-crit shadow-card transition hover:bg-crit-soft"
                 >
                   <CheckCircle2 size={17} /> Registrar pago ahora
                 </button>
@@ -202,7 +200,7 @@ export default function AccessResultModal({ resultado, onClose, onRegistrarPago,
             {!(esPermitido || esDenegado) && (
               <button
                 onClick={onClose}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3.5 text-sm font-extrabold text-slate-700 shadow-card transition hover:bg-slate-50"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3.5 text-sm font-extrabold text-ink shadow-card transition hover:bg-paper"
               >
                 Entendido <ArrowRight size={16} />
               </button>

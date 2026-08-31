@@ -20,8 +20,8 @@ export default function BookingPanel() {
   return (
     <section className="mx-auto max-w-5xl px-4 sm:px-6">
       <div className="mb-4 flex items-center justify-between gap-3">
-        <h2 className="text-lg font-extrabold tracking-tight text-nodo-navy">Reservá tu espacio</h2>
-        <span className="hidden items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-500 ring-1 ring-inset ring-nodo-border sm:inline-flex">
+        <h2 className="text-lg font-extrabold tracking-tight text-ink">Reservá tu espacio</h2>
+        <span className="hidden items-center gap-1.5 rounded-full bg-sand px-3 py-1 text-xs font-bold text-ink-soft ring-1 ring-inset ring-line sm:inline-flex">
           <CalendarRange size={13} /> Sin doble reservas
         </span>
       </div>
@@ -33,8 +33,8 @@ export default function BookingPanel() {
             onClick={() => setFiltro(c)}
             className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors ${
               filtro === c
-                ? 'bg-nodo-navy text-white shadow-card'
-                : 'bg-white text-slate-500 ring-1 ring-inset ring-nodo-border hover:bg-slate-50'
+                ? 'bg-lav-deep text-white shadow-card'
+                : 'bg-white text-ink-soft ring-1 ring-inset ring-line hover:bg-paper'
             }`}
           >
             {c}
@@ -52,7 +52,7 @@ export default function BookingPanel() {
             whileHover={{ y: -3 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => setSeleccionado(esp)}
-            className="group flex flex-col gap-3 rounded-2xl bg-white p-4 text-left shadow-card ring-1 ring-nodo-border transition-shadow hover:shadow-lift"
+            className="group flex flex-col gap-3 rounded-2xl bg-white p-4 text-left shadow-card ring-1 ring-line transition-shadow hover:shadow-lift"
           >
             <div className="flex items-center justify-between">
               <div
@@ -61,28 +61,28 @@ export default function BookingPanel() {
               >
                 <SpaceIcon icono={esp.icono} className="h-5 w-5" />
               </div>
-              <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-bold text-slate-500">
+              <span className="rounded-full bg-sand px-2.5 py-0.5 text-[11px] font-bold text-ink-soft">
                 {esp.categoria}
               </span>
             </div>
             <div>
-              <h3 className="font-extrabold text-nodo-navy">{esp.nombre}</h3>
-              <p className="mt-0.5 text-xs text-slate-500">{esp.descripcion}</p>
+              <h3 className="font-extrabold text-ink">{esp.nombre}</h3>
+              <p className="mt-0.5 text-xs text-ink-soft">{esp.descripcion}</p>
             </div>
-            <div className="mt-auto flex items-center justify-between border-t border-nodo-border pt-3 text-xs font-semibold text-slate-600">
+            <div className="mt-auto flex items-center justify-between border-t border-line pt-3 text-xs font-semibold text-ink-soft">
               <span className="inline-flex items-center gap-1.5">
-                <Users size={14} className="text-nodo-cyan" /> {esp.capacidad} personas
+                <Users size={14} className="text-lav" /> {esp.capacidad} personas
               </span>
-              <span className="font-extrabold text-nodo-teal">
+              <span className="font-extrabold text-lav">
                 {formatARS(esp.precioHora)}
-                <span className="font-medium text-slate-400"> / h</span>
+                <span className="font-medium text-ink-faint"> / h</span>
               </span>
             </div>
-            <p className="flex items-center gap-1 text-[11px] font-bold text-slate-400">
+            <p className="flex items-center gap-1 text-[11px] font-bold text-ink-faint">
               <Clock size={12} /> {nombreDias(esp.horario.dias)} · {esp.horario.apertura} a{' '}
               {esp.horario.cierre}
             </p>
-            <span className="rounded-lg bg-cyan-50 py-2 text-center text-xs font-bold text-nodo-teal transition-colors group-hover:bg-nodo-cyan group-hover:text-white">
+            <span className="rounded-lg bg-lav-soft py-2 text-center text-xs font-bold text-lav transition-colors group-hover:bg-nodo-cyan group-hover:text-white">
               Reservar ahora
             </span>
           </motion.button>

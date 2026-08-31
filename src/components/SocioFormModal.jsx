@@ -97,15 +97,15 @@ export default function SocioFormModal({ socio, onGuardar, onCerrar }) {
         onSubmit={enviar}
         className="w-full max-w-lg overflow-hidden rounded-t-3xl bg-white shadow-lift sm:rounded-3xl"
       >
-        <div className="flex items-center justify-between border-b border-nodo-border px-5 py-4">
-          <h3 className="flex items-center gap-2 font-extrabold text-nodo-navy">
+        <div className="flex items-center justify-between border-b border-line px-5 py-4">
+          <h3 className="flex items-center gap-2 font-extrabold text-ink">
             {editando ? <Save size={18} /> : <UserPlus size={18} />}
             {editando ? `Editar socio N° ${socio.numero}` : 'Alta de socio'}
           </h3>
           <button
             type="button"
             onClick={onCerrar}
-            className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+            className="rounded-full p-2 text-ink-faint transition hover:bg-sand hover:text-ink-soft"
             aria-label="Cerrar"
           >
             <X size={18} />
@@ -126,29 +126,29 @@ export default function SocioFormModal({ socio, onGuardar, onCerrar }) {
             value={datos.plan}
             onChange={set('plan')}
           />
-          <label className="text-xs font-bold text-slate-500">
+          <label className="text-xs font-bold text-ink-soft">
             Categoría
             <select
               value={datos.categoria}
               onChange={set('categoria')}
-              className="mt-1 w-full rounded-xl border-0 bg-nodo-surface px-3 py-2.5 text-sm text-slate-700 ring-1 ring-inset ring-nodo-border focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
+              className="mt-1 w-full rounded-xl border-0 bg-paper px-3 py-2.5 text-sm text-ink ring-1 ring-inset ring-line focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
             >
               {CATEGORIAS.map((c) => (
                 <option key={c}>{c}</option>
               ))}
             </select>
           </label>
-          <label className="flex items-center gap-2 self-end pb-2 text-sm font-semibold text-slate-600">
+          <label className="flex items-center gap-2 self-end pb-2 text-sm font-semibold text-ink-soft">
             <input
               type="checkbox"
               checked={datos.cuotaAlDia}
               onChange={(e) => setDatos((d) => ({ ...d, cuotaAlDia: e.target.checked }))}
-              className="h-4 w-4 rounded border-nodo-border text-nodo-teal focus:ring-nodo-cyan"
+              className="h-4 w-4 rounded border-line text-lav focus:ring-nodo-cyan"
             />
             Cuota al día
           </label>
           <div className="sm:col-span-2">
-            <p className="mb-1.5 text-xs font-bold text-slate-500">Color del carnet</p>
+            <p className="mb-1.5 text-xs font-bold text-ink-soft">Color del carnet</p>
             <div className="flex flex-wrap gap-2">
               {COLORES.map((c) => (
                 <button
@@ -167,23 +167,23 @@ export default function SocioFormModal({ socio, onGuardar, onCerrar }) {
         </div>
 
         {error && (
-          <p className="mx-5 mb-2 rounded-lg bg-red-50 px-3 py-2 text-xs font-semibold text-nodo-red">
+          <p className="mx-5 mb-2 rounded-lg bg-crit-soft px-3 py-2 text-xs font-semibold text-crit">
             {error}
           </p>
         )}
 
-        <div className="flex gap-2 border-t border-nodo-border p-4">
+        <div className="flex gap-2 border-t border-line p-4">
           <button
             type="button"
             onClick={onCerrar}
-            className="flex-1 rounded-xl bg-slate-100 px-4 py-3 text-sm font-bold text-slate-600 transition hover:bg-slate-200"
+            className="flex-1 rounded-xl bg-sand px-4 py-3 text-sm font-bold text-ink-soft transition hover:bg-slate-200"
           >
             Cancelar
           </button>
           <button
             type="submit"
             disabled={guardando}
-            className="flex flex-[2] items-center justify-center gap-2 rounded-xl bg-nodo-navy px-4 py-3 text-sm font-extrabold text-white transition hover:bg-nodo-navy-2 disabled:opacity-60"
+            className="flex flex-[2] items-center justify-center gap-2 rounded-xl bg-lav-deep px-4 py-3 text-sm font-extrabold text-white transition hover:bg-lav-deep disabled:opacity-60"
           >
             {guardando ? (
               <Loader2 size={16} className="animate-spin" />
@@ -201,12 +201,12 @@ export default function SocioFormModal({ socio, onGuardar, onCerrar }) {
 
 function Campo({ label, type = 'text', ...props }) {
   return (
-    <label className="text-xs font-bold text-slate-500">
+    <label className="text-xs font-bold text-ink-soft">
       {label}
       <input
         {...props}
         type={type}
-        className="mt-1 w-full rounded-xl border-0 bg-nodo-surface px-3 py-2.5 text-sm text-slate-700 ring-1 ring-inset ring-nodo-border placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
+        className="mt-1 w-full rounded-xl border-0 bg-paper px-3 py-2.5 text-sm text-ink ring-1 ring-inset ring-line placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
       />
     </label>
   );

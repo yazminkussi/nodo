@@ -13,7 +13,7 @@ export default function RoleToggle() {
 
   return (
     <div
-      className="relative inline-flex items-center gap-1 rounded-full bg-nodo-navy p-1 shadow-card"
+      className="relative inline-flex items-center gap-1 rounded-full bg-white/10 p-1"
       role="tablist"
       aria-label="Cambiar de vista"
     >
@@ -26,13 +26,13 @@ export default function RoleToggle() {
             aria-selected={activo}
             onClick={() => setRole(key)}
             className={`relative z-10 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors sm:px-4 sm:text-sm ${
-              activo ? 'text-white' : 'text-slate-400 hover:text-slate-200'
+              activo ? 'text-ink' : 'text-cream/60 hover:text-cream'
             }`}
           >
             {activo && (
               <motion.span
                 layoutId="role-pill"
-                className="absolute inset-0 -z-10 rounded-full bg-gradient-to-r from-nodo-cyan to-nodo-teal"
+                className="absolute inset-0 -z-10 rounded-full bg-sun"
                 transition={{ type: 'spring', stiffness: 400, damping: 32 }}
               />
             )}

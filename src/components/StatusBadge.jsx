@@ -1,59 +1,31 @@
 import { CheckCircle2, AlertTriangle, Clock, CalendarCheck2 } from 'lucide-react';
 
-const estilos = {
-  alDia: 'bg-emerald-50 text-nodo-green-dark ring-emerald-200',
-  moroso: 'bg-red-50 text-nodo-red ring-red-200',
-  pendiente: 'bg-amber-50 text-nodo-amber ring-amber-200',
-  confirmada: 'bg-cyan-50 text-nodo-teal ring-cyan-200',
-  info: 'bg-slate-100 text-slate-600 ring-slate-200',
+const config = {
+  alDia: { cls: 'bg-ok-soft text-[#1c5a3d]', icon: CheckCircle2, label: 'Al día' },
+  moroso: { cls: 'bg-crit-soft text-[#9c372f]', icon: AlertTriangle, label: 'Adeuda' },
+  adeuda: { cls: 'bg-crit-soft text-[#9c372f]', icon: AlertTriangle, label: 'Adeuda' },
+  pendiente: { cls: 'bg-sun-soft text-[#97621b]', icon: Clock, label: 'Pendiente' },
+  confirmada: { cls: 'bg-lav-soft text-lav-deep', icon: CalendarCheck2, label: 'Confirmada' },
 };
 
 export function StatusBadge({ estado, className = '' }) {
-  if (estado === 'alDia') {
+  const c = config[estado];
+  if (!c) {
     return (
       <span
-        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset ${estilos.alDia} ${className}`}
+        className={`inline-flex items-center gap-1 rounded-lg bg-sand px-2 py-0.5 text-xs font-bold text-ink-soft ${className}`}
       >
-        <CheckCircle2 size={13} strokeWidth={2.5} />
-        Al día
+        {estado}
       </span>
     );
   }
-  if (estado === 'moroso' || estado === 'adeuda') {
-    return (
-      <span
-        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset ${estilos.moroso} ${className}`}
-      >
-        <AlertTriangle size={13} strokeWidth={2.5} />
-        Adeuda
-      </span>
-    );
-  }
-  if (estado === 'pendiente') {
-    return (
-      <span
-        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset ${estilos.pendiente} ${className}`}
-      >
-        <Clock size={13} strokeWidth={2.5} />
-        Pendiente
-      </span>
-    );
-  }
-  if (estado === 'confirmada') {
-    return (
-      <span
-        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset ${estilos.confirmada} ${className}`}
-      >
-        <CalendarCheck2 size={13} strokeWidth={2.5} />
-        Confirmada
-      </span>
-    );
-  }
+  const Icon = c.icon;
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset ${estilos.info} ${className}`}
+      className={`inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-xs font-bold ${c.cls} ${className}`}
     >
-      {estado}
+      <Icon size={13} strokeWidth={2.5} />
+      {c.label}
     </span>
   );
 }

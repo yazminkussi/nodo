@@ -25,8 +25,8 @@ const colores = [
 ];
 
 const campo =
-  'w-full rounded-xl bg-white px-3 py-2.5 text-sm text-slate-700 ring-1 ring-nodo-border focus:outline-none focus:ring-2 focus:ring-nodo-cyan';
-const etiqueta = 'mb-1 block text-xs font-bold text-slate-500';
+  'w-full rounded-xl bg-white px-3 py-2.5 text-sm text-ink ring-1 ring-line focus:outline-none focus:ring-2 focus:ring-nodo-cyan';
+const etiqueta = 'mb-1 block text-xs font-bold text-ink-soft';
 
 export default function SpaceManager() {
   const espacios = useNodoStore((s) => s.espacios);
@@ -83,11 +83,11 @@ export default function SpaceManager() {
     <section className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h3 className="font-extrabold text-nodo-navy">Espacios e instalaciones</h3>
-          <p className="text-xs text-slate-500">
+          <h3 className="font-extrabold text-ink">Espacios e instalaciones</h3>
+          <p className="text-xs text-ink-soft">
             Alta, edición y disponibilidad de espacios para reservas.
             {categoriasPermitidas && (
-              <span className="ml-1 font-bold text-nodo-teal">
+              <span className="ml-1 font-bold text-lav">
                 Solo {categoriasPermitidas.join(' y ')}
               </span>
             )}
@@ -111,7 +111,7 @@ export default function SpaceManager() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ delay: i * 0.04, duration: 0.25 }}
-              className="flex flex-col rounded-2xl bg-white p-4 shadow-card ring-1 ring-nodo-border"
+              className="flex flex-col rounded-2xl bg-white p-4 shadow-card ring-1 ring-line"
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-2.5">
@@ -122,8 +122,8 @@ export default function SpaceManager() {
                     <SpaceIcon icono={esp.icono} className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-extrabold leading-tight text-nodo-navy">{esp.nombre}</p>
-                    <p className="text-[11px] font-bold text-slate-400">{esp.categoria}</p>
+                    <p className="font-extrabold leading-tight text-ink">{esp.nombre}</p>
+                    <p className="text-[11px] font-bold text-ink-faint">{esp.categoria}</p>
                   </div>
                 </div>
                 <button
@@ -138,8 +138,8 @@ export default function SpaceManager() {
                   }}
                   className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-extrabold ring-1 ring-inset transition ${
                     esp.disponible
-                      ? 'bg-emerald-50 text-nodo-green-dark ring-emerald-200'
-                      : 'bg-slate-100 text-slate-400 ring-nodo-border'
+                      ? 'bg-ok-soft text-ok ring-emerald-200'
+                      : 'bg-sand text-ink-faint ring-line'
                   }`}
                   title="Alternar disponibilidad"
                 >
@@ -147,32 +147,32 @@ export default function SpaceManager() {
                 </button>
               </div>
 
-              <p className="mt-2 line-clamp-2 text-xs text-slate-500">{esp.descripcion}</p>
+              <p className="mt-2 line-clamp-2 text-xs text-ink-soft">{esp.descripcion}</p>
 
               <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                <span className="flex items-center gap-1.5 text-slate-600">
-                  <Users size={13} className="text-nodo-cyan" /> {esp.capacidad} personas
+                <span className="flex items-center gap-1.5 text-ink-soft">
+                  <Users size={13} className="text-lav" /> {esp.capacidad} personas
                 </span>
-                <span className="font-extrabold text-nodo-teal">
+                <span className="font-extrabold text-lav">
                   {formatARS(esp.precioHora)}
-                  <span className="font-medium text-slate-400"> / h</span>
+                  <span className="font-medium text-ink-faint"> / h</span>
                 </span>
-                <span className="flex items-center gap-1.5 text-slate-600">
-                  <Clock size={13} className="text-nodo-cyan" /> {esp.horario.apertura}–
+                <span className="flex items-center gap-1.5 text-ink-soft">
+                  <Clock size={13} className="text-lav" /> {esp.horario.apertura}–
                   {esp.horario.cierre}
                 </span>
-                <span className="text-slate-600">
+                <span className="text-ink-soft">
                   Turnos de {duracionLabel(esp.horario.duracionTurno)}
                 </span>
               </div>
-              <p className="mt-2 flex items-center gap-1.5 text-[11px] font-bold text-slate-400">
+              <p className="mt-2 flex items-center gap-1.5 text-[11px] font-bold text-ink-faint">
                 <CalendarDays size={12} /> {nombreDias(esp.horario.dias)}
               </p>
 
-              <div className="mt-3 flex gap-2 border-t border-nodo-border pt-3">
+              <div className="mt-3 flex gap-2 border-t border-line pt-3">
                 <button
                   onClick={() => abrirEditar(esp)}
-                  className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-nodo-surface px-3 py-2 text-xs font-bold text-nodo-navy ring-1 ring-inset ring-nodo-border transition hover:bg-cyan-50"
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-paper px-3 py-2 text-xs font-bold text-ink ring-1 ring-inset ring-line transition hover:bg-lav-soft"
                 >
                   <Pencil size={13} /> Editar
                 </button>
@@ -181,7 +181,7 @@ export default function SpaceManager() {
                     removeEspacio(esp.id);
                     addToast(`Espacio ${esp.nombre} eliminado.`, 'info');
                   }}
-                  className="flex items-center justify-center gap-1.5 rounded-xl bg-red-50 px-3 py-2 text-xs font-bold text-nodo-red ring-1 ring-inset ring-red-200 transition hover:bg-red-100"
+                  className="flex items-center justify-center gap-1.5 rounded-xl bg-crit-soft px-3 py-2 text-xs font-bold text-crit ring-1 ring-inset ring-red-200 transition hover:bg-red-100"
                 >
                   <Trash2 size={13} /> Quitar
                 </button>
@@ -210,12 +210,12 @@ export default function SpaceManager() {
               className="max-h-[92vh] w-full max-w-md overflow-y-auto rounded-t-3xl bg-white p-5 shadow-lift sm:rounded-3xl"
             >
               <div className="mb-4 flex items-center justify-between">
-                <h3 className="font-extrabold text-nodo-navy">
+                <h3 className="font-extrabold text-ink">
                   {modal === 'nuevo' ? 'Nuevo espacio' : `Editar · ${form.nombre}`}
                 </h3>
                 <button
                   onClick={() => setModal(null)}
-                  className="rounded-full p-2 text-slate-400 hover:bg-slate-100"
+                  className="rounded-full p-2 text-ink-faint hover:bg-sand"
                   aria-label="Cerrar"
                 >
                   <X size={18} />
@@ -307,8 +307,8 @@ export default function SpaceManager() {
                     onClick={() => setForm({ ...form, icono: ic })}
                     className={`flex h-9 w-9 items-center justify-center rounded-xl transition ${
                       form.icono === ic
-                        ? 'bg-nodo-navy text-white shadow-card'
-                        : 'bg-nodo-surface text-slate-500 ring-1 ring-inset ring-nodo-border hover:bg-cyan-50'
+                        ? 'bg-lav-deep text-white shadow-card'
+                        : 'bg-paper text-ink-soft ring-1 ring-inset ring-line hover:bg-lav-soft'
                     }`}
                     title={ic}
                   >
@@ -331,7 +331,7 @@ export default function SpaceManager() {
                 ))}
               </div>
 
-              <label className="mb-4 flex items-center gap-2 text-sm font-semibold text-slate-600">
+              <label className="mb-4 flex items-center gap-2 text-sm font-semibold text-ink-soft">
                 <input
                   type="checkbox"
                   checked={form.disponible}

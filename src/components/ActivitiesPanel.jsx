@@ -36,14 +36,14 @@ export default function ActivitiesPanel() {
       <div>
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-lg font-extrabold tracking-tight text-nodo-navy">
+            <h2 className="text-lg font-extrabold tracking-tight text-ink">
               Talleres y actividades
             </h2>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-ink-soft">
               Inscribite desde la app y asegurá tu lugar en la cursada.
             </p>
           </div>
-          <span className="hidden items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-500 ring-1 ring-inset ring-nodo-border sm:inline-flex">
+          <span className="hidden items-center gap-1.5 rounded-full bg-sand px-3 py-1 text-xs font-bold text-ink-soft ring-1 ring-inset ring-line sm:inline-flex">
             <Sparkles size={13} /> Cupos en tiempo real
           </span>
         </div>
@@ -55,8 +55,8 @@ export default function ActivitiesPanel() {
               onClick={() => setFiltro(c)}
               className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors ${
                 filtro === c
-                  ? 'bg-nodo-navy text-white shadow-card'
-                  : 'bg-white text-slate-500 ring-1 ring-inset ring-nodo-border hover:bg-slate-50'
+                  ? 'bg-lav-deep text-white shadow-card'
+                  : 'bg-white text-ink-soft ring-1 ring-inset ring-line hover:bg-paper'
               }`}
             >
               {c}
@@ -79,7 +79,7 @@ export default function ActivitiesPanel() {
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ delay: i * 0.05, duration: 0.3 }}
                   className={`flex flex-col rounded-2xl bg-white p-4 shadow-card ring-1 transition ${
-                    inscripto ? 'ring-2 ring-nodo-green' : 'ring-nodo-border'
+                    inscripto ? 'ring-2 ring-nodo-green' : 'ring-line'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2">
@@ -91,45 +91,43 @@ export default function ActivitiesPanel() {
                         <SpaceIcon icono={act.icono} className="h-5 w-5" />
                       </div>
                       <div>
-                        <h3 className="font-extrabold leading-tight text-nodo-navy">
-                          {act.nombre}
-                        </h3>
-                        <p className="text-[11px] font-bold text-slate-400">
+                        <h3 className="font-extrabold leading-tight text-ink">{act.nombre}</h3>
+                        <p className="text-[11px] font-bold text-ink-faint">
                           {act.categoria} · {act.instructor}
                         </p>
                       </div>
                     </div>
                     {inscripto && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-extrabold text-nodo-green-dark ring-1 ring-inset ring-emerald-200">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-ok-soft px-2 py-1 text-[10px] font-extrabold text-ok ring-1 ring-inset ring-emerald-200">
                         <CheckCircle2 size={11} /> Inscripto
                       </span>
                     )}
                   </div>
 
-                  <p className="mt-2 line-clamp-2 text-xs text-slate-500">{act.descripcion}</p>
+                  <p className="mt-2 line-clamp-2 text-xs text-ink-soft">{act.descripcion}</p>
 
-                  <div className="mt-3 space-y-1.5 text-xs text-slate-600">
+                  <div className="mt-3 space-y-1.5 text-xs text-ink-soft">
                     <p className="flex items-center gap-1.5">
-                      <Clock size={13} className="text-nodo-cyan" />
+                      <Clock size={13} className="text-lav" />
                       {nombreDias(act.dias)} · {act.inicio} hs · {duracionLabel(act.duracion)}
                     </p>
                     <p className="flex items-center gap-1.5">
-                      <UserRound size={13} className="text-nodo-cyan" /> {act.instructor}
-                      <span className="ml-auto font-extrabold text-nodo-teal">
+                      <UserRound size={13} className="text-lav" /> {act.instructor}
+                      <span className="ml-auto font-extrabold text-lav">
                         {formatARS(act.costoMensual)}
-                        <span className="font-medium text-slate-400"> /mes</span>
+                        <span className="font-medium text-ink-faint"> /mes</span>
                       </span>
                     </p>
                   </div>
 
                   <div className="mt-3">
                     <div className="mb-1 flex items-center justify-between text-[11px] font-bold">
-                      <span className="text-slate-500">Cupo</span>
-                      <span className={llena ? 'text-nodo-red' : 'text-nodo-teal'}>
+                      <span className="text-ink-soft">Cupo</span>
+                      <span className={llena ? 'text-crit' : 'text-lav'}>
                         {cant} / {act.cupoMaximo}
                       </span>
                     </div>
-                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-sand">
                       <div
                         className={`h-full rounded-full transition-all ${llena ? 'bg-nodo-red' : 'bg-nodo-green'}`}
                         style={{ width: `${pct}%` }}
@@ -164,9 +162,9 @@ export default function ActivitiesPanel() {
                     }}
                     className={`mt-4 flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-extrabold transition ${
                       inscripto
-                        ? 'bg-red-50 text-nodo-red ring-1 ring-inset ring-red-200 hover:bg-red-100'
+                        ? 'bg-crit-soft text-crit ring-1 ring-inset ring-red-200 hover:bg-red-100'
                         : llena
-                          ? 'cursor-not-allowed bg-slate-100 text-slate-400'
+                          ? 'cursor-not-allowed bg-sand text-ink-faint'
                           : 'bg-nodo-green text-white shadow-card hover:bg-nodo-green-dark'
                     }`}
                   >
@@ -192,11 +190,11 @@ export default function ActivitiesPanel() {
       </div>
 
       <div>
-        <h3 className="mb-3 flex items-center gap-2 font-extrabold text-nodo-navy">
-          <CheckCircle2 size={18} className="text-nodo-green" /> Mis inscripciones
+        <h3 className="mb-3 flex items-center gap-2 font-extrabold text-ink">
+          <CheckCircle2 size={18} className="text-ok" /> Mis inscripciones
         </h3>
         {misInscripciones.length === 0 ? (
-          <div className="rounded-2xl border-2 border-dashed border-nodo-border bg-white p-6 text-center text-sm text-slate-400">
+          <div className="rounded-2xl border-2 border-dashed border-line bg-white p-6 text-center text-sm text-ink-faint">
             Todavía no te inscribiste en ninguna actividad.
           </div>
         ) : (
@@ -207,7 +205,7 @@ export default function ActivitiesPanel() {
               return (
                 <div
                   key={ins.id}
-                  className="flex items-center gap-3 rounded-2xl bg-white p-3.5 shadow-card ring-1 ring-nodo-border"
+                  className="flex items-center gap-3 rounded-2xl bg-white p-3.5 shadow-card ring-1 ring-line"
                 >
                   <div
                     className="flex h-9 w-9 items-center justify-center rounded-xl text-white"
@@ -216,8 +214,8 @@ export default function ActivitiesPanel() {
                     <SpaceIcon icono={act.icono} className="h-4 w-4" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-extrabold text-nodo-navy">{act.nombre}</p>
-                    <p className="text-[11px] text-slate-500">
+                    <p className="truncate text-sm font-extrabold text-ink">{act.nombre}</p>
+                    <p className="text-[11px] text-ink-soft">
                       {nombreDias(act.dias)} · {act.inicio} hs · {act.instructor}
                     </p>
                   </div>
@@ -226,7 +224,7 @@ export default function ActivitiesPanel() {
                       cancelInscripcion(ins.id);
                       addToast(`Te desinscribiste de ${act.nombre}.`, 'info');
                     }}
-                    className="rounded-xl bg-red-50 px-3 py-2 text-xs font-bold text-nodo-red ring-1 ring-inset ring-red-200 transition hover:bg-red-100"
+                    className="rounded-xl bg-crit-soft px-3 py-2 text-xs font-bold text-crit ring-1 ring-inset ring-red-200 transition hover:bg-red-100"
                   >
                     Cancelar
                   </button>

@@ -38,11 +38,11 @@ const especificaciones = [
 function Campo({ label, value, onChange }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-bold text-slate-500">{label}</span>
+      <span className="mb-1 block text-xs font-bold text-ink-soft">{label}</span>
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-xl bg-white px-3 py-2.5 text-sm text-slate-700 ring-1 ring-nodo-border focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
+        className="w-full rounded-xl bg-white px-3 py-2.5 text-sm text-ink ring-1 ring-line focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
       />
     </label>
   );
@@ -119,9 +119,9 @@ function BrandSettings() {
   return (
     <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
       <div className="space-y-5">
-        <div className="rounded-2xl bg-white p-5 shadow-card ring-1 ring-nodo-border">
-          <h3 className="mb-3 flex items-center gap-2 font-extrabold text-nodo-navy">
-            <Upload size={16} className="text-nodo-teal" /> Logo de la comunidad
+        <div className="rounded-2xl bg-white p-5 shadow-card ring-1 ring-line">
+          <h3 className="mb-3 flex items-center gap-2 font-extrabold text-ink">
+            <Upload size={16} className="text-lav" /> Logo de la comunidad
           </h3>
 
           <input
@@ -146,25 +146,25 @@ function BrandSettings() {
             }}
             className={`flex w-full flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed px-4 py-8 transition-colors ${
               arrastrando
-                ? 'border-nodo-cyan bg-cyan-50'
-                : 'border-nodo-border bg-nodo-surface hover:border-nodo-cyan hover:bg-cyan-50/60'
+                ? 'border-nodo-cyan bg-lav-soft'
+                : 'border-line bg-paper hover:border-nodo-cyan hover:bg-lav-soft/60'
             }`}
           >
             {comunidad.logo ? (
               <img
                 src={comunidad.logo}
                 alt="Logo de la comunidad"
-                className="h-20 w-20 rounded-2xl bg-white object-contain shadow-card ring-1 ring-nodo-border"
+                className="h-20 w-20 rounded-2xl bg-white object-contain shadow-card ring-1 ring-line"
               />
             ) : (
-              <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-nodo-navy text-white">
+              <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-lav-deep text-white">
                 <ImageOff size={26} />
               </span>
             )}
-            <p className="text-sm font-extrabold text-nodo-navy">
+            <p className="text-sm font-extrabold text-ink">
               {comunidad.logo ? 'Reemplazar logo' : 'Subir logo de la comunidad'}
             </p>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-ink-soft">
               Hacé clic o arrastrá tu archivo · PNG o JPG · máximo 2 MB
             </p>
           </button>
@@ -173,29 +173,29 @@ function BrandSettings() {
             <button
               onClick={quitarLogo}
               disabled={subiendo}
-              className="mt-3 inline-flex items-center gap-1.5 rounded-xl bg-red-50 px-3.5 py-2 text-xs font-bold text-nodo-red ring-1 ring-inset ring-red-200 transition hover:bg-red-100 disabled:opacity-50"
+              className="mt-3 inline-flex items-center gap-1.5 rounded-xl bg-crit-soft px-3.5 py-2 text-xs font-bold text-crit ring-1 ring-inset ring-red-200 transition hover:bg-red-100 disabled:opacity-50"
             >
               <Trash2 size={13} /> Quitar logo personalizado
             </button>
           )}
           {subiendo && (
-            <p className="mt-2 flex items-center gap-1.5 text-xs font-bold text-nodo-teal">
+            <p className="mt-2 flex items-center gap-1.5 text-xs font-bold text-lav">
               <Loader2 size={13} className="animate-spin" /> Sincronizando logo en la nube…
             </p>
           )}
         </div>
 
-        <div className="rounded-2xl bg-white p-5 shadow-card ring-1 ring-nodo-border">
-          <h3 className="mb-3 flex items-center gap-2 font-extrabold text-nodo-navy">
-            <Info size={16} className="text-nodo-teal" /> Especificaciones del logo
+        <div className="rounded-2xl bg-white p-5 shadow-card ring-1 ring-line">
+          <h3 className="mb-3 flex items-center gap-2 font-extrabold text-ink">
+            <Info size={16} className="text-lav" /> Especificaciones del logo
           </h3>
           <ul className="space-y-2.5">
             {especificaciones.map((e) => (
               <li key={e.titulo} className="flex gap-2 text-sm">
                 <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-nodo-teal" />
                 <span>
-                  <span className="font-bold text-nodo-navy">{e.titulo}: </span>
-                  <span className="text-slate-500">{e.detalle}</span>
+                  <span className="font-bold text-ink">{e.titulo}: </span>
+                  <span className="text-ink-soft">{e.detalle}</span>
                 </span>
               </li>
             ))}
@@ -204,9 +204,9 @@ function BrandSettings() {
       </div>
 
       <div className="space-y-5">
-        <div className="overflow-hidden rounded-2xl bg-nodo-navy shadow-lift ring-1 ring-white/10">
+        <div className="overflow-hidden rounded-2xl bg-lav-deep shadow-lift ring-1 ring-white/10">
           <div className="flex items-center justify-between border-b border-white/10 px-5 py-3">
-            <p className="text-xs font-extrabold uppercase tracking-widest text-nodo-cyan">
+            <p className="text-xs font-extrabold uppercase tracking-widest text-lav">
               Vista previa en vivo · Co-Branding
             </p>
             <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-bold text-slate-300">
@@ -223,7 +223,7 @@ function BrandSettings() {
                 className="h-11 w-11 rounded-full bg-white object-contain p-0.5"
               />
             ) : (
-              <span className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-dashed border-white/25 text-slate-400">
+              <span className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-dashed border-white/25 text-ink-faint">
                 <ImageOff size={16} />
               </span>
             )}
@@ -231,18 +231,18 @@ function BrandSettings() {
               <span className="block text-sm font-extrabold text-white">
                 {form.nombre || comunidad.nombre}
               </span>
-              <span className="block text-[11px] font-semibold text-slate-400">
+              <span className="block text-[11px] font-semibold text-ink-faint">
                 {form.tipo || comunidad.tipo} · {form.barrio || comunidad.barrio} · {comunidad.plan}
               </span>
             </span>
           </div>
-          <p className="border-t border-white/10 px-5 py-2.5 text-[11px] text-slate-400">
+          <p className="border-t border-white/10 px-5 py-2.5 text-[11px] text-ink-faint">
             Así se ve [NODO] + [Tu logo] + [Nombre] en la barra superior, a igual altura.
           </p>
         </div>
 
-        <div className="rounded-2xl bg-white p-5 shadow-card ring-1 ring-nodo-border">
-          <h3 className="mb-4 font-extrabold text-nodo-navy">Datos de la institución</h3>
+        <div className="rounded-2xl bg-white p-5 shadow-card ring-1 ring-line">
+          <h3 className="mb-4 font-extrabold text-ink">Datos de la institución</h3>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="sm:col-span-2">
               <Campo
@@ -288,7 +288,7 @@ function BrandSettings() {
           </div>
           <button
             onClick={guardar}
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-nodo-navy px-4 py-3 text-sm font-extrabold text-white shadow-card transition hover:bg-nodo-navy-2"
+            className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-lav-deep px-4 py-3 text-sm font-extrabold text-white shadow-card transition hover:bg-lav-deep"
           >
             <Save size={16} /> Guardar cambios
           </button>
@@ -323,21 +323,21 @@ export default function CommunitySettings() {
     <section className="mx-auto max-w-7xl space-y-6 px-4 sm:px-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="flex items-center gap-2 text-lg font-extrabold tracking-tight text-nodo-navy">
-            <Palette size={19} className="text-nodo-teal" /> Personalización de Comunidad
+          <h2 className="flex items-center gap-2 text-lg font-extrabold tracking-tight text-ink">
+            <Palette size={19} className="text-lav" /> Personalización de Comunidad
           </h2>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-ink-soft">
             Marca, espacios, actividades y horarios · {comunidad.nombre}
           </p>
         </div>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-extrabold text-nodo-green-dark ring-1 ring-inset ring-emerald-200">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-ok-soft px-3 py-1.5 text-xs font-extrabold text-ok ring-1 ring-inset ring-emerald-200">
           <ShieldCheck size={13} /> {ROLES_ADMIN[adminRole].etiqueta}
         </span>
         <span
           className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-extrabold ring-1 ring-inset ${
             supabaseDisponible
-              ? 'bg-cyan-50 text-nodo-teal ring-cyan-200'
-              : 'bg-amber-50 text-nodo-amber ring-amber-200'
+              ? 'bg-lav-soft text-lav ring-lav/25'
+              : 'bg-sun-soft text-warn ring-amber-200'
           }`}
           title={
             supabaseDisponible
@@ -359,8 +359,8 @@ export default function CommunitySettings() {
             onClick={() => setTab(t.key)}
             className={`flex shrink-0 items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold transition-colors ${
               tabActual === t.key
-                ? 'bg-nodo-navy text-white shadow-card'
-                : 'bg-white text-slate-500 ring-1 ring-inset ring-nodo-border hover:bg-slate-50'
+                ? 'bg-lav-deep text-white shadow-card'
+                : 'bg-white text-ink-soft ring-1 ring-inset ring-line hover:bg-paper'
             }`}
           >
             <t.icon size={16} /> {t.label}

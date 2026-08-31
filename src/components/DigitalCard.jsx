@@ -1,21 +1,15 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-  BadgeCheck,
-  CalendarClock,
-  ScanLine,
-  Sparkles,
-  MapPin,
-  RefreshCw,
-  Wallet,
-} from 'lucide-react';
+import { CalendarClock, ScanLine, Sparkles, MapPin, RefreshCw, Wallet, IdCard } from 'lucide-react';
 import { useNodoStore, useProximaReserva, useComunidadActual } from '../store/useNodoStore';
 import { useSesion, useComunidadActiva } from '../store/useSesion';
-import { StatusBadge } from './StatusBadge';
 import { QrSvg } from '../utils/qr';
 import { createQrPayload } from '../utils/qrPayload';
 import { formatFechaLarga, formatARS, mesesAdeudados } from '../data/mockData';
-import NodoLogo from './Navbar';
+import { NodoLogo } from './Navbar';
+import Chip from './ui/Chip';
+import Button from './ui/Button';
+import EmptyState from './ui/EmptyState';
 
 const iniciales = (nombre, apellido) => `${nombre.charAt(0)}${apellido.charAt(0)}`.toUpperCase();
 
@@ -41,7 +35,7 @@ export default function DigitalCard() {
   useEffect(() => {
     let activo = true;
     if (socioId != null && communityId != null) {
-      createQrPayload({ memberId: socioId, communityId: communityId }).then((payload) => {
+      createQrPayload({ memberId: socioId, communityId }).then((payload) => {
         if (activo) setQrPayload(payload);
       });
     }
@@ -54,27 +48,27 @@ export default function DigitalCard() {
     if (remoto) {
       return (
         <section className="mx-auto max-w-5xl px-4 sm:px-6">
-          <div className="rounded-2xl border-2 border-dashed border-nodo-border bg-white px-6 py-12 text-center shadow-card">
-            <p className="text-base font-extrabold text-nodo-navy">
-              Tu cuenta todavía no está vinculada a una ficha de socio
-            </p>
-            <p className="mx-auto mt-2 max-w-md text-sm text-slate-500">
-              Pedile a la administración de {comunidad?.nombre || 'tu comunidad'} que registre tu
-              ficha con este mismo email. Una vez cargada, tocá “Buscar mi ficha”.
-            </p>
-            <button
-              onClick={async () => {
-                setBuscando(true);
-                await refrescarSesion();
-                setBuscando(false);
-              }}
-              disabled={buscando}
-              className="mx-auto mt-5 flex items-center gap-2 rounded-xl bg-nodo-navy px-4 py-2.5 text-sm font-bold text-white transition hover:bg-nodo-navy-2 disabled:opacity-60"
-            >
-              <RefreshCw size={15} className={buscando ? 'animate-spin' : ''} />
-              {buscando ? 'Buscando…' : 'Buscar mi ficha'}
-            </button>
-          </div>
+          <EmptyState
+            icon={IdCard}
+            title="Tu cuenta todavía no está vinculada a una ficha de socio"
+            action={
+              <Button
+                variant="lav"
+                loading={buscando}
+                onClick={async () => {
+                  setBuscando(true);
+                  await refrescarSesion();
+                  setBuscando(false);
+                }}
+              >
+                {!buscando && <RefreshCw size={15} />}
+                Buscar mi ficha
+              </Button>
+            }
+          >
+            Pedile a la administración de {comunidad?.nombre || 'tu comunidad'} que registre tu
+            ficha con este mismo email. Una vez cargada, tocá “Buscar mi ficha”.
+          </EmptyState>
         </section>
       );
     }
@@ -85,35 +79,46 @@ export default function DigitalCard() {
 
   return (
     <motion.section
-      initial={{ opacity: 0, y: 14 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35 }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
       className="mx-auto max-w-5xl px-4 sm:px-6"
     >
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-extrabold tracking-tight text-nodo-navy">Carnet Digital</h2>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-cyan-50 px-3 py-1 text-xs font-bold text-nodo-teal ring-1 ring-inset ring-cyan-200">
-          <Sparkles size={13} /> Ingreso sin contacto
-        </span>
+        <h2 className="font-display text-xl font-bold tracking-tight text-ink">Carnet digital</h2>
+        <Chip tono="sun" icon={Sparkles}>
+          Ingreso sin contacto
+        </Chip>
       </div>
 
       <motion.div
         whileHover={{ y: -3 }}
-        whileTap={{ scale: 0.99 }}
-        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-nodo-navy via-nodo-navy-2 to-[#0B1222] p-5 text-white shadow-lift ring-1 ring-white/10 sm:p-6"
+        transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+        className="relative overflow-hidden rounded-[26px] bg-lav-deep p-5 text-cream shadow-lift sm:p-6"
       >
-        <div className="pointer-events-none absolute -right-20 -top-24 h-56 w-56 rounded-full bg-nodo-cyan/20 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-24 -left-16 h-56 w-56 rounded-full bg-nodo-teal/20 blur-3xl" />
+        {/* halo cálido + textura tejida */}
+        <div className="pointer-events-none absolute -right-16 -top-24 h-64 w-64 rounded-full bg-sun/20 blur-3xl" />
+        <div
+          className="pointer-events-none absolute inset-0 opacity-50"
+          style={{
+            backgroundImage: 'radial-gradient(rgba(243,239,230,0.14) 1.5px, transparent 1.6px)',
+            backgroundSize: '18px 18px',
+            WebkitMaskImage: 'linear-gradient(205deg, black, transparent 68%)',
+            maskImage: 'linear-gradient(205deg, black, transparent 68%)',
+          }}
+        />
 
         <div className="relative flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="truncate text-[11px] font-semibold uppercase tracking-widest text-slate-400">
+            <p className="truncate text-[11px] font-semibold uppercase tracking-widest text-cream/55">
               {comunidad.nombre}
             </p>
-            <p className="truncate text-[10px] font-semibold text-slate-500">
-              {comunidad.barrio} · {comunidad.ciudad}
+            <p className="truncate text-[10px] font-semibold text-cream/40">
+              {[comunidad.barrio, comunidad.ciudad].filter(Boolean).join(' · ')}
             </p>
-            <p className="mt-1 text-xl font-extrabold tracking-tight sm:text-2xl">Carnet Digital</p>
+            <p className="mt-1 font-display text-2xl font-bold tracking-tight sm:text-[1.75rem]">
+              Carnet <span className="text-sun">digital</span>
+            </p>
           </div>
           <div className="flex shrink-0 items-center gap-2">
             {logoComunidad && (
@@ -123,7 +128,7 @@ export default function DigitalCard() {
                 className="h-9 w-9 rounded-full bg-white object-contain p-0.5 ring-1 ring-white/20"
               />
             )}
-            <NodoLogo className="h-9 w-9 opacity-90" />
+            <NodoLogo size={34} color="#F3EFE6" />
           </div>
         </div>
 
@@ -131,60 +136,70 @@ export default function DigitalCard() {
           <div className="flex flex-1 flex-col justify-between gap-4">
             <div className="flex items-center gap-4">
               <div
-                className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full text-lg font-extrabold text-white ring-4 ring-white/10"
+                className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full font-display text-lg font-bold text-white ring-4 ring-white/10"
                 style={{ background: socio.color }}
               >
                 {iniciales(socio.nombre, socio.apellido)}
               </div>
               <div className="min-w-0">
-                <p className="truncate text-lg font-extrabold sm:text-xl">
+                <p className="truncate text-lg font-bold sm:text-xl">
                   {socio.nombre} {socio.apellido}
                 </p>
-                <p className="text-sm text-slate-300">
-                  Socio N° <span className="font-mono font-bold text-white">{socio.numero}</span>
+                <p className="text-sm text-cream/70">
+                  Socio N°{' '}
+                  <span className="font-semibold tabular-nums text-cream">{socio.numero}</span>
                 </p>
-                <p className="text-xs text-slate-400">{socio.categoria}</p>
+                <p className="text-xs text-cream/50">{socio.categoria}</p>
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
-              <StatusBadge estado={socio.cuotaAlDia ? 'alDia' : 'moroso'} />
+            <div className="flex flex-wrap items-center gap-1.5">
+              <Chip tono={socio.cuotaAlDia ? 'ok' : 'crit'} dot>
+                {socio.cuotaAlDia ? 'Al día' : 'Adeuda'}
+              </Chip>
               {!socio.cuotaAlDia && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset ring-white/20">
-                  <Wallet size={13} className="text-red-300" /> Adeuda {meses}{' '}
-                  {meses === 1 ? 'mes' : 'meses'} · {formatARS(socio.plan * meses)}
-                </span>
+                <Chip tono="paper" icon={Wallet}>
+                  {meses} {meses === 1 ? 'mes' : 'meses'} · {formatARS(socio.plan * meses)}
+                </Chip>
               )}
-              <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset ring-white/20">
-                <MapPin size={13} className="text-nodo-amber" /> {socio.localidad}
-              </span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset ring-white/20">
-                <BadgeCheck size={13} className="text-nodo-cyan" /> {socio.categoria}
-              </span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset ring-white/20">
-                <CalendarClock size={13} className="text-nodo-green" /> Válido hasta{' '}
-                {formatFechaLarga('2026-08-31')}
-              </span>
+              {socio.localidad && (
+                <Chip tono="paper" icon={MapPin}>
+                  {socio.localidad}
+                </Chip>
+              )}
+              <Chip tono="paper" icon={CalendarClock}>
+                Válido hasta {formatFechaLarga('2026-08-31')}
+              </Chip>
             </div>
 
             {proxima && (
-              <div className="flex items-center justify-between gap-3 rounded-xl border border-dashed border-nodo-cyan/40 bg-nodo-cyan/10 px-4 py-2.5">
+              <div className="flex items-center justify-between gap-3 rounded-xl border border-dashed border-sun/40 bg-sun/10 px-4 py-2.5">
                 <div className="text-xs">
-                  <p className="font-bold text-nodo-cyan">Próxima reserva</p>
-                  <p className="text-slate-300">
+                  <p className="font-bold text-sun">Próxima reserva</p>
+                  <p className="text-cream/70">
                     {proxima.espacio?.nombre} · {proxima.inicio} hs
                   </p>
                 </div>
-                <ScanLine size={18} className="text-nodo-cyan" />
+                <ScanLine size={18} className="text-sun" />
               </div>
             )}
           </div>
 
           <div className="flex shrink-0 flex-col items-center gap-2">
-            <div className="rounded-xl bg-white p-3">
+            <motion.div
+              className="rounded-2xl bg-paper p-3"
+              animate={{
+                boxShadow: [
+                  '0 0 0 0 rgba(232,163,61,0)',
+                  '0 0 0 6px rgba(232,163,61,0.12)',
+                  '0 0 0 0 rgba(232,163,61,0)',
+                ],
+              }}
+              transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+            >
               <QrSvg value={qrPayload || `NODO|v1|pending`} size={132} />
-            </div>
-            <p className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-widest text-slate-400">
+            </motion.div>
+            <p className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-widest text-cream/50">
               {qrPayload ? (
                 <>
                   <RefreshCw size={11} /> Vigente 15 min · Mostrar al ingresar

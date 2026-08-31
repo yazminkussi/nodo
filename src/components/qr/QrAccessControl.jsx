@@ -221,16 +221,16 @@ export default function QrAccessControl() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white p-4 shadow-card ring-1 ring-nodo-border">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white p-4 shadow-card ring-1 ring-line">
         <div className="flex items-center gap-3">
           <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-nodo-green to-nodo-teal text-white shadow-card">
             <ShieldCheck size={22} />
           </span>
           <div>
-            <h2 className="text-lg font-extrabold tracking-tight text-nodo-navy">
+            <h2 className="text-lg font-extrabold tracking-tight text-ink">
               Escanear QR · Control de Acceso
             </h2>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-ink-soft">
               {comunidad.nombre} · Operador: {OPERADOR}
             </p>
           </div>
@@ -238,8 +238,8 @@ export default function QrAccessControl() {
         <span
           className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-extrabold ring-1 ring-inset ${
             supabaseDisponible
-              ? 'bg-cyan-50 text-nodo-teal ring-cyan-200'
-              : 'bg-amber-50 text-nodo-amber ring-amber-200'
+              ? 'bg-lav-soft text-lav ring-lav/25'
+              : 'bg-sun-soft text-warn ring-amber-200'
           }`}
         >
           {supabaseDisponible ? <Database size={13} /> : <CloudOff size={13} />}
@@ -257,8 +257,8 @@ export default function QrAccessControl() {
         </div>
 
         <div className="lg:col-span-2">
-          <div className="rounded-2xl bg-white p-4 shadow-card ring-1 ring-nodo-border">
-            <p className="mb-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
+          <div className="rounded-2xl bg-white p-4 shadow-card ring-1 ring-line">
+            <p className="mb-3 text-[10px] font-extrabold uppercase tracking-widest text-ink-faint">
               Ingresos de hoy · {comunidad.barrio}
             </p>
             <div className="grid grid-cols-2 gap-3">
@@ -266,26 +266,26 @@ export default function QrAccessControl() {
                 {
                   label: 'Total',
                   valor: statsHoy.total,
-                  clase: 'text-nodo-navy',
+                  clase: 'text-ink',
                   fondo: 'bg-nodo-bg',
                 },
                 {
                   label: 'Permitidos',
                   valor: statsHoy.permitido,
-                  clase: 'text-nodo-green-dark',
-                  fondo: 'bg-emerald-50',
+                  clase: 'text-ok',
+                  fondo: 'bg-ok-soft',
                 },
                 {
                   label: 'Con Adeuda',
                   valor: statsHoy.denegado,
-                  clase: 'text-nodo-red',
-                  fondo: 'bg-red-50',
+                  clase: 'text-crit',
+                  fondo: 'bg-crit-soft',
                 },
                 {
                   label: 'Inválidos',
                   valor: statsHoy.invalido,
-                  clase: 'text-nodo-amber',
-                  fondo: 'bg-amber-50',
+                  clase: 'text-warn',
+                  fondo: 'bg-sun-soft',
                 },
               ].map((s, i) => (
                 <motion.div
@@ -293,14 +293,14 @@ export default function QrAccessControl() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  className={`rounded-2xl ${s.fondo} p-3 ring-1 ring-inset ring-nodo-border`}
+                  className={`rounded-2xl ${s.fondo} p-3 ring-1 ring-inset ring-line`}
                 >
                   <p className={`text-2xl font-extrabold tracking-tight ${s.clase}`}>{s.valor}</p>
-                  <p className="text-[11px] font-bold text-slate-500">{s.label}</p>
+                  <p className="text-[11px] font-bold text-ink-soft">{s.label}</p>
                 </motion.div>
               ))}
             </div>
-            <p className="mt-3 text-[11px] font-semibold text-slate-400">
+            <p className="mt-3 text-[11px] font-semibold text-ink-faint">
               El operador verifica el carnet y puede registrar pagos o autorizar ingresos.
             </p>
           </div>

@@ -38,21 +38,21 @@ export default function QrScannerPanel({ onEscaneado, onIngresoManual, pausado =
   const esActivo = estado === 'escaneando' || estado === 'iniciando';
 
   return (
-    <section className="overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-nodo-border">
-      <div className="flex items-center justify-between gap-3 border-b border-nodo-border px-4 py-3.5 sm:px-5">
+    <section className="overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-line">
+      <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-3.5 sm:px-5">
         <div className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-nodo-navy text-white">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-lav-deep text-white">
             <ScanLine size={17} />
           </span>
           <div>
-            <h3 className="text-sm font-extrabold tracking-tight text-nodo-navy">Escanear QR</h3>
-            <p className="text-[11px] font-semibold text-slate-400">
+            <h3 className="text-sm font-extrabold tracking-tight text-ink">Escanear QR</h3>
+            <p className="text-[11px] font-semibold text-ink-faint">
               Apuntá al carnet digital del socio para validar su ingreso
             </p>
           </div>
         </div>
         {esActivo && (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-extrabold text-nodo-green-dark ring-1 ring-inset ring-emerald-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-ok-soft px-3 py-1 text-xs font-extrabold text-ok ring-1 ring-inset ring-emerald-200">
             <motion.span
               animate={{ opacity: [1, 0.3, 1] }}
               transition={{ repeat: Infinity, duration: 1.4 }}
@@ -64,7 +64,7 @@ export default function QrScannerPanel({ onEscaneado, onIngresoManual, pausado =
       </div>
 
       <div className="p-4 sm:p-5">
-        <div className="relative mx-auto w-full max-w-sm overflow-hidden rounded-2xl border-2 border-dashed border-nodo-border bg-nodo-bg">
+        <div className="relative mx-auto w-full max-w-sm overflow-hidden rounded-2xl border-2 border-dashed border-line bg-nodo-bg">
           <div id="nodo-lector-qr" className="relative min-h-[300px] w-full" />
 
           <AnimatePresence>
@@ -75,12 +75,12 @@ export default function QrScannerPanel({ onEscaneado, onIngresoManual, pausado =
                 exit={{ opacity: 0 }}
                 className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center"
               >
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-nodo-navy text-white shadow-card">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-lav-deep text-white shadow-card">
                   <Camera size={28} />
                 </div>
                 <div>
-                  <p className="font-extrabold text-nodo-navy">Cámara lista para iniciar</p>
-                  <p className="text-xs text-slate-500">
+                  <p className="font-extrabold text-ink">Cámara lista para iniciar</p>
+                  <p className="text-xs text-ink-soft">
                     {nCamaras > 0
                       ? `${nCamaras} cámaras detectadas en el dispositivo.`
                       : 'El navegador pedirá permiso para acceder a la cámara.'}
@@ -102,8 +102,8 @@ export default function QrScannerPanel({ onEscaneado, onIngresoManual, pausado =
                 exit={{ opacity: 0 }}
                 className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center"
               >
-                <Loader2 size={30} className="animate-spin text-nodo-teal" />
-                <p className="text-sm font-bold text-slate-600">Activando cámara…</p>
+                <Loader2 size={30} className="animate-spin text-lav" />
+                <p className="text-sm font-bold text-ink-soft">Activando cámara…</p>
               </motion.div>
             )}
 
@@ -114,14 +114,14 @@ export default function QrScannerPanel({ onEscaneado, onIngresoManual, pausado =
                 exit={{ opacity: 0 }}
                 className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center"
               >
-                <AlertCircle size={34} className="text-nodo-red" />
+                <AlertCircle size={34} className="text-crit" />
                 <div>
-                  <p className="font-extrabold text-nodo-navy">No se pudo acceder a la cámara</p>
-                  <p className="mt-1 text-xs leading-relaxed text-slate-500">{error}</p>
+                  <p className="font-extrabold text-ink">No se pudo acceder a la cámara</p>
+                  <p className="mt-1 text-xs leading-relaxed text-ink-soft">{error}</p>
                 </div>
                 <button
                   onClick={() => iniciar(onEscaneado, camaraFrontal ? 'user' : 'environment')}
-                  className="inline-flex items-center gap-2 rounded-xl bg-nodo-navy px-5 py-3 text-sm font-bold text-white shadow-card transition hover:bg-nodo-navy-2"
+                  className="inline-flex items-center gap-2 rounded-xl bg-lav-deep px-5 py-3 text-sm font-bold text-white shadow-card transition hover:bg-lav-deep"
                 >
                   <CameraOff size={16} /> Reintentar
                 </button>
@@ -135,11 +135,11 @@ export default function QrScannerPanel({ onEscaneado, onIngresoManual, pausado =
                 exit={{ opacity: 0 }}
                 className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center"
               >
-                <CameraOff size={30} className="text-slate-400" />
-                <p className="text-sm font-bold text-slate-500">Escáner detenido</p>
+                <CameraOff size={30} className="text-ink-faint" />
+                <p className="text-sm font-bold text-ink-soft">Escáner detenido</p>
                 <button
                   onClick={() => iniciar(onEscaneado, 'environment')}
-                  className="inline-flex items-center gap-2 rounded-xl bg-nodo-navy px-5 py-3 text-sm font-bold text-white shadow-card transition hover:bg-nodo-navy-2"
+                  className="inline-flex items-center gap-2 rounded-xl bg-lav-deep px-5 py-3 text-sm font-bold text-white shadow-card transition hover:bg-lav-deep"
                 >
                   <Camera size={16} /> Volver a escanear
                 </button>
@@ -182,7 +182,7 @@ export default function QrScannerPanel({ onEscaneado, onIngresoManual, pausado =
           <div className="mx-auto mt-3 flex max-w-sm items-center justify-center gap-2">
             <button
               onClick={detener}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-slate-100 px-3.5 py-2.5 text-xs font-bold text-slate-600 transition hover:bg-slate-200"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-sand px-3.5 py-2.5 text-xs font-bold text-ink-soft transition hover:bg-slate-200"
             >
               <CameraOff size={14} /> Detener
             </button>
@@ -190,7 +190,7 @@ export default function QrScannerPanel({ onEscaneado, onIngresoManual, pausado =
               <button
                 onClick={alternarCamara}
                 title="Cambiar de cámara"
-                className="inline-flex items-center gap-1.5 rounded-xl bg-slate-100 px-3.5 py-2.5 text-xs font-bold text-slate-600 transition hover:bg-slate-200"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-sand px-3.5 py-2.5 text-xs font-bold text-ink-soft transition hover:bg-slate-200"
               >
                 <FlipHorizontal size={14} /> {camaraFrontal ? 'Trasera' : 'Frontal'}
               </button>
@@ -202,7 +202,7 @@ export default function QrScannerPanel({ onEscaneado, onIngresoManual, pausado =
                 className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2.5 text-xs font-bold transition ${
                   linternaEncendida
                     ? 'bg-nodo-amber text-amber-950 shadow-card'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    : 'bg-sand text-ink-soft hover:bg-slate-200'
                 }`}
               >
                 <Flashlight size={14} /> {linternaEncendida ? 'Encendida' : 'Linterna'}
@@ -212,8 +212,8 @@ export default function QrScannerPanel({ onEscaneado, onIngresoManual, pausado =
         )}
       </div>
 
-      <div className="border-t border-nodo-border bg-nodo-surface/50 p-4 sm:p-5">
-        <p className="mb-2 flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-widest text-slate-400">
+      <div className="border-t border-line bg-paper/50 p-4 sm:p-5">
+        <p className="mb-2 flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-widest text-ink-faint">
           <Keyboard size={13} /> Ingreso manual por DNI / Nº de Socio
         </p>
         <form
@@ -230,16 +230,16 @@ export default function QrScannerPanel({ onEscaneado, onIngresoManual, pausado =
             inputMode="search"
             required
             placeholder="Ej: 33774155 o 0198"
-            className="w-full rounded-xl border-0 bg-white px-4 py-3 text-sm text-slate-700 shadow-card ring-1 ring-nodo-border placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
+            className="w-full rounded-xl border-0 bg-white px-4 py-3 text-sm text-ink shadow-card ring-1 ring-line placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
           />
           <button
             type="submit"
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-nodo-navy px-5 py-3 text-sm font-extrabold text-white shadow-card transition hover:bg-nodo-navy-2"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-lav-deep px-5 py-3 text-sm font-extrabold text-white shadow-card transition hover:bg-lav-deep"
           >
             <ShieldCheck size={16} /> Verificar
           </button>
         </form>
-        <p className="mt-2 text-[11px] text-slate-400">
+        <p className="mt-2 text-[11px] text-ink-faint">
           Si la cámara no está disponible, buscá al socio por DNI o por su número de socio.
         </p>
       </div>

@@ -4,26 +4,36 @@ import { Users, Wallet, TrendingUp, CalendarCheck2 } from 'lucide-react';
 import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
 import { useComunidadActiva } from '../store/useSesion';
 import { useSocios } from '../hooks/useSocios';
+import { stagger, staggerItem } from './ui/motion';
 import { formatARS, todayISO, slotsDeHorario, diaActivo } from '../data/mockData';
 
+const sinMovimiento =
+  typeof window !== 'undefined' &&
+  window.matchMedia &&
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 function Contador({ valor, format = (n) => n.toLocaleString('es-AR') }) {
-  const [mostrado, setMostrado] = useState(0);
+  const [mostrado, setMostrado] = useState(sinMovimiento ? valor : 0);
   const ref = useRef(0);
 
   useEffect(() => {
-    const anim = requestAnimationFrame(function tick() {
+    if (sinMovimiento) {
+      setMostrado(valor);
+      return undefined;
+    }
+    let raf = requestAnimationFrame(function tick() {
       ref.current += (valor - ref.current) * 0.12;
       if (Math.abs(valor - ref.current) < 0.5) {
         setMostrado(valor);
         return;
       }
       setMostrado(ref.current);
-      requestAnimationFrame(tick);
+      raf = requestAnimationFrame(tick);
     });
-    return () => cancelAnimationFrame(anim);
+    return () => cancelAnimationFrame(raf);
   }, [valor]);
 
-  return <span>{format(Math.round(mostrado))}</span>;
+  return <span className="tabular-nums">{format(Math.round(mostrado))}</span>;
 }
 
 export default function StatsOverview() {
@@ -53,55 +63,86 @@ export default function StatsOverview() {
     {
       titulo: 'Socios activos',
       valor: <Contador valor={total} />,
-      detalle: `Plan ${comunidad.plan.replace('Plan ', '')}`,
+      detalle: `Plan ${String(comunidad.plan || '').replace('Plan ', '')}`,
       icon: Users,
-      color: 'from-nodo-navy to-nodo-navy-2',
+      hero: true,
     },
     {
       titulo: 'Recaudación mensual',
       valor: <Contador valor={recaudacion} format={(n) => formatARS(n)} />,
       detalle: 'Estimada, cuotas al día',
       icon: Wallet,
-      color: 'from-nodo-green to-nodo-green-dark',
+      tint: 'text-ok bg-ok-soft',
     },
     {
       titulo: 'Cuotas al día',
       valor: <Contador valor={pctAlDia} format={(n) => `${n}%`} />,
       detalle: `${alDia} al día · ${morosos} adeudan`,
       icon: TrendingUp,
-      color: 'from-cyan-500 to-nodo-teal',
+      tint: 'text-lav bg-lav-soft',
     },
     {
       titulo: 'Ocupación de espacios',
       valor: <Contador valor={ocupacion} format={(n) => `${n}%`} />,
       detalle: `${reservasHoy} reservas hoy · ${slotsTotales} turnos`,
       icon: CalendarCheck2,
-      color: 'from-nodo-amber to-orange-500',
+      tint: 'text-warn bg-sun-soft',
     },
   ];
 
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {tarjetas.map((t, i) => (
+      <motion.div
+        variants={stagger}
+        initial="initial"
+        animate="animate"
+        className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
+      >
+        {tarjetas.map((t) => (
           <motion.div
             key={t.titulo}
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.06, duration: 0.3 }}
+            variants={staggerItem}
             whileHover={{ y: -3 }}
-            className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${t.color} p-4 text-white shadow-card`}
+            className={`relative overflow-hidden rounded-2xl p-4 shadow-card ${
+              t.hero ? 'bg-lav-deep text-cream' : 'border border-line bg-cloud text-ink'
+            }`}
           >
-            <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-white/10 blur-2xl" />
+            {t.hero && (
+              <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-sun/20 blur-2xl" />
+            )}
             <div className="flex items-center justify-between">
-              <p className="text-xs font-bold uppercase tracking-wider opacity-80">{t.titulo}</p>
-              <t.icon size={18} className="opacity-90" strokeWidth={2.2} />
+              <p
+                className={`text-[11px] font-bold uppercase tracking-wider ${
+                  t.hero ? 'text-cream/70' : 'text-ink-faint'
+                }`}
+              >
+                {t.titulo}
+              </p>
+              <span
+                className={`flex h-7 w-7 items-center justify-center rounded-lg ${
+                  t.hero ? 'bg-white/10 text-cream' : t.tint
+                }`}
+              >
+                <t.icon size={15} strokeWidth={2.2} />
+              </span>
             </div>
-            <p className="mt-2 text-3xl font-extrabold tracking-tight">{t.valor}</p>
-            <p className="mt-1 text-[11px] font-semibold opacity-80">{t.detalle}</p>
+            <p
+              className={`mt-2 font-display text-[1.75rem] font-bold tracking-tight ${
+                t.hero ? 'text-sun' : 'text-ink'
+              }`}
+            >
+              {t.valor}
+            </p>
+            <p
+              className={`mt-1 text-[11px] font-semibold ${
+                t.hero ? 'text-cream/70' : 'text-ink-soft'
+              }`}
+            >
+              {t.detalle}
+            </p>
           </motion.div>
         ))}
-      </div>
+      </motion.div>
     </section>
   );
 }

@@ -30,7 +30,7 @@ export default function NodoDoc({ item, setItem }) {
 
   return (
     <div>
-      <div className="mb-3 flex flex-wrap gap-1.5 border-b border-nodo-border pb-3">
+      <div className="mb-3 flex flex-wrap gap-1.5 border-b border-line pb-3">
         {botones.map(({ cmd, arg, icon: Icon, titulo }) => (
           <button
             key={cmd + (arg || '')}
@@ -39,7 +39,7 @@ export default function NodoDoc({ item, setItem }) {
             aria-label={titulo}
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => ejecutar(cmd, arg)}
-            className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-200 hover:text-nodo-navy"
+            className="rounded-lg p-2 text-ink-soft transition hover:bg-slate-200 hover:text-ink"
           >
             <Icon size={16} strokeWidth={2.2} />
           </button>
@@ -50,10 +50,10 @@ export default function NodoDoc({ item, setItem }) {
         contentEditable
         suppressContentEditableWarning
         onInput={onInput}
-        className="min-h-[280px] w-full rounded-xl bg-white px-4 py-3 text-sm leading-relaxed text-slate-700 ring-1 ring-nodo-border focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
+        className="min-h-[280px] w-full rounded-xl bg-white px-4 py-3 text-sm leading-relaxed text-ink ring-1 ring-line focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
         data-placeholder="Escribí el documento…"
       />
-      <p className="mt-2 text-[11px] text-slate-400">
+      <p className="mt-2 text-[11px] text-ink-faint">
         Editor NODO Doc · actas, memorandos y comunicados listos para la comunidad.
       </p>
     </div>

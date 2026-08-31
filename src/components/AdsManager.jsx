@@ -43,10 +43,10 @@ export default function AdsManager() {
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6">
       <div className="mb-4">
-        <h2 className="text-lg font-extrabold tracking-tight text-nodo-navy">
+        <h2 className="text-lg font-extrabold tracking-tight text-ink">
           Publicidades de Comercios
         </h2>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-ink-soft">
           Sponsors del barrio con descuentos exclusivos para socios.
         </p>
       </div>
@@ -54,46 +54,46 @@ export default function AdsManager() {
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-5">
         <form
           onSubmit={crear}
-          className="space-y-3 rounded-2xl bg-white p-5 shadow-card ring-1 ring-nodo-border lg:col-span-2"
+          className="space-y-3 rounded-2xl bg-white p-5 shadow-card ring-1 ring-line lg:col-span-2"
         >
-          <h3 className="flex items-center gap-2 font-extrabold text-nodo-navy">
-            <Plus size={16} className="text-nodo-teal" /> Nueva publicidad
+          <h3 className="flex items-center gap-2 font-extrabold text-ink">
+            <Plus size={16} className="text-lav" /> Nueva publicidad
           </h3>
           <input
             value={form.negocio}
             onChange={(e) => setForm({ ...form, negocio: e.target.value })}
             placeholder="Nombre del comercio"
-            className="w-full rounded-xl bg-white px-3 py-2.5 text-sm ring-1 ring-nodo-border focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
+            className="w-full rounded-xl bg-white px-3 py-2.5 text-sm ring-1 ring-line focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
           />
           <div className="grid grid-cols-2 gap-2">
             <input
               value={form.rubro}
               onChange={(e) => setForm({ ...form, rubro: e.target.value })}
               placeholder="Rubro (ej. Alimentos)"
-              className="w-full rounded-xl bg-white px-3 py-2.5 text-sm ring-1 ring-nodo-border focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
+              className="w-full rounded-xl bg-white px-3 py-2.5 text-sm ring-1 ring-line focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
             />
             <input
               value={form.descuento}
               onChange={(e) => setForm({ ...form, descuento: e.target.value })}
               placeholder="10% OFF"
-              className="w-full rounded-xl bg-white px-3 py-2.5 text-sm ring-1 ring-nodo-border focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
+              className="w-full rounded-xl bg-white px-3 py-2.5 text-sm ring-1 ring-line focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
             />
           </div>
           <input
             value={form.barrio}
             onChange={(e) => setForm({ ...form, barrio: e.target.value })}
             placeholder="Barrio"
-            className="w-full rounded-xl bg-white px-3 py-2.5 text-sm ring-1 ring-nodo-border focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
+            className="w-full rounded-xl bg-white px-3 py-2.5 text-sm ring-1 ring-line focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
           />
           <textarea
             value={form.descripcion}
             onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
             placeholder="Descuento y condiciones para socios…"
             rows={2}
-            className="w-full rounded-xl bg-white px-3 py-2.5 text-sm ring-1 ring-nodo-border focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
+            className="w-full rounded-xl bg-white px-3 py-2.5 text-sm ring-1 ring-line focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
           />
           <div>
-            <p className="mb-1.5 text-xs font-bold text-slate-500">Color de marca</p>
+            <p className="mb-1.5 text-xs font-bold text-ink-soft">Color de marca</p>
             <div className="flex gap-2">
               {colores.map((c) => (
                 <button
@@ -107,7 +107,7 @@ export default function AdsManager() {
               ))}
             </div>
           </div>
-          <label className="flex items-center gap-2 text-sm font-semibold text-slate-600">
+          <label className="flex items-center gap-2 text-sm font-semibold text-ink-soft">
             <input
               type="checkbox"
               checked={form.destacada}
@@ -118,7 +118,7 @@ export default function AdsManager() {
           </label>
           <button
             type="submit"
-            className="w-full rounded-xl bg-nodo-navy px-4 py-3 text-sm font-extrabold text-white shadow-card transition hover:bg-nodo-navy-2"
+            className="w-full rounded-xl bg-lav-deep px-4 py-3 text-sm font-extrabold text-white shadow-card transition hover:bg-lav-deep"
           >
             Activar publicidad
           </button>
@@ -133,7 +133,7 @@ export default function AdsManager() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.96 }}
-                className="mb-3 flex items-center gap-3 rounded-2xl bg-white p-4 shadow-card ring-1 ring-nodo-border"
+                className="mb-3 flex items-center gap-3 rounded-2xl bg-white p-4 shadow-card ring-1 ring-line"
               >
                 <div
                   className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-white"
@@ -143,18 +143,18 @@ export default function AdsManager() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <p className="truncate font-extrabold text-nodo-navy">{ad.negocio}</p>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-extrabold text-nodo-green-dark">
+                    <p className="truncate font-extrabold text-ink">{ad.negocio}</p>
+                    <span className="inline-flex items-center gap-1 rounded-full bg-ok-soft px-2 py-0.5 text-[10px] font-extrabold text-ok">
                       <Percent size={10} /> {ad.descuento}
                     </span>
                     {ad.destacada && (
-                      <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-extrabold text-nodo-amber">
+                      <span className="rounded-full bg-sun-soft px-2 py-0.5 text-[10px] font-extrabold text-warn">
                         Destacada
                       </span>
                     )}
                   </div>
-                  <p className="truncate text-xs text-slate-500">{ad.descripcion}</p>
-                  <p className="mt-0.5 flex items-center gap-1 text-[11px] font-bold text-nodo-teal">
+                  <p className="truncate text-xs text-ink-soft">{ad.descripcion}</p>
+                  <p className="mt-0.5 flex items-center gap-1 text-[11px] font-bold text-lav">
                     <MapPin size={10} /> {ad.barrio}
                   </p>
                 </div>
@@ -163,7 +163,7 @@ export default function AdsManager() {
                     removeAd(ad.id);
                     addToast(`Publicidad de ${ad.negocio} retirada.`, 'info');
                   }}
-                  className="rounded-xl p-2.5 text-slate-400 transition hover:bg-red-50 hover:text-nodo-red"
+                  className="rounded-xl p-2.5 text-ink-faint transition hover:bg-crit-soft hover:text-crit"
                   title="Retirar publicidad"
                 >
                   <Trash2 size={16} />

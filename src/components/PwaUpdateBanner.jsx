@@ -17,7 +17,7 @@ export default function PwaUpdateBanner() {
           role="dialog"
           aria-live="polite"
         >
-          <div className="flex items-center gap-3 rounded-2xl bg-nodo-navy p-4 text-white shadow-lift ring-1 ring-white/10">
+          <div className="flex items-center gap-3 rounded-2xl bg-lav-deep p-4 text-white shadow-lift ring-1 ring-white/10">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-nodo-cyan to-nodo-teal">
               <Sparkles size={18} />
             </span>

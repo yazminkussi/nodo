@@ -17,8 +17,8 @@ export default function AdminRoleSwitcher() {
   const addToast = useNodoStore((s) => s.addToast);
 
   return (
-    <div className="rounded-2xl bg-white p-4 shadow-card ring-1 ring-nodo-border">
-      <p className="mb-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
+    <div className="rounded-2xl bg-white p-4 shadow-card ring-1 ring-line">
+      <p className="mb-3 text-[10px] font-extrabold uppercase tracking-widest text-ink-faint">
         Rol de administración activo
       </p>
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
@@ -34,8 +34,8 @@ export default function AdminRoleSwitcher() {
               }}
               className={`relative flex items-start gap-2.5 rounded-xl p-3 text-left transition-colors ${
                 activo
-                  ? 'bg-nodo-navy text-white shadow-card'
-                  : 'bg-nodo-surface text-slate-600 ring-1 ring-inset ring-nodo-border hover:bg-slate-100'
+                  ? 'bg-lav-deep text-white shadow-card'
+                  : 'bg-paper text-ink-soft ring-1 ring-inset ring-line hover:bg-sand'
               }`}
             >
               {activo && (
@@ -46,14 +46,14 @@ export default function AdminRoleSwitcher() {
                 />
               )}
               <span
-                className={`relative flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${activo ? 'bg-nodo-cyan/20 text-nodo-cyan' : 'bg-white text-nodo-teal'}`}
+                className={`relative flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${activo ? 'bg-nodo-cyan/20 text-lav' : 'bg-white text-lav'}`}
               >
                 <Icon size={16} strokeWidth={2.2} />
               </span>
               <span className="relative min-w-0">
                 <span className="block text-sm font-extrabold leading-tight">{r.etiqueta}</span>
                 <span
-                  className={`mt-0.5 block text-[11px] font-semibold leading-snug ${activo ? 'text-slate-300' : 'text-slate-500'}`}
+                  className={`mt-0.5 block text-[11px] font-semibold leading-snug ${activo ? 'text-slate-300' : 'text-ink-soft'}`}
                 >
                   {r.descripcion}
                 </span>
