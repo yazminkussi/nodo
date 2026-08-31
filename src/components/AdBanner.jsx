@@ -18,15 +18,15 @@ export default function AdBanner() {
         </Chip>
       </div>
 
-      <div className="flex snap-x gap-4 overflow-x-auto pb-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {orden.map((ad, i) => (
           <motion.div
             key={ad.id}
-            initial={{ opacity: 0, x: 16 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05, duration: 0.3 }}
             whileHover={{ y: -3 }}
-            className={`relative w-64 shrink-0 snap-start overflow-hidden rounded-2xl bg-cloud p-4 shadow-card transition-shadow hover:shadow-lift ${
+            className={`relative overflow-hidden rounded-2xl bg-cloud p-4 shadow-card transition-shadow hover:shadow-lift ${
               ad.destacada ? 'ring-2 ring-sun/50' : 'ring-1 ring-line'
             }`}
           >
