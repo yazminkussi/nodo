@@ -28,7 +28,11 @@ export default function Toasts() {
             >
               <Icon size={18} className={text} strokeWidth={2.2} />
               <span>{t.mensaje}</span>
-              <button onClick={() => removeToast(t.id)} className="ml-1 text-slate-400 hover:text-slate-600" aria-label="Cerrar">
+              <button
+                onClick={() => removeToast(t.id)}
+                className="ml-1 text-slate-400 hover:text-slate-600"
+                aria-label="Cerrar"
+              >
                 <X size={14} />
               </button>
             </motion.div>

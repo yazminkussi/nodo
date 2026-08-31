@@ -182,7 +182,9 @@ export function CommunityBadge() {
                         {c.tipo} · {c.barrio || c.direccion?.split(', ')[1] || ''} · {c.plan}
                       </span>
                     </span>
-                    {activa && <span className="ml-auto h-2 w-2 shrink-0 rounded-full bg-nodo-green" />}
+                    {activa && (
+                      <span className="ml-auto h-2 w-2 shrink-0 rounded-full bg-nodo-green" />
+                    )}
                   </button>
                 </li>
               );
@@ -202,7 +204,9 @@ export function Header() {
           <NodoLogo />
           <div className="hidden min-w-0 leading-tight sm:block">
             <p className="text-sm font-extrabold tracking-tight text-white">NODO</p>
-            <p className="truncate text-[11px] text-slate-400">Experiencia Digital para Comunidades</p>
+            <p className="truncate text-[11px] text-slate-400">
+              Experiencia Digital para Comunidades
+            </p>
           </div>
         </div>
 
@@ -223,13 +227,18 @@ export function SectionNav({ sections, active, onChange }) {
   return (
     <>
       <div className="sticky top-16 z-30 border-b border-nodo-border bg-nodo-bg/95 backdrop-blur">
-        <nav className="mx-auto flex max-w-7xl items-center gap-1 overflow-x-auto px-4 py-3 sm:px-6" aria-label="Secciones">
+        <nav
+          className="mx-auto flex max-w-7xl items-center gap-1 overflow-x-auto px-4 py-3 sm:px-6"
+          aria-label="Secciones"
+        >
           {sections.map(({ key, label, icon: Icon }) => (
             <button
               key={key}
               onClick={() => onChange(key)}
               className={`flex shrink-0 items-center gap-2 rounded-full px-3.5 py-2 text-sm font-semibold transition-colors ${
-                active === key ? 'bg-nodo-navy text-white shadow-card' : 'text-slate-500 hover:bg-white hover:text-nodo-navy'
+                active === key
+                  ? 'bg-nodo-navy text-white shadow-card'
+                  : 'text-slate-500 hover:bg-white hover:text-nodo-navy'
               }`}
             >
               <Icon size={16} strokeWidth={2.2} />

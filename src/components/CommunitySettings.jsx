@@ -1,6 +1,20 @@
 import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Upload, ImageOff, Trash2, Save, Palette, Info, ShieldCheck, Building2, Sparkles, Clock, Cloud, CloudOff, Loader2 } from 'lucide-react';
+import {
+  Upload,
+  ImageOff,
+  Trash2,
+  Save,
+  Palette,
+  Info,
+  ShieldCheck,
+  Building2,
+  Sparkles,
+  Clock,
+  Cloud,
+  CloudOff,
+  Loader2,
+} from 'lucide-react';
 import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
 import { NodoLogo } from './Navbar';
 import { redimensionarLogo } from '../utils/image';
@@ -14,7 +28,10 @@ import ScheduleManager from './ScheduleManager';
 const especificaciones = [
   { titulo: 'Tamaño recomendado', detalle: '512 × 512 px · relación 1:1 (cuadrada).' },
   { titulo: 'Formatos admitidos', detalle: 'PNG (con fondo transparente, recomendado) o JPG.' },
-  { titulo: 'Cómo se verá', detalle: 'Tu logo se muestra al lado del logo de NODO, a la misma altura.' },
+  {
+    titulo: 'Cómo se verá',
+    detalle: 'Tu logo se muestra al lado del logo de NODO, a la misma altura.',
+  },
   { titulo: 'Peso máximo', detalle: 'Hasta 2 MB. Se reescala automáticamente a 512 px.' },
 ];
 
@@ -228,17 +245,45 @@ function BrandSettings() {
           <h3 className="mb-4 font-extrabold text-nodo-navy">Datos de la institución</h3>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="sm:col-span-2">
-              <Campo label="Nombre de la comunidad" value={form.nombre} onChange={(v) => setForm({ ...form, nombre: v })} />
+              <Campo
+                label="Nombre de la comunidad"
+                value={form.nombre}
+                onChange={(v) => setForm({ ...form, nombre: v })}
+              />
             </div>
-            <Campo label="Tipo de institución" value={form.tipo} onChange={(v) => setForm({ ...form, tipo: v })} />
+            <Campo
+              label="Tipo de institución"
+              value={form.tipo}
+              onChange={(v) => setForm({ ...form, tipo: v })}
+            />
             <Campo label="Plan NODO" value={comunidad.plan} onChange={() => {}} />
-            <Campo label="Dirección" value={form.direccion} onChange={(v) => setForm({ ...form, direccion: v })} />
-            <Campo label="Ciudad" value={form.ciudad} onChange={(v) => setForm({ ...form, ciudad: v })} />
-            <Campo label="Barrio" value={form.barrio || ''} onChange={(v) => setForm({ ...form, barrio: v })} />
+            <Campo
+              label="Dirección"
+              value={form.direccion}
+              onChange={(v) => setForm({ ...form, direccion: v })}
+            />
+            <Campo
+              label="Ciudad"
+              value={form.ciudad}
+              onChange={(v) => setForm({ ...form, ciudad: v })}
+            />
+            <Campo
+              label="Barrio"
+              value={form.barrio || ''}
+              onChange={(v) => setForm({ ...form, barrio: v })}
+            />
             <Campo label="CUIT" value={form.cuit} onChange={(v) => setForm({ ...form, cuit: v })} />
-            <Campo label="Teléfono" value={form.telefono} onChange={(v) => setForm({ ...form, telefono: v })} />
+            <Campo
+              label="Teléfono"
+              value={form.telefono}
+              onChange={(v) => setForm({ ...form, telefono: v })}
+            />
             <div className="sm:col-span-2">
-              <Campo label="Email de contacto" value={form.email} onChange={(v) => setForm({ ...form, email: v })} />
+              <Campo
+                label="Email de contacto"
+                value={form.email}
+                onChange={(v) => setForm({ ...form, email: v })}
+              />
             </div>
           </div>
           <button
@@ -301,7 +346,9 @@ export default function CommunitySettings() {
           }
         >
           {supabaseDisponible ? <Cloud size={13} /> : <CloudOff size={13} />}
-          {supabaseDisponible ? 'Sincronización en vivo activa' : 'Modo demo · sin sincronización en vivo'}
+          {supabaseDisponible
+            ? 'Sincronización en vivo activa'
+            : 'Modo demo · sin sincronización en vivo'}
         </span>
       </div>
 
@@ -311,7 +358,9 @@ export default function CommunitySettings() {
             key={t.key}
             onClick={() => setTab(t.key)}
             className={`flex shrink-0 items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold transition-colors ${
-              tabActual === t.key ? 'bg-nodo-navy text-white shadow-card' : 'bg-white text-slate-500 ring-1 ring-inset ring-nodo-border hover:bg-slate-50'
+              tabActual === t.key
+                ? 'bg-nodo-navy text-white shadow-card'
+                : 'bg-white text-slate-500 ring-1 ring-inset ring-nodo-border hover:bg-slate-50'
             }`}
           >
             <t.icon size={16} /> {t.label}

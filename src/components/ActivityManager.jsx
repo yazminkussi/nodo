@@ -7,9 +7,19 @@ import SpaceIcon, { ICONOS_ESPACIO } from './SpaceIcon';
 import DiasActivosPicker from './DiasActivosPicker';
 
 const categorias = ['Deportivo', 'Cultural', 'Recreativo'];
-const colores = ['#EF4444', '#059669', '#7C3AED', '#1E293B', '#EC4899', '#06B6D4', '#0EA5E9', '#F97316'];
+const colores = [
+  '#EF4444',
+  '#059669',
+  '#7C3AED',
+  '#1E293B',
+  '#EC4899',
+  '#06B6D4',
+  '#0EA5E9',
+  '#F97316',
+];
 
-const campo = 'w-full rounded-xl bg-white px-3 py-2.5 text-sm text-slate-700 ring-1 ring-nodo-border focus:outline-none focus:ring-2 focus:ring-nodo-cyan';
+const campo =
+  'w-full rounded-xl bg-white px-3 py-2.5 text-sm text-slate-700 ring-1 ring-nodo-border focus:outline-none focus:ring-2 focus:ring-nodo-cyan';
 const etiqueta = 'mb-1 block text-xs font-bold text-slate-500';
 
 export default function ActivityManager() {
@@ -32,7 +42,8 @@ export default function ActivityManager() {
   const [form, setForm] = useState(null);
   const [abierta, setAbierta] = useState(null);
 
-  const inscriptos = (actividadId) => inscripciones.filter((i) => i.actividadId === actividadId && i.estado === 'activa');
+  const inscriptos = (actividadId) =>
+    inscripciones.filter((i) => i.actividadId === actividadId && i.estado === 'activa');
 
   const abrirNuevo = () => {
     setForm({
@@ -63,7 +74,12 @@ export default function ActivityManager() {
       addToast('Completá nombre e instructor.', 'error');
       return;
     }
-    const payload = { ...form, nombre: form.nombre.trim(), instructor: form.instructor.trim(), espacioId: form.espacioId || undefined };
+    const payload = {
+      ...form,
+      nombre: form.nombre.trim(),
+      instructor: form.instructor.trim(),
+      espacioId: form.espacioId || undefined,
+    };
     if (modal === 'nuevo') {
       addActividad(payload);
       addToast(`Actividad ${payload.nombre} creada.`, 'success');
@@ -82,7 +98,9 @@ export default function ActivityManager() {
           <p className="text-xs text-slate-500">
             Alta, edición y cupos de actividades con inscripción de socios.
             {categoriasPermitidas && (
-              <span className="ml-1 font-bold text-nodo-teal">Solo {categoriasPermitidas.join(' y ')}</span>
+              <span className="ml-1 font-bold text-nodo-teal">
+                Solo {categoriasPermitidas.join(' y ')}
+              </span>
             )}
           </p>
         </div>
@@ -112,7 +130,10 @@ export default function ActivityManager() {
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2.5">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl text-white shadow-card" style={{ background: act.color }}>
+                    <div
+                      className="flex h-10 w-10 items-center justify-center rounded-xl text-white shadow-card"
+                      style={{ background: act.color }}
+                    >
                       <SpaceIcon icono={act.icono} className="h-5 w-5" />
                     </div>
                     <div>
@@ -125,10 +146,15 @@ export default function ActivityManager() {
                   <button
                     onClick={() => {
                       updateActividad(act.id, { activa: !act.activa });
-                      addToast(act.activa ? `${act.nombre} pausada.` : `${act.nombre} reactivada.`, 'info');
+                      addToast(
+                        act.activa ? `${act.nombre} pausada.` : `${act.nombre} reactivada.`,
+                        'info'
+                      );
                     }}
                     className={`flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-extrabold ring-1 ring-inset transition ${
-                      act.activa ? 'bg-emerald-50 text-nodo-green-dark ring-emerald-200' : 'bg-slate-100 text-slate-400 ring-nodo-border'
+                      act.activa
+                        ? 'bg-emerald-50 text-nodo-green-dark ring-emerald-200'
+                        : 'bg-slate-100 text-slate-400 ring-nodo-border'
                     }`}
                     title="Alternar actividad"
                   >
@@ -146,7 +172,9 @@ export default function ActivityManager() {
                   <p className="flex items-center gap-1.5">
                     <Users size={13} className="text-nodo-cyan" />
                     {cant} / {act.cupoMaximo} inscriptos
-                    <span className="font-extrabold text-nodo-teal">· {formatARS(act.costoMensual)}/mes</span>
+                    <span className="font-extrabold text-nodo-teal">
+                      · {formatARS(act.costoMensual)}/mes
+                    </span>
                   </p>
                 </div>
 
@@ -163,7 +191,10 @@ export default function ActivityManager() {
                     className="flex flex-1 items-center justify-center gap-1 rounded-xl bg-nodo-surface px-2 py-2 text-xs font-bold text-nodo-navy ring-1 ring-inset ring-nodo-border transition hover:bg-cyan-50"
                   >
                     <UserRound size={13} /> Socios
-                    <ChevronDown size={13} className={`transition-transform ${abierta === act.id ? 'rotate-180' : ''}`} />
+                    <ChevronDown
+                      size={13}
+                      className={`transition-transform ${abierta === act.id ? 'rotate-180' : ''}`}
+                    />
                   </button>
                   <button
                     onClick={() => abrirEditar(act)}
@@ -195,7 +226,10 @@ export default function ActivityManager() {
                           <li className="text-xs text-slate-400">Sin inscriptos todavía.</li>
                         )}
                         {inscriptos(act.id).map((ins) => (
-                          <li key={ins.id} className="flex items-center justify-between gap-2 text-xs">
+                          <li
+                            key={ins.id}
+                            className="flex items-center justify-between gap-2 text-xs"
+                          >
                             <span className="font-semibold text-slate-600">{ins.socioNombre}</span>
                             <button
                               onClick={() => {
@@ -240,7 +274,11 @@ export default function ActivityManager() {
                 <h3 className="font-extrabold text-nodo-navy">
                   {modal === 'nuevo' ? 'Nueva actividad' : `Editar · ${form.nombre}`}
                 </h3>
-                <button onClick={() => setModal(null)} className="rounded-full p-2 text-slate-400 hover:bg-slate-100" aria-label="Cerrar">
+                <button
+                  onClick={() => setModal(null)}
+                  className="rounded-full p-2 text-slate-400 hover:bg-slate-100"
+                  aria-label="Cerrar"
+                >
                   <X size={18} />
                 </button>
               </div>
@@ -248,39 +286,85 @@ export default function ActivityManager() {
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div className="sm:col-span-2">
                   <label className={etiqueta}>Nombre</label>
-                  <input value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} className={campo} placeholder="Ej. Folclore y Danzas" />
+                  <input
+                    value={form.nombre}
+                    onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+                    className={campo}
+                    placeholder="Ej. Folclore y Danzas"
+                  />
                 </div>
                 <div className="sm:col-span-2">
                   <label className={etiqueta}>Descripción</label>
-                  <textarea value={form.descripcion} onChange={(e) => setForm({ ...form, descripcion: e.target.value })} rows={2} className={campo} />
+                  <textarea
+                    value={form.descripcion}
+                    onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
+                    rows={2}
+                    className={campo}
+                  />
                 </div>
                 <div>
                   <label className={etiqueta}>Instructor / docente</label>
-                  <input value={form.instructor} onChange={(e) => setForm({ ...form, instructor: e.target.value })} className={campo} />
+                  <input
+                    value={form.instructor}
+                    onChange={(e) => setForm({ ...form, instructor: e.target.value })}
+                    className={campo}
+                  />
                 </div>
                 <div>
                   <label className={etiqueta}>Categoría</label>
-                  <select value={form.categoria} onChange={(e) => setForm({ ...form, categoria: e.target.value })} className={campo}>
+                  <select
+                    value={form.categoria}
+                    onChange={(e) => setForm({ ...form, categoria: e.target.value })}
+                    className={campo}
+                  >
                     {categorias.map((c) => (
-                      <option key={c} value={c} disabled={categoriasPermitidas?.length && !categoriasPermitidas.includes(c)}>{c}</option>
+                      <option
+                        key={c}
+                        value={c}
+                        disabled={categoriasPermitidas?.length && !categoriasPermitidas.includes(c)}
+                      >
+                        {c}
+                      </option>
                     ))}
                   </select>
                 </div>
                 <div>
                   <label className={etiqueta}>Cupo máximo</label>
-                  <input type="number" min="1" value={form.cupoMaximo} onChange={(e) => setForm({ ...form, cupoMaximo: Number(e.target.value) })} className={campo} />
+                  <input
+                    type="number"
+                    min="1"
+                    value={form.cupoMaximo}
+                    onChange={(e) => setForm({ ...form, cupoMaximo: Number(e.target.value) })}
+                    className={campo}
+                  />
                 </div>
                 <div>
                   <label className={etiqueta}>Costo mensual ($)</label>
-                  <input type="number" min="0" step="500" value={form.costoMensual} onChange={(e) => setForm({ ...form, costoMensual: Number(e.target.value) })} className={campo} />
+                  <input
+                    type="number"
+                    min="0"
+                    step="500"
+                    value={form.costoMensual}
+                    onChange={(e) => setForm({ ...form, costoMensual: Number(e.target.value) })}
+                    className={campo}
+                  />
                 </div>
                 <div>
                   <label className={etiqueta}>Hora de inicio</label>
-                  <input type="time" value={form.inicio} onChange={(e) => setForm({ ...form, inicio: e.target.value })} className={campo} />
+                  <input
+                    type="time"
+                    value={form.inicio}
+                    onChange={(e) => setForm({ ...form, inicio: e.target.value })}
+                    className={campo}
+                  />
                 </div>
                 <div>
                   <label className={etiqueta}>Duración (hs)</label>
-                  <select value={form.duracion} onChange={(e) => setForm({ ...form, duracion: Number(e.target.value) })} className={campo}>
+                  <select
+                    value={form.duracion}
+                    onChange={(e) => setForm({ ...form, duracion: Number(e.target.value) })}
+                    className={campo}
+                  >
                     <option value={1}>1 hora</option>
                     <option value={1.5}>1 h 30</option>
                     <option value={2}>2 horas</option>
@@ -289,14 +373,23 @@ export default function ActivityManager() {
                 </div>
                 <div className="sm:col-span-2">
                   <label className={etiqueta}>Días de cursada</label>
-                  <DiasActivosPicker dias={form.dias} onChange={(dias) => setForm({ ...form, dias })} />
+                  <DiasActivosPicker
+                    dias={form.dias}
+                    onChange={(dias) => setForm({ ...form, dias })}
+                  />
                 </div>
                 <div className="sm:col-span-2">
                   <label className={etiqueta}>Espacio donde se dicta (opcional)</label>
-                  <select value={form.espacioId ?? ''} onChange={(e) => setForm({ ...form, espacioId: e.target.value })} className={campo}>
+                  <select
+                    value={form.espacioId ?? ''}
+                    onChange={(e) => setForm({ ...form, espacioId: e.target.value })}
+                    className={campo}
+                  >
                     <option value="">Sin espacio asignado</option>
                     {espacios.map((e) => (
-                      <option key={e.id} value={e.id}>{e.nombre}</option>
+                      <option key={e.id} value={e.id}>
+                        {e.nombre}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -335,7 +428,10 @@ export default function ActivityManager() {
                 ))}
               </div>
 
-              <button onClick={guardar} className="w-full rounded-xl bg-nodo-green px-4 py-3 text-sm font-extrabold text-white shadow-card transition hover:bg-nodo-green-dark">
+              <button
+                onClick={guardar}
+                className="w-full rounded-xl bg-nodo-green px-4 py-3 text-sm font-extrabold text-white shadow-card transition hover:bg-nodo-green-dark"
+              >
                 {modal === 'nuevo' ? 'Crear actividad' : 'Guardar cambios'}
               </button>
             </motion.div>

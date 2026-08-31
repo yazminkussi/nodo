@@ -12,14 +12,10 @@ import {
 } from 'lucide-react';
 import { formatARS } from '../../data/mockData';
 
-const iniciales = (a, b) => `${String(a || '?').charAt(0)}${String(b || '?').charAt(0)}`.toUpperCase();
+const iniciales = (a, b) =>
+  `${String(a || '?').charAt(0)}${String(b || '?').charAt(0)}`.toUpperCase();
 
-export default function AccessResultModal({
-  resultado,
-  onClose,
-  onRegistrarPago,
-  onOverride,
-}) {
+export default function AccessResultModal({ resultado, onClose, onRegistrarPago, onOverride }) {
   if (!resultado) return null;
 
   const esPermitido = resultado.tipo === 'permitido';
@@ -75,7 +71,11 @@ export default function AccessResultModal({
 
           <div className="px-6 pb-6 text-center text-white">
             <p className="text-3xl font-extrabold tracking-tight">
-              {esPermitido ? 'Acceso Permitido' : esDenegado ? 'Acceso Denegado' : 'Código Inválido'}
+              {esPermitido
+                ? 'Acceso Permitido'
+                : esDenegado
+                  ? 'Acceso Denegado'
+                  : 'Código Inválido'}
             </p>
             <p className="mt-1 text-sm font-semibold text-white/80">
               {esPermitido
@@ -93,7 +93,8 @@ export default function AccessResultModal({
 
             {resultado.comunidadNombre && (
               <p className="mt-2 text-xs text-white/70">
-                Institución del QR: <span className="font-bold text-white">{resultado.comunidadNombre}</span>
+                Institución del QR:{' '}
+                <span className="font-bold text-white">{resultado.comunidadNombre}</span>
               </p>
             )}
           </div>
@@ -137,7 +138,10 @@ export default function AccessResultModal({
                     </p>
                   </div>
                   <p className="mt-1 text-xs text-slate-600">
-                    Debe abonar <span className="font-extrabold text-nodo-red">{formatARS(resultado.monto)}</span>{' '}
+                    Debe abonar{' '}
+                    <span className="font-extrabold text-nodo-red">
+                      {formatARS(resultado.monto)}
+                    </span>{' '}
                     (cuota mensual). Último pago: {resultado.socio.ultimaCuota}.
                   </p>
                 </div>

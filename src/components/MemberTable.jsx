@@ -35,7 +35,9 @@ export default function MemberTable() {
         m.numero.includes(q) ||
         m.localidad.toLowerCase().includes(q);
       const coincideEstado =
-        filtro === 'todos' || (filtro === 'alDia' && m.cuotaAlDia) || (filtro === 'morosos' && !m.cuotaAlDia);
+        filtro === 'todos' ||
+        (filtro === 'alDia' && m.cuotaAlDia) ||
+        (filtro === 'morosos' && !m.cuotaAlDia);
       return coincideTexto && coincideEstado;
     });
   }, [members, busqueda, filtro]);
@@ -63,7 +65,9 @@ export default function MemberTable() {
     <section className="mx-auto max-w-7xl px-4 sm:px-6">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-extrabold tracking-tight text-nodo-navy">Gestión de Socios</h2>
+          <h2 className="text-lg font-extrabold tracking-tight text-nodo-navy">
+            Gestión de Socios
+          </h2>
           <p className="text-xs text-slate-500">
             {alDia} al día · {morosos} adeudan · {members.length} en total
           </p>
@@ -78,7 +82,10 @@ export default function MemberTable() {
 
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="relative flex-1">
-          <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search
+            size={16}
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+          />
           <input
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
@@ -96,7 +103,9 @@ export default function MemberTable() {
               key={f.key}
               onClick={() => setFiltro(f.key)}
               className={`rounded-full px-3.5 py-2 text-xs font-bold transition-colors ${
-                filtro === f.key ? 'bg-nodo-navy text-white shadow-card' : 'bg-white text-slate-500 ring-1 ring-inset ring-nodo-border hover:bg-slate-50'
+                filtro === f.key
+                  ? 'bg-nodo-navy text-white shadow-card'
+                  : 'bg-white text-slate-500 ring-1 ring-inset ring-nodo-border hover:bg-slate-50'
               }`}
             >
               {f.label}
@@ -132,19 +141,30 @@ export default function MemberTable() {
                   >
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-extrabold text-white" style={{ background: m.color }}>
+                        <div
+                          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-extrabold text-white"
+                          style={{ background: m.color }}
+                        >
                           {iniciales(m.nombre, m.apellido)}
                         </div>
                         <div>
-                          <p className="font-bold text-nodo-navy">{m.nombre} {m.apellido}</p>
+                          <p className="font-bold text-nodo-navy">
+                            {m.nombre} {m.apellido}
+                          </p>
                           <p className="text-[11px] text-slate-400">{m.localidad}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 font-mono text-xs font-bold text-slate-500">N° {m.numero}</td>
-                    <td className="px-4 py-3 text-xs font-semibold text-slate-600">{m.categoria}</td>
+                    <td className="px-4 py-3 font-mono text-xs font-bold text-slate-500">
+                      N° {m.numero}
+                    </td>
+                    <td className="px-4 py-3 text-xs font-semibold text-slate-600">
+                      {m.categoria}
+                    </td>
                     <td className="px-4 py-3 text-xs text-slate-500">{m.ultimaCuota}</td>
-                    <td className="px-4 py-3 text-xs font-bold text-slate-600">{formatARS(m.plan)}</td>
+                    <td className="px-4 py-3 text-xs font-bold text-slate-600">
+                      {formatARS(m.plan)}
+                    </td>
                     <td className="px-4 py-3">
                       <StatusBadge estado={m.cuotaAlDia ? 'alDia' : 'moroso'} />
                     </td>
@@ -182,7 +202,9 @@ export default function MemberTable() {
           </table>
         </div>
         {filtrados.length === 0 && (
-          <p className="px-4 py-10 text-center text-sm text-slate-400">No se encontraron socios con esos criterios.</p>
+          <p className="px-4 py-10 text-center text-sm text-slate-400">
+            No se encontraron socios con esos criterios.
+          </p>
         )}
       </div>
     </section>

@@ -1,6 +1,15 @@
 import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { History, CheckCircle2, XCircle, AlertTriangle, QrCode, Keyboard, Trash2, Clock } from 'lucide-react';
+import {
+  History,
+  CheckCircle2,
+  XCircle,
+  AlertTriangle,
+  QrCode,
+  Keyboard,
+  Trash2,
+  Clock,
+} from 'lucide-react';
 import { useNodoStore } from '../../store/useNodoStore';
 
 const badgeResultado = {
@@ -44,9 +53,11 @@ export function AccessLogTable() {
 
   const formatearFecha = (iso) => {
     const d = new Date(iso);
-    return d.toLocaleDateString('es-AR', { day: '2-digit', month: 'short' }) +
+    return (
+      d.toLocaleDateString('es-AR', { day: '2-digit', month: 'short' }) +
       ' · ' +
-      d.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+      d.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
+    );
   };
 
   return (
@@ -57,7 +68,9 @@ export function AccessLogTable() {
             <History size={17} />
           </span>
           <div>
-            <h3 className="text-sm font-extrabold tracking-tight text-nodo-navy">Historial de Ingresos</h3>
+            <h3 className="text-sm font-extrabold tracking-tight text-nodo-navy">
+              Historial de Ingresos
+            </h3>
             <p className="text-[11px] font-semibold text-slate-400">
               {registros.length} eventos registrados en total
             </p>
@@ -144,13 +157,17 @@ export function AccessLogTable() {
                       </td>
                       <td className="px-4 py-3 font-bold text-nodo-navy">
                         {r.nombre || '—'}
-                        <p className="text-[10px] font-semibold text-slate-400">{r.estadoAlIngreso}</p>
+                        <p className="text-[10px] font-semibold text-slate-400">
+                          {r.estadoAlIngreso}
+                        </p>
                       </td>
                       <td className="px-4 py-3 font-mono text-xs font-bold text-slate-500">
                         {r.numeroSocio || r.numero || '—'}
                       </td>
                       <td className="px-4 py-3">
-                        <span className="text-xs font-semibold text-slate-600">{r.estadoAlIngreso}</span>
+                        <span className="text-xs font-semibold text-slate-600">
+                          {r.estadoAlIngreso}
+                        </span>
                       </td>
                       <td className="px-4 py-3">
                         <span
@@ -171,7 +188,9 @@ export function AccessLogTable() {
                           {r.metodo === 'manual' ? 'Manual' : 'QR'}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-xs font-semibold text-slate-500">{r.escaneadoPor || '—'}</td>
+                      <td className="px-4 py-3 text-xs font-semibold text-slate-500">
+                        {r.escaneadoPor || '—'}
+                      </td>
                     </motion.tr>
                   );
                 })}

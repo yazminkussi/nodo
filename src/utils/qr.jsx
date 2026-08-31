@@ -53,7 +53,14 @@ function dibujarConLogo(canvas, img) {
   ctx.restore();
 }
 
-function QrCanvas({ value, size = 168, color = '#0F172A', bg = '#FFFFFF', logo = LOGO, className = '' }) {
+function QrCanvas({
+  value,
+  size = 168,
+  color = '#0F172A',
+  bg = '#FFFFFF',
+  logo = LOGO,
+  className = '',
+}) {
   const ref = useRef(null);
 
   useEffect(() => {

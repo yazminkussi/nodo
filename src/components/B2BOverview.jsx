@@ -19,8 +19,9 @@ export default function B2BOverview() {
           Unificá WhatsApp, Excel y carpetas en una sola plataforma digital.
         </h2>
         <p className="mt-2 max-w-xl text-sm text-slate-300">
-          NODO es la experiencia digital integral para clubes, centros culturales y movimientos juveniles. Carnet con QR,
-          cuotas al día, reservas y comunidad, todo en el bolsillo de cada socio.
+          NODO es la experiencia digital integral para clubes, centros culturales y movimientos
+          juveniles. Carnet con QR, cuotas al día, reservas y comunidad, todo en el bolsillo de cada
+          socio.
         </p>
 
         <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -47,7 +48,9 @@ export default function B2BOverview() {
       </div>
 
       <div>
-        <h3 className="mb-5 text-center text-xl font-extrabold tracking-tight text-nodo-navy">Planes comerciales</h3>
+        <h3 className="mb-5 text-center text-xl font-extrabold tracking-tight text-nodo-navy">
+          Planes comerciales
+        </h3>
         <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
           {planesB2B.map((plan, i) => (
             <motion.div
@@ -68,21 +71,37 @@ export default function B2BOverview() {
                 </span>
               )}
               <h4 className="text-lg font-extrabold">{plan.nombre}</h4>
-              <p className={`text-xs font-semibold ${plan.destacado ? 'text-slate-400' : 'text-slate-500'}`}>{plan.socios}</p>
+              <p
+                className={`text-xs font-semibold ${plan.destacado ? 'text-slate-400' : 'text-slate-500'}`}
+              >
+                {plan.socios}
+              </p>
               <p className="mt-4 text-3xl font-extrabold tracking-tight">
                 {formatARS(plan.precioMensual)}
-                <span className={`ml-1 text-xs font-medium ${plan.destacado ? 'text-slate-400' : 'text-slate-400'}`}>/ mes</span>
+                <span
+                  className={`ml-1 text-xs font-medium ${plan.destacado ? 'text-slate-400' : 'text-slate-400'}`}
+                >
+                  / mes
+                </span>
               </p>
               <ul className="mt-5 space-y-2.5">
                 {plan.features.map((f) => (
                   <li key={f} className="flex items-start gap-2 text-sm">
-                    <Check size={16} strokeWidth={3} className={`mt-0.5 shrink-0 ${plan.destacado ? 'text-nodo-green' : 'text-nodo-teal'}`} />
-                    <span className={plan.destacado ? 'text-slate-200' : 'text-slate-600'}>{f}</span>
+                    <Check
+                      size={16}
+                      strokeWidth={3}
+                      className={`mt-0.5 shrink-0 ${plan.destacado ? 'text-nodo-green' : 'text-nodo-teal'}`}
+                    />
+                    <span className={plan.destacado ? 'text-slate-200' : 'text-slate-600'}>
+                      {f}
+                    </span>
                   </li>
                 ))}
               </ul>
               <button
-                onClick={() => addToast(`Consulta recibida para el ${plan.nombre}. ¡Nos contactamos!`, 'success')}
+                onClick={() =>
+                  addToast(`Consulta recibida para el ${plan.nombre}. ¡Nos contactamos!`, 'success')
+                }
                 className={`mt-6 flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-extrabold transition ${
                   plan.destacado
                     ? 'bg-nodo-cyan text-white hover:bg-cyan-600'
@@ -95,7 +114,8 @@ export default function B2BOverview() {
           ))}
         </div>
         <p className="mt-5 text-center text-xs text-slate-400">
-          Precios expresados en pesos argentinos. {comunidad.ciudad} · IVA incluido · Sin permanencia.
+          Precios expresados en pesos argentinos. {comunidad.ciudad} · IVA incluido · Sin
+          permanencia.
         </p>
       </div>
     </section>

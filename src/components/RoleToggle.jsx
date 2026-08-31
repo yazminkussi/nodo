@@ -12,7 +12,11 @@ export default function RoleToggle() {
   const setRole = useNodoStore((s) => s.setRole);
 
   return (
-    <div className="relative inline-flex items-center gap-1 rounded-full bg-nodo-navy p-1 shadow-card" role="tablist" aria-label="Cambiar de vista">
+    <div
+      className="relative inline-flex items-center gap-1 rounded-full bg-nodo-navy p-1 shadow-card"
+      role="tablist"
+      aria-label="Cambiar de vista"
+    >
       {opciones.map(({ key, label, icon: Icon }) => {
         const activo = role === key;
         return (

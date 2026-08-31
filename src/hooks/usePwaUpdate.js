@@ -55,7 +55,9 @@ export function usePwaUpdate() {
       .catch((err) => console.warn('NODO: no se pudo registrar el SW.', err));
 
     return () => {
-      navigator.serviceWorker.removeEventListener('controllerchange', () => window.location.reload());
+      navigator.serviceWorker.removeEventListener('controllerchange', () =>
+        window.location.reload()
+      );
     };
   }, []);
 

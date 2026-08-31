@@ -149,8 +149,18 @@ export const nextDays = (n: number): string[] =>
   Array.from({ length: n }, (_, i) => toISODate(addDays(new Date(), i)));
 
 export const HORARIOS = [
-  '09:00', '10:00', '11:00', '12:00', '13:00', '14:00',
-  '15:00', '16:00', '17:00', '18:00', '19:00', '20:00',
+  '09:00',
+  '10:00',
+  '11:00',
+  '12:00',
+  '13:00',
+  '14:00',
+  '15:00',
+  '16:00',
+  '17:00',
+  '18:00',
+  '19:00',
+  '20:00',
 ];
 
 export const nextHour = (): string => {
@@ -212,7 +222,11 @@ export const duracionLabel = (hs: number): string => {
 };
 
 export const formatARS = (n: number): string =>
-  new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(n);
+  new Intl.NumberFormat('es-AR', {
+    style: 'currency',
+    currency: 'ARS',
+    maximumFractionDigits: 0,
+  }).format(n);
 
 /* Devuelve el nro de meses adeudados aproximados a partir de la última cuota
    pagada ("DD/MM/AAAA"). Mínimo 1 cuando la cuota no está al día. */
@@ -223,13 +237,18 @@ export const mesesAdeudados = (socio: { cuotaAlDia: boolean; ultimaCuota: string
   const [dd, mm, yyyy] = partes.map(Number);
   const ultima = new Date(yyyy, mm - 1, dd);
   const hoy = new Date();
-  let meses = (hoy.getFullYear() - ultima.getFullYear()) * 12 + (hoy.getMonth() - ultima.getMonth());
+  let meses =
+    (hoy.getFullYear() - ultima.getFullYear()) * 12 + (hoy.getMonth() - ultima.getMonth());
   return Math.max(1, meses);
 };
 
 export const formatFechaLarga = (iso: string): string => {
   const [y, m, d] = iso.split('-').map(Number);
-  return new Date(y, m - 1, d).toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
+  return new Date(y, m - 1, d).toLocaleDateString('es-AR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  });
 };
 
 export const formatFechaCorta = (iso: string): string => {
@@ -313,7 +332,16 @@ export const ROLES_ADMIN = {
     etiqueta: 'SuperAdmin / Tesorero',
     descripcion: 'Facturación, métricas y personalización de la comunidad.',
     icono: 'shield',
-    secciones: ['resumen', 'acceso', 'socios', 'reservas', 'publicidades', 'planes', 'drive', 'personalizacion'],
+    secciones: [
+      'resumen',
+      'acceso',
+      'socios',
+      'reservas',
+      'publicidades',
+      'planes',
+      'drive',
+      'personalizacion',
+    ],
     categorias: null,
   },
   deportes: {
@@ -752,14 +780,70 @@ export const actividadesIniciales: Actividad[] = [
 ];
 
 export const inscripcionesIniciales: Inscripcion[] = [
-  { id: 1, actividadId: 1, socioId: 6, socioNombre: 'Sofía Almeida', fecha: todayISO(), estado: 'activa' },
-  { id: 2, actividadId: 1, socioId: 10, socioNombre: 'Carla Ruiz', fecha: todayISO(), estado: 'activa' },
-  { id: 3, actividadId: 2, socioId: 2, socioNombre: 'Julieta Méndez', fecha: todayISO(), estado: 'activa' },
-  { id: 4, actividadId: 2, socioId: 8, socioNombre: 'Lucía Benítez', fecha: todayISO(), estado: 'activa' },
-  { id: 5, actividadId: 3, socioId: 12, socioNombre: 'Nadia Quiroga', fecha: todayISO(), estado: 'activa' },
-  { id: 6, actividadId: 4, socioId: 3, socioNombre: 'Roberto Fernández', fecha: todayISO(), estado: 'activa' },
-  { id: 7, actividadId: 4, socioId: 1, socioNombre: 'Carlos Kussi', fecha: todayISO(), estado: 'activa' },
-  { id: 8, actividadId: 6, socioId: 10, socioNombre: 'Carla Ruiz', fecha: todayISO(), estado: 'activa' },
+  {
+    id: 1,
+    actividadId: 1,
+    socioId: 6,
+    socioNombre: 'Sofía Almeida',
+    fecha: todayISO(),
+    estado: 'activa',
+  },
+  {
+    id: 2,
+    actividadId: 1,
+    socioId: 10,
+    socioNombre: 'Carla Ruiz',
+    fecha: todayISO(),
+    estado: 'activa',
+  },
+  {
+    id: 3,
+    actividadId: 2,
+    socioId: 2,
+    socioNombre: 'Julieta Méndez',
+    fecha: todayISO(),
+    estado: 'activa',
+  },
+  {
+    id: 4,
+    actividadId: 2,
+    socioId: 8,
+    socioNombre: 'Lucía Benítez',
+    fecha: todayISO(),
+    estado: 'activa',
+  },
+  {
+    id: 5,
+    actividadId: 3,
+    socioId: 12,
+    socioNombre: 'Nadia Quiroga',
+    fecha: todayISO(),
+    estado: 'activa',
+  },
+  {
+    id: 6,
+    actividadId: 4,
+    socioId: 3,
+    socioNombre: 'Roberto Fernández',
+    fecha: todayISO(),
+    estado: 'activa',
+  },
+  {
+    id: 7,
+    actividadId: 4,
+    socioId: 1,
+    socioNombre: 'Carlos Kussi',
+    fecha: todayISO(),
+    estado: 'activa',
+  },
+  {
+    id: 8,
+    actividadId: 6,
+    socioId: 10,
+    socioNombre: 'Carla Ruiz',
+    fecha: todayISO(),
+    estado: 'activa',
+  },
 ];
 
 /* ---------------------------------- reservas ---------------------------------- */
@@ -767,18 +851,130 @@ export const inscripcionesIniciales: Inscripcion[] = [
 const d0 = todayISO();
 
 export const reservasIniciales: Reserva[] = [
-  { id: 1, espacioId: 1, socioId: 4, socioNombre: 'Mariana López', fecha: d0, inicio: '18:00', fin: '19:00', estado: 'confirmada', concepto: 'Partido equipo A vs B' },
-  { id: 2, espacioId: 1, socioId: 5, socioNombre: 'Diego Correa', fecha: d0, inicio: '20:00', fin: '21:00', estado: 'confirmada' },
-  { id: 3, espacioId: 2, socioId: 2, socioNombre: 'Julieta Méndez', fecha: d0, inicio: '10:00', fin: '12:00', estado: 'confirmada', concepto: 'Taller semanal' },
-  { id: 4, espacioId: 2, socioId: 8, socioNombre: 'Lucía Benítez', fecha: toISODate(addDays(new Date(), 1)), inicio: '15:00', fin: '17:00', estado: 'confirmada' },
-  { id: 5, espacioId: 3, socioId: 6, socioNombre: 'Sofía Almeida', fecha: d0, inicio: '09:00', fin: '10:00', estado: 'confirmada' },
-  { id: 6, espacioId: 3, socioId: 10, socioNombre: 'Carla Ruiz', fecha: d0, inicio: '17:00', fin: '18:00', estado: 'confirmada' },
-  { id: 7, espacioId: 4, socioId: 1, socioNombre: 'Carlos Kussi', fecha: toISODate(addDays(new Date(), 2)), inicio: '19:00', fin: '22:00', estado: 'confirmada', concepto: 'Asamblea general' },
-  { id: 8, espacioId: 5, socioId: 12, socioNombre: 'Nadia Quiroga', fecha: d0, inicio: '19:00', fin: '21:00', estado: 'confirmada' },
-  { id: 9, espacioId: 1, socioId: 3, socioNombre: 'Roberto Fernández', fecha: toISODate(addDays(new Date(), 1)), inicio: '19:00', fin: '20:00', estado: 'confirmada' },
-  { id: 10, espacioId: 4, socioId: 2, socioNombre: 'Julieta Méndez', fecha: toISODate(addDays(new Date(), 1)), inicio: '11:00', fin: '13:00', estado: 'confirmada', concepto: 'Feria de comercios' },
-  { id: 11, espacioId: 3, socioId: 7, socioNombre: 'Jorge Paredes', fecha: toISODate(addDays(new Date(), 1)), inicio: '18:00', fin: '19:00', estado: 'confirmada' },
-  { id: 12, espacioId: 2, socioId: 4, socioNombre: 'Mariana López', fecha: toISODate(addDays(new Date(), 2)), inicio: '16:00', fin: '18:00', estado: 'confirmada' },
+  {
+    id: 1,
+    espacioId: 1,
+    socioId: 4,
+    socioNombre: 'Mariana López',
+    fecha: d0,
+    inicio: '18:00',
+    fin: '19:00',
+    estado: 'confirmada',
+    concepto: 'Partido equipo A vs B',
+  },
+  {
+    id: 2,
+    espacioId: 1,
+    socioId: 5,
+    socioNombre: 'Diego Correa',
+    fecha: d0,
+    inicio: '20:00',
+    fin: '21:00',
+    estado: 'confirmada',
+  },
+  {
+    id: 3,
+    espacioId: 2,
+    socioId: 2,
+    socioNombre: 'Julieta Méndez',
+    fecha: d0,
+    inicio: '10:00',
+    fin: '12:00',
+    estado: 'confirmada',
+    concepto: 'Taller semanal',
+  },
+  {
+    id: 4,
+    espacioId: 2,
+    socioId: 8,
+    socioNombre: 'Lucía Benítez',
+    fecha: toISODate(addDays(new Date(), 1)),
+    inicio: '15:00',
+    fin: '17:00',
+    estado: 'confirmada',
+  },
+  {
+    id: 5,
+    espacioId: 3,
+    socioId: 6,
+    socioNombre: 'Sofía Almeida',
+    fecha: d0,
+    inicio: '09:00',
+    fin: '10:00',
+    estado: 'confirmada',
+  },
+  {
+    id: 6,
+    espacioId: 3,
+    socioId: 10,
+    socioNombre: 'Carla Ruiz',
+    fecha: d0,
+    inicio: '17:00',
+    fin: '18:00',
+    estado: 'confirmada',
+  },
+  {
+    id: 7,
+    espacioId: 4,
+    socioId: 1,
+    socioNombre: 'Carlos Kussi',
+    fecha: toISODate(addDays(new Date(), 2)),
+    inicio: '19:00',
+    fin: '22:00',
+    estado: 'confirmada',
+    concepto: 'Asamblea general',
+  },
+  {
+    id: 8,
+    espacioId: 5,
+    socioId: 12,
+    socioNombre: 'Nadia Quiroga',
+    fecha: d0,
+    inicio: '19:00',
+    fin: '21:00',
+    estado: 'confirmada',
+  },
+  {
+    id: 9,
+    espacioId: 1,
+    socioId: 3,
+    socioNombre: 'Roberto Fernández',
+    fecha: toISODate(addDays(new Date(), 1)),
+    inicio: '19:00',
+    fin: '20:00',
+    estado: 'confirmada',
+  },
+  {
+    id: 10,
+    espacioId: 4,
+    socioId: 2,
+    socioNombre: 'Julieta Méndez',
+    fecha: toISODate(addDays(new Date(), 1)),
+    inicio: '11:00',
+    fin: '13:00',
+    estado: 'confirmada',
+    concepto: 'Feria de comercios',
+  },
+  {
+    id: 11,
+    espacioId: 3,
+    socioId: 7,
+    socioNombre: 'Jorge Paredes',
+    fecha: toISODate(addDays(new Date(), 1)),
+    inicio: '18:00',
+    fin: '19:00',
+    estado: 'confirmada',
+  },
+  {
+    id: 12,
+    espacioId: 2,
+    socioId: 4,
+    socioNombre: 'Mariana López',
+    fecha: toISODate(addDays(new Date(), 2)),
+    inicio: '16:00',
+    fin: '18:00',
+    estado: 'confirmada',
+  },
 ];
 
 /* ---------------------------------- novedades ---------------------------------- */
@@ -942,9 +1138,18 @@ export const planesB2B: PlanB2B[] = [
 /* ---------------------------------- textos institucionales ---------------------------------- */
 
 export const valueProps = [
-  { titulo: 'Adiós al WhatsApp', detalle: 'Fin a los grupos caóticos de mensajes para anotarse o saber quién paga.' },
-  { titulo: 'Adiós al Excel', detalle: 'Cuotas, socios y morosidad siempre actualizados, sin planillas sueltas.' },
-  { titulo: 'Adiós a las carpetas', detalle: 'Reservas y comunicados en una única plataforma digital para toda la comunidad.' },
+  {
+    titulo: 'Adiós al WhatsApp',
+    detalle: 'Fin a los grupos caóticos de mensajes para anotarse o saber quién paga.',
+  },
+  {
+    titulo: 'Adiós al Excel',
+    detalle: 'Cuotas, socios y morosidad siempre actualizados, sin planillas sueltas.',
+  },
+  {
+    titulo: 'Adiós a las carpetas',
+    detalle: 'Reservas y comunicados en una única plataforma digital para toda la comunidad.',
+  },
 ];
 
 /* ---------------------------------- NODO Drive (módulo interno de administración) ---------------------------------- */

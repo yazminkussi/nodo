@@ -23,17 +23,25 @@ export default function ActivitiesPanel() {
   const inscriptosDe = (actividadId) =>
     inscripciones.filter((i) => i.actividadId === actividadId && i.estado === 'activa');
   const esInscripto = (actividadId) =>
-    inscripciones.some((i) => i.actividadId === actividadId && i.socioId === socio?.id && i.estado === 'activa');
+    inscripciones.some(
+      (i) => i.actividadId === actividadId && i.socioId === socio?.id && i.estado === 'activa'
+    );
 
-  const misInscripciones = inscripciones.filter((i) => i.socioId === socio?.id && i.estado === 'activa');
+  const misInscripciones = inscripciones.filter(
+    (i) => i.socioId === socio?.id && i.estado === 'activa'
+  );
 
   return (
     <section className="mx-auto max-w-5xl space-y-8 px-4 sm:px-6">
       <div>
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-lg font-extrabold tracking-tight text-nodo-navy">Talleres y actividades</h2>
-            <p className="text-xs text-slate-500">Inscribite desde la app y asegurá tu lugar en la cursada.</p>
+            <h2 className="text-lg font-extrabold tracking-tight text-nodo-navy">
+              Talleres y actividades
+            </h2>
+            <p className="text-xs text-slate-500">
+              Inscribite desde la app y asegurá tu lugar en la cursada.
+            </p>
           </div>
           <span className="hidden items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-500 ring-1 ring-inset ring-nodo-border sm:inline-flex">
             <Sparkles size={13} /> Cupos en tiempo real
@@ -46,7 +54,9 @@ export default function ActivitiesPanel() {
               key={c}
               onClick={() => setFiltro(c)}
               className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors ${
-                filtro === c ? 'bg-nodo-navy text-white shadow-card' : 'bg-white text-slate-500 ring-1 ring-inset ring-nodo-border hover:bg-slate-50'
+                filtro === c
+                  ? 'bg-nodo-navy text-white shadow-card'
+                  : 'bg-white text-slate-500 ring-1 ring-inset ring-nodo-border hover:bg-slate-50'
               }`}
             >
               {c}
@@ -74,11 +84,16 @@ export default function ActivitiesPanel() {
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2.5">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-xl text-white shadow-card" style={{ background: act.color }}>
+                      <div
+                        className="flex h-11 w-11 items-center justify-center rounded-xl text-white shadow-card"
+                        style={{ background: act.color }}
+                      >
                         <SpaceIcon icono={act.icono} className="h-5 w-5" />
                       </div>
                       <div>
-                        <h3 className="font-extrabold leading-tight text-nodo-navy">{act.nombre}</h3>
+                        <h3 className="font-extrabold leading-tight text-nodo-navy">
+                          {act.nombre}
+                        </h3>
                         <p className="text-[11px] font-bold text-slate-400">
                           {act.categoria} · {act.instructor}
                         </p>
@@ -100,14 +115,19 @@ export default function ActivitiesPanel() {
                     </p>
                     <p className="flex items-center gap-1.5">
                       <UserRound size={13} className="text-nodo-cyan" /> {act.instructor}
-                      <span className="ml-auto font-extrabold text-nodo-teal">{formatARS(act.costoMensual)}<span className="font-medium text-slate-400"> /mes</span></span>
+                      <span className="ml-auto font-extrabold text-nodo-teal">
+                        {formatARS(act.costoMensual)}
+                        <span className="font-medium text-slate-400"> /mes</span>
+                      </span>
                     </p>
                   </div>
 
                   <div className="mt-3">
                     <div className="mb-1 flex items-center justify-between text-[11px] font-bold">
                       <span className="text-slate-500">Cupo</span>
-                      <span className={llena ? 'text-nodo-red' : 'text-nodo-teal'}>{cant} / {act.cupoMaximo}</span>
+                      <span className={llena ? 'text-nodo-red' : 'text-nodo-teal'}>
+                        {cant} / {act.cupoMaximo}
+                      </span>
                     </div>
                     <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
                       <div
@@ -121,14 +141,24 @@ export default function ActivitiesPanel() {
                     onClick={() => {
                       if (inscripto) {
                         const insc = inscripciones.find(
-                          (i) => i.actividadId === act.id && i.socioId === socio?.id && i.estado === 'activa'
+                          (i) =>
+                            i.actividadId === act.id &&
+                            i.socioId === socio?.id &&
+                            i.estado === 'activa'
                         );
                         cancelInscripcion(insc.id);
                         addToast('Te desinscribiste de la actividad.', 'info');
                       } else if (llena) {
-                        addToast('Cupo completo. Consultá en recepción por la lista de espera.', 'info');
+                        addToast(
+                          'Cupo completo. Consultá en recepción por la lista de espera.',
+                          'info'
+                        );
                       } else {
-                        addInscripcion({ actividadId: act.id, socioId: socio.id, socioNombre: `${socio.nombre} ${socio.apellido}` });
+                        addInscripcion({
+                          actividadId: act.id,
+                          socioId: socio.id,
+                          socioNombre: `${socio.nombre} ${socio.apellido}`,
+                        });
                         addToast(`Inscripción confirmada en ${act.nombre}.`, 'success');
                       }
                     }}
@@ -141,11 +171,17 @@ export default function ActivitiesPanel() {
                     }`}
                   >
                     {inscripto ? (
-                      <><XCircle size={16} /> Desinscribirme</>
+                      <>
+                        <XCircle size={16} /> Desinscribirme
+                      </>
                     ) : llena ? (
-                      <><Users size={16} /> Cupo lleno</>
+                      <>
+                        <Users size={16} /> Cupo lleno
+                      </>
                     ) : (
-                      <><PlusCircle size={16} /> Inscribirme</>
+                      <>
+                        <PlusCircle size={16} /> Inscribirme
+                      </>
                     )}
                   </button>
                 </motion.div>
@@ -169,8 +205,14 @@ export default function ActivitiesPanel() {
               const act = actividades.find((a) => a.id === ins.actividadId);
               if (!act) return null;
               return (
-                <div key={ins.id} className="flex items-center gap-3 rounded-2xl bg-white p-3.5 shadow-card ring-1 ring-nodo-border">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl text-white" style={{ background: act.color }}>
+                <div
+                  key={ins.id}
+                  className="flex items-center gap-3 rounded-2xl bg-white p-3.5 shadow-card ring-1 ring-nodo-border"
+                >
+                  <div
+                    className="flex h-9 w-9 items-center justify-center rounded-xl text-white"
+                    style={{ background: act.color }}
+                  >
                     <SpaceIcon icono={act.icono} className="h-4 w-4" />
                   </div>
                   <div className="min-w-0 flex-1">

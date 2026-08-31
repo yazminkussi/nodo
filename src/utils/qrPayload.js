@@ -93,7 +93,9 @@ export async function verifyQrSignature(dataB64, sig) {
 }
 
 export function parseQrPayload(raw) {
-  const partes = String(raw || '').trim().split('|');
+  const partes = String(raw || '')
+    .trim()
+    .split('|');
   if (partes.length !== 4 || partes[0] !== 'NODO' || partes[1] !== VERSION) {
     return { ok: false, error: 'Formato no reconocido' };
   }

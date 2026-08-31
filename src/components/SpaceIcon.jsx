@@ -1,4 +1,19 @@
-import { Trophy, Palette, Dumbbell, DoorOpen, Music, Target, Waves, Flame, BookOpen, LayoutGrid, PersonStanding, Footprints, Clapperboard, Zap } from 'lucide-react';
+import {
+  Trophy,
+  Palette,
+  Dumbbell,
+  DoorOpen,
+  Music,
+  Target,
+  Waves,
+  Flame,
+  BookOpen,
+  LayoutGrid,
+  PersonStanding,
+  Footprints,
+  Clapperboard,
+  Zap,
+} from 'lucide-react';
 
 const mapa = {
   futbol: Trophy,

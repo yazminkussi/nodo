@@ -20,7 +20,10 @@ export default function NodoSheet({ item, setItem }) {
     });
   const agregarFila = () => actualizar({ columnas, filas: [...filas, columnas.map(() => '')] });
   const agregarColumna = () =>
-    actualizar({ columnas: [...columnas, `Columna ${columnas.length + 1}`], filas: filas.map((row) => [...row, '']) });
+    actualizar({
+      columnas: [...columnas, `Columna ${columnas.length + 1}`],
+      filas: filas.map((row) => [...row, '']),
+    });
   const quitarFila = () => actualizar({ columnas, filas: filas.slice(0, -1) });
 
   return (
@@ -58,7 +61,10 @@ export default function NodoSheet({ item, setItem }) {
                 #
               </th>
               {columnas.map((col, i) => (
-                <th key={i} className="min-w-[130px] border-b border-r border-nodo-border p-0 last:border-r-0">
+                <th
+                  key={i}
+                  className="min-w-[130px] border-b border-r border-nodo-border p-0 last:border-r-0"
+                >
                   <input
                     value={col}
                     onChange={(e) => setColumna(i, e.target.value)}
