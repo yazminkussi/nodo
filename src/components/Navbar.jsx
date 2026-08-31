@@ -4,17 +4,10 @@ import { Download, WifiOff, Building2, ChevronDown, LogOut, UserCircle2 } from '
 import RoleToggle from './RoleToggle';
 import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
 import { useSesion, useComunidadActiva } from '../store/useSesion';
+import NodoMark from './ui/NodoMark';
 
-export function NodoLogo({ className = 'h-9 w-9', tone = 'light' }) {
-  return (
-    <img
-      src="/imagenes/nodo_logo.png"
-      alt="NODO"
-      className={`${className} object-contain`}
-      style={{ filter: tone === 'light' ? 'brightness(0) invert(1)' : 'none' }}
-      loading="eager"
-    />
-  );
+export function NodoLogo({ size = 32, color = '#F3EFE6', className = '' }) {
+  return <NodoMark size={size} color={color} className={className} />;
 }
 
 export function PWAInstallButton() {

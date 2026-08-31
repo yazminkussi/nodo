@@ -74,7 +74,7 @@ export default function LoginScreen() {
         className="relative w-full max-w-sm"
       >
         <div className="mb-6 flex flex-col items-center text-center text-cream">
-          <NodoMark size={56} tone="light" className="mb-2" />
+          <NodoMark size={54} color="#F3EFE6" animate className="mb-2" />
           <h1 className="font-display text-3xl font-bold lowercase tracking-tight">nodo</h1>
           <p className="text-sm text-cream/70">Experiencia digital para comunidades</p>
         </div>

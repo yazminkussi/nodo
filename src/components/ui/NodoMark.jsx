@@ -1,26 +1,66 @@
-/* Logo de NODO (glifo de trazo continuo).
-   tone:
-     'brand'  → indigo original (sobre fondos claros)
-     'light'  → blanco / crema (sobre fondos oscuros)
-     'ink'    → casi negro
-*/
+import { motion } from 'framer-motion';
 
-const filtros = {
-  brand: 'none',
-  light: 'brightness(0) invert(1)',
-  ink: 'brightness(0)',
-};
+/* Logo de NODO — glifo de trazo continuo, vectorizado desde el original.
+   - `color`: cualquier color CSS (default: hereda con currentColor).
+   - `animate`: dibuja el contorno y después rellena, al montar.
+   Respeta prefers-reduced-motion vía el <MotionConfig> de main.jsx. */
 
-export default function NodoMark({ size = 36, tone = 'brand', className = '' }) {
+const VIEWBOX = '0 0 445 444.6';
+const D =
+  'M13.2 33.0L10.0 53.5L12.1 64.8L21.7 78.0L35.6 88.7L67.6 107.8L80.2 121.6L86.0 143.8L83.0 167.0L68.2 214.5L62.9 239.8L61.7 268.0L65.0 289.7L76.2 326.8L84.8 344.7L99.4 361.2L115.2 371.0L148.0 383.6L165.6 387.5L185.5 386.6L201.1 381.3L228.1 366.2L240.8 355.4L252.0 338.1L257.9 320.1L264.4 283.4L264.2 261.8L257.2 233.7L245.8 208.5L218.4 161.0L209.6 139.2L210.4 121.5L220.7 113.6L250.6 107.9L266.0 106.7L282.6 108.8L294.7 113.6L314.5 125.9L324.2 133.3L333.6 143.2L339.5 152.4L347.8 170.1L351.4 186.9L354.2 219.8L355.1 257.8L355.1 338.8L356.3 375.8L359.9 405.9L364.7 419.1L375.5 428.4L381.7 432.3L389.5 434.6L396.3 434.5L408.9 432.0L415.2 429.8L421.4 425.7L425.6 421.1L431.7 411.4L434.0 399.0L435.0 371.7L434.2 338.4L431.0 266.1L427.5 229.3L420.3 191.2L411.8 164.6L393.4 122.9L381.1 102.2L362.4 82.1L343.5 69.1L305.7 50.4L283.7 43.7L255.5 42.2L230.5 46.6L183.7 61.0L159.5 64.7L133.7 61.6L114.9 52.6L84.3 28.9L69.1 18.6L54.0 11.5L44.0 10.0L29.2 12.5L22.3 15.9L16.3 23.6Z M155.3 186.0L160.0 187.5L162.7 189.0L166.3 192.3L169.6 196.1L175.7 204.4L179.0 209.2L182.8 215.5L185.9 221.0L191.3 231.5L194.0 237.2L196.8 243.8L198.7 249.1L201.6 258.4L202.9 263.6L204.0 269.7L204.4 274.8L204.8 283.8L204.8 288.2L204.6 292.5L204.2 295.3L203.1 299.2L202.1 301.7L200.3 305.0L198.3 308.2L194.0 314.3L191.5 317.3L188.4 320.2L185.6 322.0L180.6 324.5L177.8 325.7L174.6 326.6L172.0 327.1L167.3 327.4L164.5 327.4L160.8 326.9L157.4 326.2L150.9 324.4L147.4 322.9L143.6 320.4L140.6 317.6L135.6 311.9L133.0 308.2L130.2 302.9L128.2 297.8L125.0 287.7L123.5 282.2L122.3 275.9L121.8 270.8L121.4 261.8L121.5 256.4L122.1 249.2L123.0 242.6L125.2 230.0L126.5 223.4L128.3 216.3L130.0 211.1L133.2 202.4L135.3 198.2L138.2 194.1L140.9 191.6L146.3 188.0L149.2 186.5L152.6 185.8Z';
+
+export default function NodoMark({
+  size = 36,
+  color = 'currentColor',
+  animate = false,
+  className = '',
+}) {
+  if (!animate) {
+    return (
+      <svg
+        width={size}
+        height={size}
+        viewBox={VIEWBOX}
+        className={className}
+        aria-label="NODO"
+        role="img"
+      >
+        <path d={D} fill={color} fillRule="evenodd" />
+      </svg>
+    );
+  }
+
   return (
-    <img
-      src="/imagenes/nodo_logo.png"
-      alt="NODO"
+    <svg
       width={size}
       height={size}
-      loading="eager"
-      className={`object-contain ${className}`}
-      style={{ width: size, height: size, filter: filtros[tone] }}
-    />
+      viewBox={VIEWBOX}
+      className={className}
+      aria-label="NODO"
+      role="img"
+    >
+      <motion.path
+        d={D}
+        fill="none"
+        stroke={color}
+        strokeWidth={7}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        initial={{ pathLength: 0, opacity: 0.9 }}
+        animate={{ pathLength: 1, opacity: 0 }}
+        transition={{
+          pathLength: { duration: 1.1, ease: 'easeInOut' },
+          opacity: { delay: 1.0, duration: 0.35 },
+        }}
+      />
+      <motion.path
+        d={D}
+        fill={color}
+        fillRule="evenodd"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.95, duration: 0.4 }}
+      />
+    </svg>
   );
 }
