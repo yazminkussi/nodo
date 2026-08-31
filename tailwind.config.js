@@ -8,7 +8,7 @@ export default {
            Paleta del rediseño · "Cada comunidad, un nodo"
            Lavanda terroso + sol cálido + papel. Cálido y de barrio.
         --------------------------------------------------------------- */
-        lav: { DEFAULT: '#5E52C4', deep: '#3B2FA6', soft: '#EBE9F8' },
+        lav: { DEFAULT: '#5E52C4', deep: '#32328E', soft: '#EBE9F8' },
         sun: { DEFAULT: '#E8A33D', soft: '#F9E9CF' },
         clay: '#C56A46',
         paper: '#F8F6F1',
@@ -25,7 +25,7 @@ export default {
            Alias de compatibilidad — se migran a los tokens de arriba
            componente por componente.
         --------------------------------------------------------------- */
-        'nodo-navy': '#3B2FA6',
+        'nodo-navy': '#32328E',
         'nodo-navy-2': '#2F2585',
         'nodo-navy-3': '#4C40B0',
         'nodo-bg': '#F8F6F1',
