@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import { useNodoStore } from './store/useNodoStore';
 import { useSesion } from './store/useSesion';
@@ -46,17 +46,14 @@ export default function App() {
     <div className="min-h-screen bg-nodo-bg font-sans text-slate-800 antialiased">
       <Toasts />
       <PwaUpdateBanner />
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={role}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-        >
-          {role === 'socio' ? <SocioPortal /> : <AdminDashboard />}
-        </motion.div>
-      </AnimatePresence>
+      <motion.div
+        key={role}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.18 }}
+      >
+        {role === 'socio' ? <SocioPortal /> : <AdminDashboard />}
+      </motion.div>
     </div>
   );
 }

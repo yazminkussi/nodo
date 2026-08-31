@@ -21,6 +21,8 @@ import NodoDrive from './NodoDrive';
 import AdminRoleSwitcher from './AdminRoleSwitcher';
 import QrAccessControl from './qr/QrAccessControl';
 import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
+import { useComunidadActiva, useSesion } from '../store/useSesion';
+import { useSocios } from '../hooks/useSocios';
 import { ROLES_ADMIN } from '../data/mockData';
 
 const seccionesBase = [
@@ -35,10 +37,13 @@ const seccionesBase = [
 ];
 
 export default function AdminDashboard() {
-  const members = useNodoStore((s) => s.members);
+  const { socios: members } = useSocios();
   const adminRole = useNodoStore((s) => s.adminRole);
-  const comunidad = useComunidadActual();
+  const comunidadDemo = useComunidadActual();
+  const comunidad = useComunidadActiva() || comunidadDemo;
+  const perfil = useSesion((s) => s.perfil);
   const morosos = members.filter((m) => !m.cuotaAlDia);
+  const saludo = perfil?.nombre ? perfil.nombre : 'Carlos';
 
   const permitidas = useMemo(() => ROLES_ADMIN[adminRole]?.secciones || [], [adminRole]);
   const secciones = seccionesBase.filter((s) => permitidas.includes(s.key));
@@ -63,7 +68,7 @@ export default function AdminDashboard() {
                 Panel de Administración
               </h1>
               <p className="text-xs text-slate-500">
-                Bienvenido Carlos · {comunidad.nombre} · {comunidad.plan}
+                Bienvenido {saludo} · {comunidad.nombre} · {comunidad.plan}
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">

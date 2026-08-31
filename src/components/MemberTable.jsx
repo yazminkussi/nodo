@@ -1,14 +1,25 @@
 import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, MessageCircle, Eye, RefreshCcw, UserPlus } from 'lucide-react';
+import {
+  Search,
+  MessageCircle,
+  Eye,
+  RefreshCcw,
+  UserPlus,
+  Loader2,
+  AlertCircle,
+} from 'lucide-react';
 import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
+import { useComunidadActiva } from '../store/useSesion';
+import { useSocios } from '../hooks/useSocios';
 import { StatusBadge } from './StatusBadge';
 import { formatARS } from '../data/mockData';
+import SocioFormModal from './SocioFormModal';
 
 const iniciales = (a, b) => `${a.charAt(0)}${b.charAt(0)}`.toUpperCase();
 
 const waLink = (socio, comunidadNombre) => {
-  const numero = socio.celular.replace(/\D/g, '');
+  const numero = (socio.celular || '').replace(/\D/g, '');
   const texto = encodeURIComponent(
     `Hola ${socio.nombre} 👋, te escribimos desde ${comunidadNombre}. Tu cuota social figura como pendiente. Podés ponerte al día desde la app NODO o respondernos este mensaje. ¡Gracias!`
   );
@@ -16,15 +27,27 @@ const waLink = (socio, comunidadNombre) => {
 };
 
 export default function MemberTable() {
-  const members = useNodoStore((s) => s.members);
-  const toggleCuotaStatus = useNodoStore((s) => s.toggleCuotaStatus);
+  const {
+    modo,
+    socios: members,
+    cargando,
+    error,
+    registrarPago,
+    toggleCuota,
+    crear,
+    actualizar,
+  } = useSocios();
   const addToast = useNodoStore((s) => s.addToast);
   const setSocioActual = useNodoStore((s) => s.setSocioActual);
   const setRole = useNodoStore((s) => s.setRole);
-  const comunidad = useComunidadActual();
+  const comunidadDemo = useComunidadActual();
+  const comunidadReal = useComunidadActiva();
+  const comunidad = comunidadReal || comunidadDemo;
 
   const [busqueda, setBusqueda] = useState('');
   const [filtro, setFiltro] = useState('todos');
+  const [formAbierto, setFormAbierto] = useState(false);
+  const [enEdicion, setEnEdicion] = useState(null);
 
   const filtrados = useMemo(() => {
     const q = busqueda.trim().toLowerCase();
@@ -33,7 +56,7 @@ export default function MemberTable() {
         !q ||
         `${m.nombre} ${m.apellido}`.toLowerCase().includes(q) ||
         m.numero.includes(q) ||
-        m.localidad.toLowerCase().includes(q);
+        (m.localidad || '').toLowerCase().includes(q);
       const coincideEstado =
         filtro === 'todos' ||
         (filtro === 'alDia' && m.cuotaAlDia) ||
@@ -45,20 +68,58 @@ export default function MemberTable() {
   const alDia = members.filter((m) => m.cuotaAlDia).length;
   const morosos = members.length - alDia;
 
-  const cambiarEstado = (m) => {
-    toggleCuotaStatus(m.id);
-    addToast(
-      m.cuotaAlDia
-        ? `${m.nombre} ${m.apellido} pasó a estado Adeuda.`
-        : `${m.nombre} ${m.apellido} marcado como Al día. 🎉`,
-      m.cuotaAlDia ? 'error' : 'success'
-    );
+  const cambiarEstado = async (m) => {
+    try {
+      await toggleCuota(m.id);
+      addToast(
+        m.cuotaAlDia
+          ? `${m.nombre} ${m.apellido} pasó a estado Adeuda.`
+          : `${m.nombre} ${m.apellido} marcado como Al día. 🎉`,
+        m.cuotaAlDia ? 'error' : 'success'
+      );
+    } catch {
+      addToast('No se pudo actualizar el estado de la cuota.', 'error');
+    }
+  };
+
+  const marcarPago = async (m) => {
+    try {
+      await registrarPago(m.id);
+      addToast(`Pago registrado para ${m.nombre} ${m.apellido}.`, 'success');
+    } catch {
+      addToast('No se pudo registrar el pago.', 'error');
+    }
   };
 
   const verCarnet = (m) => {
     setSocioActual(m.id);
     setRole('socio');
     addToast(`Mostrando el carnet de ${m.nombre} ${m.apellido}.`, 'info');
+  };
+
+  const abrirAlta = () => {
+    if (modo === 'demo') {
+      addToast('El alta de socios se habilita con la cuenta conectada a Supabase.', 'info');
+      return;
+    }
+    setEnEdicion(null);
+    setFormAbierto(true);
+  };
+
+  const abrirEdicion = (m) => {
+    setEnEdicion(m);
+    setFormAbierto(true);
+  };
+
+  const guardar = async (datos) => {
+    if (enEdicion) {
+      await actualizar(enEdicion.id, datos);
+      addToast('Socio actualizado.', 'success');
+    } else {
+      await crear(datos);
+      addToast('Socio dado de alta.', 'success');
+    }
+    setFormAbierto(false);
   };
 
   return (
@@ -70,10 +131,11 @@ export default function MemberTable() {
           </h2>
           <p className="text-xs text-slate-500">
             {alDia} al día · {morosos} adeudan · {members.length} en total
+            {modo === 'demo' && ' · datos de demostración'}
           </p>
         </div>
         <button
-          onClick={() => addToast('Alta de socios disponible en el plan comercial.', 'info')}
+          onClick={abrirAlta}
           className="inline-flex items-center gap-2 rounded-xl bg-nodo-navy px-4 py-2.5 text-sm font-bold text-white shadow-card transition hover:bg-nodo-navy-2"
         >
           <UserPlus size={16} /> Alta de socio
@@ -114,6 +176,12 @@ export default function MemberTable() {
         </div>
       </div>
 
+      {error && (
+        <div className="mb-4 flex items-center gap-2 rounded-xl bg-red-50 px-4 py-3 text-sm font-semibold text-nodo-red ring-1 ring-inset ring-red-200">
+          <AlertCircle size={16} /> No se pudieron cargar los socios: {error.message}
+        </div>
+      )}
+
       <div className="overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-nodo-border">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[760px] text-left text-sm">
@@ -140,7 +208,10 @@ export default function MemberTable() {
                     className="border-b border-nodo-border last:border-0 hover:bg-slate-50/70"
                   >
                     <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => modo === 'remoto' && abrirEdicion(m)}
+                        className="flex items-center gap-3 text-left"
+                      >
                         <div
                           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-extrabold text-white"
                           style={{ background: m.color }}
@@ -153,7 +224,7 @@ export default function MemberTable() {
                           </p>
                           <p className="text-[11px] text-slate-400">{m.localidad}</p>
                         </div>
-                      </div>
+                      </button>
                     </td>
                     <td className="px-4 py-3 font-mono text-xs font-bold text-slate-500">
                       N° {m.numero}
@@ -161,7 +232,7 @@ export default function MemberTable() {
                     <td className="px-4 py-3 text-xs font-semibold text-slate-600">
                       {m.categoria}
                     </td>
-                    <td className="px-4 py-3 text-xs text-slate-500">{m.ultimaCuota}</td>
+                    <td className="px-4 py-3 text-xs text-slate-500">{m.ultimaCuota || '—'}</td>
                     <td className="px-4 py-3 text-xs font-bold text-slate-600">
                       {formatARS(m.plan)}
                     </td>
@@ -170,29 +241,43 @@ export default function MemberTable() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1.5">
-                        <button
-                          onClick={() => verCarnet(m)}
-                          title="Ver carnet digital"
-                          className="rounded-lg p-2 text-nodo-teal transition hover:bg-cyan-50"
-                        >
-                          <Eye size={16} />
-                        </button>
-                        <a
-                          href={waLink(m, comunidad.nombre)}
-                          target="_blank"
-                          rel="noreferrer"
-                          title="Recordatorio por WhatsApp"
-                          className="rounded-lg p-2 text-nodo-green-dark transition hover:bg-emerald-50"
-                        >
-                          <MessageCircle size={16} />
-                        </a>
-                        <button
-                          onClick={() => cambiarEstado(m)}
-                          title={m.cuotaAlDia ? 'Marcar como adeuda' : 'Marcar como al día'}
-                          className="rounded-lg p-2 text-nodo-amber transition hover:bg-amber-50"
-                        >
-                          <RefreshCcw size={16} />
-                        </button>
+                        {modo === 'demo' && (
+                          <button
+                            onClick={() => verCarnet(m)}
+                            title="Ver carnet digital"
+                            className="rounded-lg p-2 text-nodo-teal transition hover:bg-cyan-50"
+                          >
+                            <Eye size={16} />
+                          </button>
+                        )}
+                        {!m.cuotaAlDia && (
+                          <a
+                            href={waLink(m, comunidad.nombre)}
+                            target="_blank"
+                            rel="noreferrer"
+                            title="Recordatorio por WhatsApp"
+                            className="rounded-lg p-2 text-nodo-green-dark transition hover:bg-emerald-50"
+                          >
+                            <MessageCircle size={16} />
+                          </a>
+                        )}
+                        {!m.cuotaAlDia ? (
+                          <button
+                            onClick={() => marcarPago(m)}
+                            title="Registrar pago de cuota"
+                            className="rounded-lg p-2 text-nodo-green-dark transition hover:bg-emerald-50"
+                          >
+                            <RefreshCcw size={16} />
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => cambiarEstado(m)}
+                            title="Marcar como adeuda"
+                            className="rounded-lg p-2 text-nodo-amber transition hover:bg-amber-50"
+                          >
+                            <RefreshCcw size={16} />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </motion.tr>
@@ -201,12 +286,30 @@ export default function MemberTable() {
             </tbody>
           </table>
         </div>
-        {filtrados.length === 0 && (
+
+        {cargando && (
+          <p className="flex items-center justify-center gap-2 px-4 py-10 text-sm text-slate-400">
+            <Loader2 size={16} className="animate-spin" /> Cargando socios…
+          </p>
+        )}
+        {!cargando && filtrados.length === 0 && (
           <p className="px-4 py-10 text-center text-sm text-slate-400">
-            No se encontraron socios con esos criterios.
+            {members.length === 0
+              ? 'Todavía no hay socios cargados. Usá “Alta de socio” para empezar.'
+              : 'No se encontraron socios con esos criterios.'}
           </p>
         )}
       </div>
+
+      <AnimatePresence>
+        {formAbierto && (
+          <SocioFormModal
+            socio={enEdicion}
+            onGuardar={guardar}
+            onCerrar={() => setFormAbierto(false)}
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 }
