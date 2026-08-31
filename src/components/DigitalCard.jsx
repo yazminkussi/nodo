@@ -10,6 +10,7 @@ import {
   Wallet,
 } from 'lucide-react';
 import { useNodoStore, useProximaReserva, useComunidadActual } from '../store/useNodoStore';
+import { useSesion, useComunidadActiva } from '../store/useSesion';
 import { StatusBadge } from './StatusBadge';
 import { QrSvg } from '../utils/qr';
 import { createQrPayload } from '../utils/qrPayload';
@@ -19,9 +20,17 @@ import NodoLogo from './Navbar';
 const iniciales = (nombre, apellido) => `${nombre.charAt(0)}${apellido.charAt(0)}`.toUpperCase();
 
 export default function DigitalCard() {
-  const socio = useNodoStore((s) => s.members.find((m) => m.id === s.socioActualId));
-  const comunidad = useComunidadActual();
-  const proxima = useProximaReserva(socio?.id);
+  const estado = useSesion((s) => s.estado);
+  const miSocio = useSesion((s) => s.miSocio);
+  const socioDemo = useNodoStore((s) => s.members.find((m) => m.id === s.socioActualId));
+  const comunidadDemo = useComunidadActual();
+  const comunidadReal = useComunidadActiva();
+
+  const remoto = estado === 'activo';
+  const socio = remoto ? miSocio : socioDemo;
+  const comunidad = comunidadReal || comunidadDemo;
+  const logoComunidad = comunidad?.logo_url || comunidad?.logo || null;
+  const proxima = useProximaReserva(remoto ? null : socio?.id);
   const [qrPayload, setQrPayload] = useState(null);
 
   const socioId = socio?.id;
@@ -39,7 +48,24 @@ export default function DigitalCard() {
     };
   }, [socioId, communityId, socio?.numero]);
 
-  if (!socio) return null;
+  if (!socio) {
+    if (remoto) {
+      return (
+        <section className="mx-auto max-w-5xl px-4 sm:px-6">
+          <div className="rounded-2xl border-2 border-dashed border-nodo-border bg-white px-6 py-12 text-center shadow-card">
+            <p className="text-base font-extrabold text-nodo-navy">
+              Tu cuenta todavía no está vinculada a una ficha de socio
+            </p>
+            <p className="mx-auto mt-2 max-w-md text-sm text-slate-500">
+              Pedile a la administración de {comunidad?.nombre || 'tu comunidad'} que registre tu
+              ficha con este mismo email. Una vez cargada, tu carnet aparece acá automáticamente.
+            </p>
+          </div>
+        </section>
+      );
+    }
+    return null;
+  }
 
   const meses = mesesAdeudados(socio);
 
@@ -76,9 +102,9 @@ export default function DigitalCard() {
             <p className="mt-1 text-xl font-extrabold tracking-tight sm:text-2xl">Carnet Digital</p>
           </div>
           <div className="flex shrink-0 items-center gap-2">
-            {comunidad.logo && (
+            {logoComunidad && (
               <img
-                src={comunidad.logo}
+                src={logoComunidad}
                 alt={`Logo de ${comunidad.nombre}`}
                 className="h-9 w-9 rounded-full bg-white object-contain p-0.5 ring-1 ring-white/20"
               />

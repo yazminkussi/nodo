@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   LayoutDashboard,
   Users,
@@ -21,6 +21,8 @@ import NodoDrive from './NodoDrive';
 import AdminRoleSwitcher from './AdminRoleSwitcher';
 import QrAccessControl from './qr/QrAccessControl';
 import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
+import { useComunidadActiva, useSesion, useRolActivo } from '../store/useSesion';
+import { useSocios } from '../hooks/useSocios';
 import { ROLES_ADMIN } from '../data/mockData';
 
 const seccionesBase = [
@@ -35,10 +37,19 @@ const seccionesBase = [
 ];
 
 export default function AdminDashboard() {
-  const members = useNodoStore((s) => s.members);
-  const adminRole = useNodoStore((s) => s.adminRole);
-  const comunidad = useComunidadActual();
+  const { socios: members } = useSocios();
+  const adminRoleDemo = useNodoStore((s) => s.adminRole);
+  const comunidadDemo = useComunidadActual();
+  const comunidad = useComunidadActiva() || comunidadDemo;
+  const perfil = useSesion((s) => s.perfil);
+  const estadoSesion = useSesion((s) => s.estado);
+  const rolReal = useRolActivo();
   const morosos = members.filter((m) => !m.cuotaAlDia);
+  const saludo = perfil?.nombre ? perfil.nombre : 'Carlos';
+
+  // Con sesión real, el rol viene de la membresía; en demo, del selector local.
+  const adminRole =
+    estadoSesion === 'activo' && rolReal && rolReal !== 'socio' ? rolReal : adminRoleDemo;
 
   const permitidas = useMemo(() => ROLES_ADMIN[adminRole]?.secciones || [], [adminRole]);
   const secciones = seccionesBase.filter((s) => permitidas.includes(s.key));
@@ -63,7 +74,7 @@ export default function AdminDashboard() {
                 Panel de Administración
               </h1>
               <p className="text-xs text-slate-500">
-                Bienvenido Carlos · {comunidad.nombre} · {comunidad.plan}
+                Bienvenido {saludo} · {comunidad.nombre} · {comunidad.plan}
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
@@ -78,32 +89,29 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          <AdminRoleSwitcher />
+          {estadoSesion !== 'activo' && <AdminRoleSwitcher />}
 
-          <AnimatePresence mode="wait">
-            <motion.main
-              key={seccion}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.25 }}
-              className="space-y-8"
-            >
-              {seccion === 'resumen' && (
-                <>
-                  <StatsOverview />
-                  <ReservationManager />
-                </>
-              )}
-              {seccion === 'acceso' && <QrAccessControl />}
-              {seccion === 'socios' && <MemberTable />}
-              {seccion === 'reservas' && <ReservationManager />}
-              {seccion === 'publicidades' && <AdsManager />}
-              {seccion === 'planes' && <B2BOverview />}
-              {seccion === 'drive' && <NodoDrive />}
-              {seccion === 'personalizacion' && <CommunitySettings />}
-            </motion.main>
-          </AnimatePresence>
+          <motion.main
+            key={seccion}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.22 }}
+            className="space-y-8"
+          >
+            {seccion === 'resumen' && (
+              <>
+                <StatsOverview />
+                <ReservationManager />
+              </>
+            )}
+            {seccion === 'acceso' && <QrAccessControl />}
+            {seccion === 'socios' && <MemberTable />}
+            {seccion === 'reservas' && <ReservationManager />}
+            {seccion === 'publicidades' && <AdsManager />}
+            {seccion === 'planes' && <B2BOverview />}
+            {seccion === 'drive' && <NodoDrive />}
+            {seccion === 'personalizacion' && <CommunitySettings />}
+          </motion.main>
         </div>
       </div>
     </div>

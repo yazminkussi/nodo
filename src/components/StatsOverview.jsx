@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Users, Wallet, TrendingUp, CalendarCheck2 } from 'lucide-react';
 import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
+import { useComunidadActiva } from '../store/useSesion';
+import { useSocios } from '../hooks/useSocios';
 import { formatARS, todayISO, slotsDeHorario, diaActivo } from '../data/mockData';
 
 function Contador({ valor, format = (n) => n.toLocaleString('es-AR') }) {
@@ -25,10 +27,11 @@ function Contador({ valor, format = (n) => n.toLocaleString('es-AR') }) {
 }
 
 export default function StatsOverview() {
-  const members = useNodoStore((s) => s.members);
+  const { socios: members } = useSocios();
   const reservations = useNodoStore((s) => s.reservations);
   const espacios = useNodoStore((s) => s.espacios);
-  const comunidad = useComunidadActual();
+  const comunidadDemo = useComunidadActual();
+  const comunidad = useComunidadActiva() || comunidadDemo;
 
   const total = members.length;
   const alDia = members.filter((m) => m.cuotaAlDia).length;

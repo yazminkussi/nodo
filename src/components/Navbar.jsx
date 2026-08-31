@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Download, WifiOff, Building2, ChevronDown } from 'lucide-react';
+import { Download, WifiOff, Building2, ChevronDown, LogOut, UserCircle2 } from 'lucide-react';
 import RoleToggle from './RoleToggle';
 import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
+import { useSesion, useComunidadActiva } from '../store/useSesion';
 
 export function NodoLogo({ className = 'h-9 w-9' }) {
   return (
@@ -72,7 +73,10 @@ export function PWAInstallButton() {
 
 export function CommunityBadge() {
   const comunidades = useNodoStore((s) => s.comunidades);
-  const comunidad = useComunidadActual();
+  const comunidadDemo = useComunidadActual();
+  const comunidadReal = useComunidadActiva();
+  const esRemoto = useSesion((s) => s.estado === 'activo');
+  const comunidad = comunidadReal || comunidadDemo;
   const setComunidadActual = useNodoStore((s) => s.setComunidadActual);
   const addToast = useNodoStore((s) => s.addToast);
   const [abierto, setAbierto] = useState(false);
@@ -92,6 +96,34 @@ export function CommunityBadge() {
       window.removeEventListener('keydown', onKey);
     };
   }, []);
+
+  // En modo remoto (sesión real) la comunidad viene de la membresía: no hay
+  // selector de demo, se muestra fija.
+  if (esRemoto) {
+    return (
+      <div className="flex min-w-0 items-center gap-2 rounded-full border border-white/15 bg-white/5 py-1.5 pl-2 pr-3">
+        {comunidad.logo_url || comunidad.logo ? (
+          <img
+            src={comunidad.logo_url || comunidad.logo}
+            alt={comunidad.nombre}
+            className="h-7 w-7 shrink-0 rounded-full bg-white object-contain p-0.5"
+          />
+        ) : (
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-nodo-cyan to-nodo-teal text-white">
+            <Building2 size={14} />
+          </span>
+        )}
+        <span className="min-w-0 text-left leading-tight">
+          <span className="block truncate text-xs font-extrabold text-white">
+            {comunidad.nombre}
+          </span>
+          <span className="block truncate text-[10px] font-semibold text-slate-400">
+            {barrio || comunidad.tipo} · {comunidad.plan}
+          </span>
+        </span>
+      </div>
+    );
+  }
 
   const cambiar = (id) => {
     const next = comunidades.find((c) => c.id === id);
@@ -196,6 +228,81 @@ export function CommunityBadge() {
   );
 }
 
+export function CuentaMenu() {
+  const estado = useSesion((s) => s.estado);
+  const perfil = useSesion((s) => s.perfil);
+  const session = useSesion((s) => s.session);
+  const salir = useSesion((s) => s.salir);
+  const salirModoDemo = useSesion((s) => s.salirModoDemo);
+  const [abierto, setAbierto] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const onClick = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setAbierto(false);
+    };
+    document.addEventListener('mousedown', onClick);
+    return () => document.removeEventListener('mousedown', onClick);
+  }, []);
+
+  if (estado === 'demo') {
+    return (
+      <button
+        onClick={salirModoDemo}
+        className="flex items-center gap-1.5 rounded-full border border-white/20 px-3 py-1.5 text-xs font-semibold text-slate-300 transition hover:bg-white/10"
+        title="Salir del modo demo"
+      >
+        Modo demo
+      </button>
+    );
+  }
+  if (estado !== 'activo') return null;
+
+  const email = perfil?.email || session?.user?.email || '';
+  const nombre = [perfil?.nombre, perfil?.apellido].filter(Boolean).join(' ') || email;
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setAbierto((v) => !v)}
+        className="flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 py-1.5 pl-1.5 pr-2.5 text-white transition hover:bg-white/10"
+        aria-haspopup="menu"
+        aria-expanded={abierto}
+      >
+        <UserCircle2 size={20} className="shrink-0 text-slate-300" />
+        <span className="hidden max-w-[9rem] truncate text-xs font-semibold sm:block">
+          {nombre}
+        </span>
+        <ChevronDown size={13} className={`text-slate-400 ${abierto ? 'rotate-180' : ''}`} />
+      </button>
+      <AnimatePresence>
+        {abierto && (
+          <motion.div
+            initial={{ opacity: 0, y: 8, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 6, scale: 0.97 }}
+            transition={{ duration: 0.15 }}
+            role="menu"
+            className="absolute right-0 top-full z-50 mt-2 w-60 overflow-hidden rounded-2xl bg-white p-1.5 shadow-lift ring-1 ring-nodo-border"
+          >
+            <div className="px-3 py-2">
+              <p className="truncate text-sm font-extrabold text-nodo-navy">{nombre}</p>
+              <p className="truncate text-[11px] text-slate-400">{email}</p>
+            </div>
+            <button
+              role="menuitem"
+              onClick={salir}
+              className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-nodo-red transition hover:bg-red-50"
+            >
+              <LogOut size={15} /> Cerrar sesión
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export function Header() {
   return (
     <header className="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-nodo-navy/90 backdrop-blur-md">
@@ -217,6 +324,7 @@ export function Header() {
         <div className="ml-auto flex shrink-0 items-center gap-2">
           <PWAInstallButton />
           <RoleToggle />
+          <CuentaMenu />
         </div>
       </div>
     </header>
