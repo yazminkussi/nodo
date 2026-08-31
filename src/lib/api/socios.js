@@ -60,11 +60,15 @@ export async function reclamarSocio() {
 /** Ficha de socio de la cuenta actual en una comunidad (o null). */
 export async function miSocioDe(comunidadId) {
   if (!supabaseDisponible || !comunidadId) return null;
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
   const { data, error } = await supabase
     .from('socios')
     .select('*')
     .eq('comunidad_id', comunidadId)
-    .not('perfil_id', 'is', null)
+    .eq('perfil_id', user.id)
     .maybeSingle();
   if (error) {
     console.warn('NODO: no se pudo cargar la ficha de socio propia.', error.message);

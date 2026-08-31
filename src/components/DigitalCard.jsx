@@ -22,6 +22,8 @@ const iniciales = (nombre, apellido) => `${nombre.charAt(0)}${apellido.charAt(0)
 export default function DigitalCard() {
   const estado = useSesion((s) => s.estado);
   const miSocio = useSesion((s) => s.miSocio);
+  const refrescarSesion = useSesion((s) => s.refrescar);
+  const [buscando, setBuscando] = useState(false);
   const socioDemo = useNodoStore((s) => s.members.find((m) => m.id === s.socioActualId));
   const comunidadDemo = useComunidadActual();
   const comunidadReal = useComunidadActiva();
@@ -58,8 +60,20 @@ export default function DigitalCard() {
             </p>
             <p className="mx-auto mt-2 max-w-md text-sm text-slate-500">
               Pedile a la administración de {comunidad?.nombre || 'tu comunidad'} que registre tu
-              ficha con este mismo email. Una vez cargada, tu carnet aparece acá automáticamente.
+              ficha con este mismo email. Una vez cargada, tocá “Buscar mi ficha”.
             </p>
+            <button
+              onClick={async () => {
+                setBuscando(true);
+                await refrescarSesion();
+                setBuscando(false);
+              }}
+              disabled={buscando}
+              className="mx-auto mt-5 flex items-center gap-2 rounded-xl bg-nodo-navy px-4 py-2.5 text-sm font-bold text-white transition hover:bg-nodo-navy-2 disabled:opacity-60"
+            >
+              <RefreshCw size={15} className={buscando ? 'animate-spin' : ''} />
+              {buscando ? 'Buscando…' : 'Buscar mi ficha'}
+            </button>
           </div>
         </section>
       );
