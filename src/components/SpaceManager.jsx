@@ -2,13 +2,30 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Pencil, Trash2, Users, Clock, CalendarDays, Power, X } from 'lucide-react';
 import { useNodoStore } from '../store/useNodoStore';
-import { ROLES_ADMIN, formatARS, nombreDias, duracionLabel, HORARIO_DEFECTO } from '../data/mockData';
+import {
+  ROLES_ADMIN,
+  formatARS,
+  nombreDias,
+  duracionLabel,
+  HORARIO_DEFECTO,
+} from '../data/mockData';
 import SpaceIcon, { ICONOS_ESPACIO } from './SpaceIcon';
 
 const categorias = ['Deportivo', 'Cultural', 'Recreativo'];
-const colores = ['#059669', '#0D9488', '#06B6D4', '#7C3AED', '#1E293B', '#F97316', '#EF4444', '#0EA5E9', '#8B5CF6'];
+const colores = [
+  '#059669',
+  '#0D9488',
+  '#06B6D4',
+  '#7C3AED',
+  '#1E293B',
+  '#F97316',
+  '#EF4444',
+  '#0EA5E9',
+  '#8B5CF6',
+];
 
-const campo = 'w-full rounded-xl bg-white px-3 py-2.5 text-sm text-slate-700 ring-1 ring-nodo-border focus:outline-none focus:ring-2 focus:ring-nodo-cyan';
+const campo =
+  'w-full rounded-xl bg-white px-3 py-2.5 text-sm text-slate-700 ring-1 ring-nodo-border focus:outline-none focus:ring-2 focus:ring-nodo-cyan';
 const etiqueta = 'mb-1 block text-xs font-bold text-slate-500';
 
 export default function SpaceManager() {
@@ -70,7 +87,9 @@ export default function SpaceManager() {
           <p className="text-xs text-slate-500">
             Alta, edición y disponibilidad de espacios para reservas.
             {categoriasPermitidas && (
-              <span className="ml-1 font-bold text-nodo-teal">Solo {categoriasPermitidas.join(' y ')}</span>
+              <span className="ml-1 font-bold text-nodo-teal">
+                Solo {categoriasPermitidas.join(' y ')}
+              </span>
             )}
           </p>
         </div>
@@ -96,7 +115,10 @@ export default function SpaceManager() {
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-2.5">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl text-white shadow-card" style={{ background: esp.color }}>
+                  <div
+                    className="flex h-10 w-10 items-center justify-center rounded-xl text-white shadow-card"
+                    style={{ background: esp.color }}
+                  >
                     <SpaceIcon icono={esp.icono} className="h-5 w-5" />
                   </div>
                   <div>
@@ -107,7 +129,12 @@ export default function SpaceManager() {
                 <button
                   onClick={() => {
                     updateEspacio(esp.id, { disponible: !esp.disponible });
-                    addToast(esp.disponible ? `${esp.nombre} deshabilitado para reservas.` : `${esp.nombre} disponible para reservas.`, 'info');
+                    addToast(
+                      esp.disponible
+                        ? `${esp.nombre} deshabilitado para reservas.`
+                        : `${esp.nombre} disponible para reservas.`,
+                      'info'
+                    );
                   }}
                   className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-extrabold ring-1 ring-inset transition ${
                     esp.disponible
@@ -127,12 +154,16 @@ export default function SpaceManager() {
                   <Users size={13} className="text-nodo-cyan" /> {esp.capacidad} personas
                 </span>
                 <span className="font-extrabold text-nodo-teal">
-                  {formatARS(esp.precioHora)}<span className="font-medium text-slate-400"> / h</span>
+                  {formatARS(esp.precioHora)}
+                  <span className="font-medium text-slate-400"> / h</span>
                 </span>
                 <span className="flex items-center gap-1.5 text-slate-600">
-                  <Clock size={13} className="text-nodo-cyan" /> {esp.horario.apertura}–{esp.horario.cierre}
+                  <Clock size={13} className="text-nodo-cyan" /> {esp.horario.apertura}–
+                  {esp.horario.cierre}
                 </span>
-                <span className="text-slate-600">Turnos de {duracionLabel(esp.horario.duracionTurno)}</span>
+                <span className="text-slate-600">
+                  Turnos de {duracionLabel(esp.horario.duracionTurno)}
+                </span>
               </div>
               <p className="mt-2 flex items-center gap-1.5 text-[11px] font-bold text-slate-400">
                 <CalendarDays size={12} /> {nombreDias(esp.horario.dias)}
@@ -182,37 +213,83 @@ export default function SpaceManager() {
                 <h3 className="font-extrabold text-nodo-navy">
                   {modal === 'nuevo' ? 'Nuevo espacio' : `Editar · ${form.nombre}`}
                 </h3>
-                <button onClick={() => setModal(null)} className="rounded-full p-2 text-slate-400 hover:bg-slate-100" aria-label="Cerrar">
+                <button
+                  onClick={() => setModal(null)}
+                  className="rounded-full p-2 text-slate-400 hover:bg-slate-100"
+                  aria-label="Cerrar"
+                >
                   <X size={18} />
                 </button>
               </div>
 
               <label className={etiqueta}>Nombre</label>
-              <input value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} className={`mb-3 ${campo}`} placeholder="Ej. Cancha de Básquet" />
+              <input
+                value={form.nombre}
+                onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+                className={`mb-3 ${campo}`}
+                placeholder="Ej. Cancha de Básquet"
+              />
 
               <label className={etiqueta}>Descripción</label>
-              <textarea value={form.descripcion} onChange={(e) => setForm({ ...form, descripcion: e.target.value })} rows={2} className={`mb-3 ${campo}`} />
+              <textarea
+                value={form.descripcion}
+                onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
+                rows={2}
+                className={`mb-3 ${campo}`}
+              />
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className={etiqueta}>Categoría</label>
-                  <select value={form.categoria} onChange={(e) => setForm({ ...form, categoria: e.target.value })} className={campo}>
+                  <select
+                    value={form.categoria}
+                    onChange={(e) => setForm({ ...form, categoria: e.target.value })}
+                    className={campo}
+                  >
                     {categorias.map((c) => (
-                      <option key={c} value={c} disabled={categoriasPermitidas?.length && !categoriasPermitidas.includes(c)}>{c}</option>
+                      <option
+                        key={c}
+                        value={c}
+                        disabled={categoriasPermitidas?.length && !categoriasPermitidas.includes(c)}
+                      >
+                        {c}
+                      </option>
                     ))}
                   </select>
                 </div>
                 <div>
                   <label className={etiqueta}>Capacidad</label>
-                  <input type="number" min="1" value={form.capacidad} onChange={(e) => setForm({ ...form, capacidad: Number(e.target.value) })} className={campo} />
+                  <input
+                    type="number"
+                    min="1"
+                    value={form.capacidad}
+                    onChange={(e) => setForm({ ...form, capacidad: Number(e.target.value) })}
+                    className={campo}
+                  />
                 </div>
                 <div>
                   <label className={etiqueta}>Precio por hora ($)</label>
-                  <input type="number" min="0" step="500" value={form.precioHora} onChange={(e) => setForm({ ...form, precioHora: Number(e.target.value) })} className={campo} />
+                  <input
+                    type="number"
+                    min="0"
+                    step="500"
+                    value={form.precioHora}
+                    onChange={(e) => setForm({ ...form, precioHora: Number(e.target.value) })}
+                    className={campo}
+                  />
                 </div>
                 <div>
                   <label className={etiqueta}>Duración de turno (hs)</label>
-                  <select value={form.horario.duracionTurno} onChange={(e) => setForm({ ...form, horario: { ...form.horario, duracionTurno: Number(e.target.value) } })} className={campo}>
+                  <select
+                    value={form.horario.duracionTurno}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        horario: { ...form.horario, duracionTurno: Number(e.target.value) },
+                      })
+                    }
+                    className={campo}
+                  >
                     <option value={1}>1 hora</option>
                     <option value={1.5}>1 h 30</option>
                     <option value={2}>2 horas</option>
@@ -264,7 +341,10 @@ export default function SpaceManager() {
                 Habilitado para reservas
               </label>
 
-              <button onClick={guardar} className="w-full rounded-xl bg-nodo-green px-4 py-3 text-sm font-extrabold text-white shadow-card transition hover:bg-nodo-green-dark">
+              <button
+                onClick={guardar}
+                className="w-full rounded-xl bg-nodo-green px-4 py-3 text-sm font-extrabold text-white shadow-card transition hover:bg-nodo-green-dark"
+              >
                 {modal === 'nuevo' ? 'Crear espacio' : 'Guardar cambios'}
               </button>
             </motion.div>

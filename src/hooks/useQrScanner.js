@@ -117,9 +117,11 @@ export function useQrScanner(elementId) {
         setEstado('escaneando');
 
         try {
-          Html5Qrcode.getCameras().then((camaras) => {
-            setNCamaras(camaras?.length || 0);
-          }).catch(() => setNCamaras(0));
+          Html5Qrcode.getCameras()
+            .then((camaras) => {
+              setNCamaras(camaras?.length || 0);
+            })
+            .catch(() => setNCamaras(0));
         } catch {
           setNCamaras(0);
         }

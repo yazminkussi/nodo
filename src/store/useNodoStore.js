@@ -46,7 +46,11 @@ export const useNodoStore = create(
         set((state) => ({
           comunidades: state.comunidades.map((c) =>
             c.id === id
-              ? { ...c, ...(logo !== undefined ? { logo, logoEtag } : {}), ...(nombre ? { nombre } : {}) }
+              ? {
+                  ...c,
+                  ...(logo !== undefined ? { logo, logoEtag } : {}),
+                  ...(nombre ? { nombre } : {}),
+                }
               : c
           ),
           _marcaRev: (state._marcaRev || 0) + 1,
@@ -62,7 +66,11 @@ export const useNodoStore = create(
         set((state) => ({
           members: state.members.map((m) =>
             m.id === id
-              ? { ...m, cuotaAlDia: !m.cuotaAlDia, ultimaCuota: !m.cuotaAlDia ? todayISO() : m.ultimaCuota }
+              ? {
+                  ...m,
+                  cuotaAlDia: !m.cuotaAlDia,
+                  ultimaCuota: !m.cuotaAlDia ? todayISO() : m.ultimaCuota,
+                }
               : m
           ),
         })),
@@ -133,7 +141,15 @@ export const useNodoStore = create(
 
       /* ---- reservas ---- */
       reservations: reservasIniciales,
-      addReservation: ({ espacioId, socioId, socioNombre, fecha, inicio, concepto, duracion = 1 }) => {
+      addReservation: ({
+        espacioId,
+        socioId,
+        socioNombre,
+        fecha,
+        inicio,
+        concepto,
+        duracion = 1,
+      }) => {
         const reserva = {
           id: Date.now(),
           espacioId,
@@ -153,10 +169,7 @@ export const useNodoStore = create(
       isSlotTaken: (espacioId, fecha, inicio) =>
         get().reservations.some(
           (r) =>
-            r.espacioId === espacioId &&
-            r.fecha === fecha &&
-            r.inicio <= inicio &&
-            r.fin > inicio
+            r.espacioId === espacioId && r.fecha === fecha && r.inicio <= inicio && r.fin > inicio
         ),
 
       /* ---- publicidades ---- */
@@ -167,7 +180,9 @@ export const useNodoStore = create(
       /* ---- NODO Drive (documentos internos) ---- */
       driveItems: driveItemsIniciales,
       addDriveItem: (item) =>
-        set((state) => ({ driveItems: [...state.driveItems, { ...item, id: item.id ?? Date.now() }] })),
+        set((state) => ({
+          driveItems: [...state.driveItems, { ...item, id: item.id ?? Date.now() }],
+        })),
       updateDriveItem: (id, patch) =>
         set((state) => ({
           driveItems: state.driveItems.map((i) => (i.id === id ? { ...i, ...patch } : i)),
@@ -182,7 +197,11 @@ export const useNodoStore = create(
           // Deduplica: evita contar dos veces el mismo ingreso cuando llega
           // por Realtime (echo del propio dispositivo) y por la acción local.
           const clave = [reg.timestamp, reg.numeroSocio, reg.resultado, reg.comunidadId].join('|');
-          if (state.registrosAcceso.some((r) => [r.timestamp, r.numeroSocio, r.resultado, r.comunidadId].join('|') === clave)) {
+          if (
+            state.registrosAcceso.some(
+              (r) => [r.timestamp, r.numeroSocio, r.resultado, r.comunidadId].join('|') === clave
+            )
+          ) {
             return state;
           }
           return { registrosAcceso: [reg, ...state.registrosAcceso].slice(0, 300) };
@@ -230,7 +249,9 @@ export const useProximaReserva = (socioId) => {
   const hoy = todayISO();
   const hoyHora = nextHour();
   const proxima = reservations
-    .filter((r) => r.socioId === socioId && (r.fecha > hoy || (r.fecha === hoy && r.inicio >= hoyHora)))
+    .filter(
+      (r) => r.socioId === socioId && (r.fecha > hoy || (r.fecha === hoy && r.inicio >= hoyHora))
+    )
     .sort((a, b) => (a.fecha + a.inicio).localeCompare(b.fecha + b.inicio))[0];
   if (!proxima) return null;
   const espacio = espacios.find((e) => e.id === proxima.espacioId);

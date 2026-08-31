@@ -2,7 +2,14 @@ import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Trash2, CalendarDays, UserRound, Filter, CalendarX2 } from 'lucide-react';
 import { useNodoStore } from '../store/useNodoStore';
-import { nextDays, todayISO, formatFechaLarga, ROLES_ADMIN, slotsDeHorario, diaActivo } from '../data/mockData';
+import {
+  nextDays,
+  todayISO,
+  formatFechaLarga,
+  ROLES_ADMIN,
+  slotsDeHorario,
+  diaActivo,
+} from '../data/mockData';
 import SpaceIcon from './SpaceIcon';
 import { StatusBadge } from './StatusBadge';
 
@@ -49,9 +56,10 @@ export default function ReservationManager() {
     reservasDelDia.find((r) => r.espacioId === espacioId && r.inicio === inicio);
 
   const espacioForm = espacios.find((e) => e.id === Number(form.espacioId));
-  const slotsForm = espacioForm && diaActivo(espacioForm.horario.dias, dia)
-    ? slotsDeHorario(espacioForm.horario)
-    : [];
+  const slotsForm =
+    espacioForm && diaActivo(espacioForm.horario.dias, dia)
+      ? slotsDeHorario(espacioForm.horario)
+      : [];
 
   const crearReserva = () => {
     const socio = members.find((m) => m.id === Number(form.socioId));
@@ -80,7 +88,9 @@ export default function ReservationManager() {
     <section className="mx-auto max-w-7xl px-4 sm:px-6">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-extrabold tracking-tight text-nodo-navy">Control de Reservas</h2>
+          <h2 className="text-lg font-extrabold tracking-tight text-nodo-navy">
+            Control de Reservas
+          </h2>
           <p className="text-xs text-slate-500">
             Grilla sincronizada con los horarios configurados por espacio.
             {categoriasPermitidas && (
@@ -102,14 +112,21 @@ export default function ReservationManager() {
         {dias.map((d) => {
           const activo = d === dia;
           const esHoy = d === hoy;
-          const diaSemana = new Date(`${d}T12:00:00`).toLocaleDateString('es-AR', { weekday: 'short' });
+          const diaSemana = new Date(`${d}T12:00:00`).toLocaleDateString('es-AR', {
+            weekday: 'short',
+          });
           const [m, dd] = [d.split('-')[1], d.split('-')[2]];
           return (
             <button
               key={d}
-              onClick={() => { setDia(d); setSeleccion(null); }}
+              onClick={() => {
+                setDia(d);
+                setSeleccion(null);
+              }}
               className={`flex min-w-[64px] flex-col items-center rounded-xl px-3 py-2 transition-colors ${
-                activo ? 'bg-nodo-navy text-white shadow-card' : 'bg-white text-slate-500 ring-1 ring-inset ring-nodo-border hover:bg-slate-50'
+                activo
+                  ? 'bg-nodo-navy text-white shadow-card'
+                  : 'bg-white text-slate-500 ring-1 ring-inset ring-nodo-border hover:bg-slate-50'
               }`}
             >
               <span className="text-[10px] font-semibold uppercase">{diaSemana}</span>
@@ -128,7 +145,8 @@ export default function ReservationManager() {
             <span className="h-2.5 w-2.5 rounded-sm bg-nodo-green" /> Reservado
           </span>
           <span className="flex items-center gap-1 text-[11px] font-semibold text-slate-400">
-            <span className="h-2.5 w-2.5 rounded-sm bg-nodo-surface ring-1 ring-nodo-border" /> Libre
+            <span className="h-2.5 w-2.5 rounded-sm bg-nodo-surface ring-1 ring-nodo-border" />{' '}
+            Libre
           </span>
           <span className="flex items-center gap-1 text-[11px] font-semibold text-slate-400">
             <span className="h-2.5 w-2.5 rounded-sm bg-slate-50" /> Cerrado
@@ -142,7 +160,10 @@ export default function ReservationManager() {
                   Espacio
                 </th>
                 {slotsDelDia.map((h) => (
-                  <th key={h} className="border-b border-nodo-border bg-white px-1 py-2.5 text-center text-[10px] font-bold text-slate-400">
+                  <th
+                    key={h}
+                    className="border-b border-nodo-border bg-white px-1 py-2.5 text-center text-[10px] font-bold text-slate-400"
+                  >
                     {h}
                   </th>
                 ))}
@@ -153,10 +174,15 @@ export default function ReservationManager() {
                 <tr key={esp.id}>
                   <td className="sticky left-0 z-10 border-b border-r border-nodo-border bg-white px-3 py-2.5">
                     <div className="flex items-center gap-2">
-                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-white" style={{ background: esp.color }}>
+                      <div
+                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-white"
+                        style={{ background: esp.color }}
+                      >
                         <SpaceIcon icono={esp.icono} className="h-3.5 w-3.5" />
                       </div>
-                      <span className="whitespace-nowrap text-[11px] font-bold text-nodo-navy">{esp.nombre}</span>
+                      <span className="whitespace-nowrap text-[11px] font-bold text-nodo-navy">
+                        {esp.nombre}
+                      </span>
                     </div>
                   </td>
                   {slotsDelDia.map((h) => {
@@ -170,7 +196,8 @@ export default function ReservationManager() {
                       );
                     }
                     const reserva = reservaDeCelda(esp.id, h);
-                    const esHoyPasado = dia === hoy && Number(h.split(':')[0]) <= new Date().getHours();
+                    const esHoyPasado =
+                      dia === hoy && Number(h.split(':')[0]) <= new Date().getHours();
                     return (
                       <td key={h} className="border-b border-nodo-border p-0.5">
                         <button
@@ -212,7 +239,8 @@ export default function ReservationManager() {
               <div>
                 <p className="font-extrabold text-nodo-navy">{seleccion.socioNombre}</p>
                 <p className="text-xs text-slate-500">
-                  {espacios.find((e) => e.id === seleccion.espacioId)?.nombre} · {seleccion.inicio} hs
+                  {espacios.find((e) => e.id === seleccion.espacioId)?.nombre} · {seleccion.inicio}{' '}
+                  hs
                 </p>
               </div>
             </div>
@@ -250,7 +278,8 @@ export default function ReservationManager() {
               className="w-full max-w-md rounded-t-3xl bg-white p-5 shadow-lift sm:rounded-3xl"
             >
               <h3 className="mb-4 flex items-center gap-2 font-extrabold text-nodo-navy">
-                <CalendarDays size={18} className="text-nodo-teal" /> Nueva reserva · {formatFechaLarga(dia)}
+                <CalendarDays size={18} className="text-nodo-teal" /> Nueva reserva ·{' '}
+                {formatFechaLarga(dia)}
               </h3>
               <label className="mb-1 block text-xs font-bold text-slate-500">Socio</label>
               <select
@@ -260,7 +289,9 @@ export default function ReservationManager() {
               >
                 <option value="">Seleccionar socio…</option>
                 {members.map((m) => (
-                  <option key={m.id} value={m.id}>{m.nombre} {m.apellido} · N° {m.numero}</option>
+                  <option key={m.id} value={m.id}>
+                    {m.nombre} {m.apellido} · N° {m.numero}
+                  </option>
                 ))}
               </select>
               <label className="mb-1 block text-xs font-bold text-slate-500">Espacio</label>
@@ -271,7 +302,9 @@ export default function ReservationManager() {
               >
                 <option value="">Seleccionar espacio…</option>
                 {espaciosVisibles.map((e) => (
-                  <option key={e.id} value={e.id}>{e.nombre}</option>
+                  <option key={e.id} value={e.id}>
+                    {e.nombre}
+                  </option>
                 ))}
               </select>
               <label className="mb-1 block text-xs font-bold text-slate-500">Horario</label>

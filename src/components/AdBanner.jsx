@@ -9,7 +9,9 @@ export default function AdBanner() {
   return (
     <section className="mx-auto max-w-5xl px-4 sm:px-6">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-extrabold tracking-tight text-nodo-navy">Comercios del barrio</h2>
+        <h2 className="text-lg font-extrabold tracking-tight text-nodo-navy">
+          Comercios del barrio
+        </h2>
         <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-nodo-amber ring-1 ring-inset ring-amber-200">
           <Percent size={13} /> Descuentos para socios
         </span>
@@ -27,11 +29,17 @@ export default function AdBanner() {
               ad.destacada ? 'ring-2 ring-nodo-amber/50' : 'ring-nodo-border'
             }`}
           >
-            <div className="absolute right-0 top-0 rounded-bl-xl px-2.5 py-1 text-xs font-extrabold text-white" style={{ background: ad.color }}>
+            <div
+              className="absolute right-0 top-0 rounded-bl-xl px-2.5 py-1 text-xs font-extrabold text-white"
+              style={{ background: ad.color }}
+            >
               {ad.descuento}
             </div>
             <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg text-white" style={{ background: ad.color }}>
+              <div
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-white"
+                style={{ background: ad.color }}
+              >
                 <Store size={16} strokeWidth={2.2} />
               </div>
               <div>

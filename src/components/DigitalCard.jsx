@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { BadgeCheck, CalendarClock, ScanLine, Sparkles, MapPin, RefreshCw, Wallet } from 'lucide-react';
+import {
+  BadgeCheck,
+  CalendarClock,
+  ScanLine,
+  Sparkles,
+  MapPin,
+  RefreshCw,
+  Wallet,
+} from 'lucide-react';
 import { useNodoStore, useProximaReserva, useComunidadActual } from '../store/useNodoStore';
 import { StatusBadge } from './StatusBadge';
 import { QrSvg } from '../utils/qr';
@@ -8,8 +16,7 @@ import { createQrPayload } from '../utils/qrPayload';
 import { formatFechaLarga, formatARS, mesesAdeudados } from '../data/mockData';
 import NodoLogo from './Navbar';
 
-const iniciales = (nombre, apellido) =>
-  `${nombre.charAt(0)}${apellido.charAt(0)}`.toUpperCase();
+const iniciales = (nombre, apellido) => `${nombre.charAt(0)}${apellido.charAt(0)}`.toUpperCase();
 
 export default function DigitalCard() {
   const socio = useNodoStore((s) => s.members.find((m) => m.id === s.socioActualId));
@@ -104,8 +111,8 @@ export default function DigitalCard() {
               <StatusBadge estado={socio.cuotaAlDia ? 'alDia' : 'moroso'} />
               {!socio.cuotaAlDia && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset ring-white/20">
-                  <Wallet size={13} className="text-red-300" /> Adeuda {meses} {meses === 1 ? 'mes' : 'meses'} ·{' '}
-                  {formatARS(socio.plan * meses)}
+                  <Wallet size={13} className="text-red-300" /> Adeuda {meses}{' '}
+                  {meses === 1 ? 'mes' : 'meses'} · {formatARS(socio.plan * meses)}
                 </span>
               )}
               <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset ring-white/20">
@@ -115,7 +122,8 @@ export default function DigitalCard() {
                 <BadgeCheck size={13} className="text-nodo-cyan" /> {socio.categoria}
               </span>
               <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset ring-white/20">
-                <CalendarClock size={13} className="text-nodo-green" /> Válido hasta {formatFechaLarga('2026-08-31')}
+                <CalendarClock size={13} className="text-nodo-green" /> Válido hasta{' '}
+                {formatFechaLarga('2026-08-31')}
               </span>
             </div>
 

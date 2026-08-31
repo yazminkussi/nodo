@@ -1,6 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LayoutDashboard, Users, CalendarRange, Store, Building2, Palette, FolderOpen, QrCode } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Users,
+  CalendarRange,
+  Store,
+  Building2,
+  Palette,
+  FolderOpen,
+  QrCode,
+} from 'lucide-react';
 import { Header, SectionNav } from './Navbar';
 import StatsOverview from './StatsOverview';
 import MemberTable from './MemberTable';
@@ -50,7 +59,9 @@ export default function AdminDashboard() {
         <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6">
           <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white p-4 shadow-card ring-1 ring-nodo-border">
             <div>
-              <h1 className="text-lg font-extrabold tracking-tight text-nodo-navy">Panel de Administración</h1>
+              <h1 className="text-lg font-extrabold tracking-tight text-nodo-navy">
+                Panel de Administración
+              </h1>
               <p className="text-xs text-slate-500">
                 Bienvenido Carlos · {comunidad.nombre} · {comunidad.plan}
               </p>

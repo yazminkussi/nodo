@@ -18,7 +18,9 @@ export default function Feed() {
   return (
     <section className="mx-auto max-w-5xl px-4 sm:px-6">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-extrabold tracking-tight text-nodo-navy">Novedades y Comunidad</h2>
+        <h2 className="text-lg font-extrabold tracking-tight text-nodo-navy">
+          Novedades y Comunidad
+        </h2>
         <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-500 ring-1 ring-inset ring-nodo-border">
           <Megaphone size={13} /> Oficial de {comunidad.nombre}
         </span>
@@ -42,10 +44,14 @@ export default function Feed() {
                   <Pin size={11} /> DESTACADA
                 </span>
               )}
-              <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ring-1 ring-inset ${colorCategoria[n.categoria] || colorCategoria.Comunidad}`}>
+              <span
+                className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ring-1 ring-inset ${colorCategoria[n.categoria] || colorCategoria.Comunidad}`}
+              >
                 {n.categoria}
               </span>
-              <span className="ml-auto text-xs font-semibold text-slate-400">{formatFechaCorta(n.fecha)}</span>
+              <span className="ml-auto text-xs font-semibold text-slate-400">
+                {formatFechaCorta(n.fecha)}
+              </span>
             </div>
             <h3 className="text-[15px] font-extrabold leading-snug text-nodo-navy">
               <span className="mr-1.5">{n.emoji}</span>

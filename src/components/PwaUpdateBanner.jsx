@@ -32,7 +32,11 @@ export default function PwaUpdateBanner() {
               disabled={instalando}
               className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-nodo-green px-3.5 py-2.5 text-xs font-extrabold text-white shadow-card transition hover:bg-nodo-green-dark disabled:opacity-60"
             >
-              {instalando ? <RefreshCw size={14} className="animate-spin" /> : <RotateCw size={14} />}
+              {instalando ? (
+                <RefreshCw size={14} className="animate-spin" />
+              ) : (
+                <RotateCw size={14} />
+              )}
               Actualizar
             </button>
           </div>

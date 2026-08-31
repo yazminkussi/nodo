@@ -2,7 +2,17 @@ import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, CalendarCheck, CheckCircle2, Download, UserRound, CalendarX2 } from 'lucide-react';
 import { useNodoStore } from '../store/useNodoStore';
-import { nextDays, todayISO, formatARS, formatFechaLarga, slotsDeHorario, diaActivo, nombreDias, horaAmin, minAstring } from '../data/mockData';
+import {
+  nextDays,
+  todayISO,
+  formatARS,
+  formatFechaLarga,
+  slotsDeHorario,
+  diaActivo,
+  nombreDias,
+  horaAmin,
+  minAstring,
+} from '../data/mockData';
 import { QrSvg } from '../utils/qr';
 import SpaceIcon from './SpaceIcon';
 import { StatusBadge } from './StatusBadge';
@@ -78,20 +88,30 @@ export default function BookingModal({ espacio, onClose }) {
         >
           <div className="flex items-center justify-between border-b border-nodo-border px-5 py-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl text-white" style={{ background: espacio.color }}>
+              <div
+                className="flex h-10 w-10 items-center justify-center rounded-xl text-white"
+                style={{ background: espacio.color }}
+              >
                 <SpaceIcon icono={espacio.icono} />
               </div>
               <div>
-                <h3 className="font-extrabold text-nodo-navy">{confirmado ? 'Reserva confirmada' : `Reservar · ${espacio.nombre}`}</h3>
+                <h3 className="font-extrabold text-nodo-navy">
+                  {confirmado ? 'Reserva confirmada' : `Reservar · ${espacio.nombre}`}
+                </h3>
                 <p className="text-xs text-slate-500">
                   {formatARS(espacio.precioHora)} / hora · {espacio.capacidad} personas
                 </p>
                 <p className="text-[11px] font-bold text-nodo-teal">
-                  {nombreDias(espacio.horario.dias)} · {espacio.horario.apertura} a {espacio.horario.cierre}
+                  {nombreDias(espacio.horario.dias)} · {espacio.horario.apertura} a{' '}
+                  {espacio.horario.cierre}
                 </p>
               </div>
             </div>
-            <button onClick={onClose} className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600" aria-label="Cerrar">
+            <button
+              onClick={onClose}
+              className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+              aria-label="Cerrar"
+            >
               <X size={18} />
             </button>
           </div>
@@ -115,16 +135,25 @@ export default function BookingModal({ espacio, onClose }) {
                   <div className="flex-1 space-y-1.5 text-sm">
                     <p className="flex items-center gap-2 text-slate-700">
                       <UserRound size={14} className="text-nodo-teal" />
-                      <span className="font-bold">{socio.nombre} {socio.apellido}</span>
-                    </p>
-                    <p className="text-slate-600"><span className="font-semibold text-slate-500">Espacio:</span> {espacio.nombre}</p>
-                    <p className="text-slate-600">
-                      <span className="font-semibold text-slate-500">Fecha:</span> {formatFechaLarga(fecha)}
+                      <span className="font-bold">
+                        {socio.nombre} {socio.apellido}
+                      </span>
                     </p>
                     <p className="text-slate-600">
-                      <span className="font-semibold text-slate-500">Horario:</span> {inicio} a {finReserva(inicio)} hs
+                      <span className="font-semibold text-slate-500">Espacio:</span>{' '}
+                      {espacio.nombre}
                     </p>
-                    <p className="text-xs text-slate-400">Mostrá este pase en la entrada del espacio para ingresar.</p>
+                    <p className="text-slate-600">
+                      <span className="font-semibold text-slate-500">Fecha:</span>{' '}
+                      {formatFechaLarga(fecha)}
+                    </p>
+                    <p className="text-slate-600">
+                      <span className="font-semibold text-slate-500">Horario:</span> {inicio} a{' '}
+                      {finReserva(inicio)} hs
+                    </p>
+                    <p className="text-xs text-slate-400">
+                      Mostrá este pase en la entrada del espacio para ingresar.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -145,38 +174,51 @@ export default function BookingModal({ espacio, onClose }) {
             </div>
           ) : (
             <div className="p-5">
-              <p className="mb-2 text-xs font-bold uppercase tracking-widest text-slate-400">Elegí el día</p>
+              <p className="mb-2 text-xs font-bold uppercase tracking-widest text-slate-400">
+                Elegí el día
+              </p>
               <div className="flex gap-2 overflow-x-auto pb-2">
                 {dias.map((d) => {
                   const [, m, dd] = d.split('-');
                   const activo = d === fecha;
                   const esHoy = d === hoy;
                   const cerrado = !diaActivo(espacio.horario.dias, d);
-                  const diaSemana = new Date(`${d}T12:00:00`).toLocaleDateString('es-AR', { weekday: 'short' });
+                  const diaSemana = new Date(`${d}T12:00:00`).toLocaleDateString('es-AR', {
+                    weekday: 'short',
+                  });
                   return (
                     <button
                       key={d}
                       onClick={() => setFecha(d)}
                       className={`flex min-w-[64px] flex-col items-center rounded-xl px-3 py-2 transition-colors ${
-                        activo ? 'bg-nodo-navy text-white shadow-card' : 'bg-slate-50 text-slate-500 ring-1 ring-inset ring-nodo-border hover:bg-slate-100'
+                        activo
+                          ? 'bg-nodo-navy text-white shadow-card'
+                          : 'bg-slate-50 text-slate-500 ring-1 ring-inset ring-nodo-border hover:bg-slate-100'
                       } ${cerrado && !activo ? 'opacity-45' : ''}`}
                     >
                       <span className="text-[10px] font-semibold uppercase">{diaSemana}</span>
                       <span className="text-lg font-extrabold leading-none">{dd}</span>
                       <span className="text-[10px] font-semibold uppercase">{m}</span>
                       {esHoy && <span className="text-[9px] font-bold text-nodo-cyan">Hoy</span>}
-                      {cerrado && <span className="text-[8px] font-bold text-slate-400">Cerrado</span>}
+                      {cerrado && (
+                        <span className="text-[8px] font-bold text-slate-400">Cerrado</span>
+                      )}
                     </button>
                   );
                 })}
               </div>
 
-              <p className="mb-2 mt-4 text-xs font-bold uppercase tracking-widest text-slate-400">Elegí el horario</p>
+              <p className="mb-2 mt-4 text-xs font-bold uppercase tracking-widest text-slate-400">
+                Elegí el horario
+              </p>
               {diaCerrado ? (
                 <div className="flex flex-col items-center gap-2 rounded-2xl border-2 border-dashed border-nodo-border bg-nodo-surface px-4 py-8 text-center">
                   <CalendarX2 size={26} className="text-slate-300" />
                   <p className="text-sm font-bold text-slate-500">Este espacio no abre ese día</p>
-                  <p className="text-xs text-slate-400">{nombreDias(espacio.horario.dias)} · {espacio.horario.apertura} a {espacio.horario.cierre}</p>
+                  <p className="text-xs text-slate-400">
+                    {nombreDias(espacio.horario.dias)} · {espacio.horario.apertura} a{' '}
+                    {espacio.horario.cierre}
+                  </p>
                 </div>
               ) : (
                 <div className="grid grid-cols-4 gap-2">

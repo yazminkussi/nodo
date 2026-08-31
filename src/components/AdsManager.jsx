@@ -29,18 +29,33 @@ export default function AdsManager() {
     }
     addAd({ ...form, negocio: form.negocio.trim(), rubro: form.rubro.trim() || 'Comercio local' });
     addToast(`Publicidad de ${form.negocio} activada.`, 'success');
-    setForm({ negocio: '', rubro: '', descuento: '10% OFF', descripcion: '', barrio: '', color: colores[0], destacada: false });
+    setForm({
+      negocio: '',
+      rubro: '',
+      descuento: '10% OFF',
+      descripcion: '',
+      barrio: '',
+      color: colores[0],
+      destacada: false,
+    });
   };
 
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6">
       <div className="mb-4">
-        <h2 className="text-lg font-extrabold tracking-tight text-nodo-navy">Publicidades de Comercios</h2>
-        <p className="text-xs text-slate-500">Sponsors del barrio con descuentos exclusivos para socios.</p>
+        <h2 className="text-lg font-extrabold tracking-tight text-nodo-navy">
+          Publicidades de Comercios
+        </h2>
+        <p className="text-xs text-slate-500">
+          Sponsors del barrio con descuentos exclusivos para socios.
+        </p>
       </div>
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-5">
-        <form onSubmit={crear} className="space-y-3 rounded-2xl bg-white p-5 shadow-card ring-1 ring-nodo-border lg:col-span-2">
+        <form
+          onSubmit={crear}
+          className="space-y-3 rounded-2xl bg-white p-5 shadow-card ring-1 ring-nodo-border lg:col-span-2"
+        >
           <h3 className="flex items-center gap-2 font-extrabold text-nodo-navy">
             <Plus size={16} className="text-nodo-teal" /> Nueva publicidad
           </h3>
@@ -101,7 +116,10 @@ export default function AdsManager() {
             />
             Publicidad destacada
           </label>
-          <button type="submit" className="w-full rounded-xl bg-nodo-navy px-4 py-3 text-sm font-extrabold text-white shadow-card transition hover:bg-nodo-navy-2">
+          <button
+            type="submit"
+            className="w-full rounded-xl bg-nodo-navy px-4 py-3 text-sm font-extrabold text-white shadow-card transition hover:bg-nodo-navy-2"
+          >
             Activar publicidad
           </button>
         </form>
@@ -117,7 +135,10 @@ export default function AdsManager() {
                 exit={{ opacity: 0, scale: 0.96 }}
                 className="mb-3 flex items-center gap-3 rounded-2xl bg-white p-4 shadow-card ring-1 ring-nodo-border"
               >
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-white" style={{ background: ad.color }}>
+                <div
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-white"
+                  style={{ background: ad.color }}
+                >
                   <Store size={18} />
                 </div>
                 <div className="min-w-0 flex-1">
@@ -127,7 +148,9 @@ export default function AdsManager() {
                       <Percent size={10} /> {ad.descuento}
                     </span>
                     {ad.destacada && (
-                      <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-extrabold text-nodo-amber">Destacada</span>
+                      <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-extrabold text-nodo-amber">
+                        Destacada
+                      </span>
                     )}
                   </div>
                   <p className="truncate text-xs text-slate-500">{ad.descripcion}</p>

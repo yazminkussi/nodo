@@ -11,7 +11,9 @@ const estilos = {
 export function StatusBadge({ estado, className = '' }) {
   if (estado === 'alDia') {
     return (
-      <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset ${estilos.alDia} ${className}`}>
+      <span
+        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset ${estilos.alDia} ${className}`}
+      >
         <CheckCircle2 size={13} strokeWidth={2.5} />
         Al día
       </span>
@@ -19,7 +21,9 @@ export function StatusBadge({ estado, className = '' }) {
   }
   if (estado === 'moroso' || estado === 'adeuda') {
     return (
-      <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset ${estilos.moroso} ${className}`}>
+      <span
+        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset ${estilos.moroso} ${className}`}
+      >
         <AlertTriangle size={13} strokeWidth={2.5} />
         Adeuda
       </span>
@@ -27,7 +31,9 @@ export function StatusBadge({ estado, className = '' }) {
   }
   if (estado === 'pendiente') {
     return (
-      <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset ${estilos.pendiente} ${className}`}>
+      <span
+        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset ${estilos.pendiente} ${className}`}
+      >
         <Clock size={13} strokeWidth={2.5} />
         Pendiente
       </span>
@@ -35,14 +41,18 @@ export function StatusBadge({ estado, className = '' }) {
   }
   if (estado === 'confirmada') {
     return (
-      <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset ${estilos.confirmada} ${className}`}>
+      <span
+        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset ${estilos.confirmada} ${className}`}
+      >
         <CalendarCheck2 size={13} strokeWidth={2.5} />
         Confirmada
       </span>
     );
   }
   return (
-    <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset ${estilos.info} ${className}`}>
+    <span
+      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset ${estilos.info} ${className}`}
+    >
       {estado}
     </span>
   );

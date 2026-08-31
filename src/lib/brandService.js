@@ -64,7 +64,10 @@ export async function sincronizarLogo({ comunidadId, dataUrl }) {
 
     const { data: fila, error: cfgError } = await supabase
       .from(TABLA_CONFIG)
-      .upsert({ comunidad_id: comunidadId, logo_url: publica.publicUrl, logo_etag: etag }, { onConflict: 'comunidad_id' })
+      .upsert(
+        { comunidad_id: comunidadId, logo_url: publica.publicUrl, logo_etag: etag },
+        { onConflict: 'comunidad_id' }
+      )
       .select()
       .single();
     if (cfgError) throw cfgError;

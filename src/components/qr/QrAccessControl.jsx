@@ -67,7 +67,9 @@ export default function QrAccessControl() {
       override,
       meses: socio && !socio.cuotaAlDia ? mesesAdeudados(socio) : 0,
       monto: socio && !socio.cuotaAlDia ? socio.plan * Math.max(1, mesesAdeudados(socio)) : 0,
-      reserva: reservaActiva ? { espacioNombre: reservaActiva.space.nombre, hora: reservaActiva.res.inicio } : null,
+      reserva: reservaActiva
+        ? { espacioNombre: reservaActiva.space.nombre, hora: reservaActiva.res.inicio }
+        : null,
     };
   };
 
@@ -170,7 +172,13 @@ export default function QrAccessControl() {
     const q = consulta.trim().toLowerCase();
     if (!q) return;
     const socio = members.find(
-      (m) => m.dni === q.replace(/\D/g, '') || m.numero === q.replace(/^n\s?°/i, '').replace(/\D/g, '').padStart(4, '0')
+      (m) =>
+        m.dni === q.replace(/\D/g, '') ||
+        m.numero ===
+          q
+            .replace(/^n\s?°/i, '')
+            .replace(/\D/g, '')
+            .padStart(4, '0')
     );
     if (!socio) {
       const res = construirResultado({
@@ -241,7 +249,11 @@ export default function QrAccessControl() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
         <div className="lg:col-span-3">
-          <QrScannerPanel onEscaneado={handleEscaneo} onIngresoManual={handleManual} pausado={Boolean(resultado)} />
+          <QrScannerPanel
+            onEscaneado={handleEscaneo}
+            onIngresoManual={handleManual}
+            pausado={Boolean(resultado)}
+          />
         </div>
 
         <div className="lg:col-span-2">
@@ -251,10 +263,30 @@ export default function QrAccessControl() {
             </p>
             <div className="grid grid-cols-2 gap-3">
               {[
-                { label: 'Total', valor: statsHoy.total, clase: 'text-nodo-navy', fondo: 'bg-nodo-bg' },
-                { label: 'Permitidos', valor: statsHoy.permitido, clase: 'text-nodo-green-dark', fondo: 'bg-emerald-50' },
-                { label: 'Con Adeuda', valor: statsHoy.denegado, clase: 'text-nodo-red', fondo: 'bg-red-50' },
-                { label: 'Inválidos', valor: statsHoy.invalido, clase: 'text-nodo-amber', fondo: 'bg-amber-50' },
+                {
+                  label: 'Total',
+                  valor: statsHoy.total,
+                  clase: 'text-nodo-navy',
+                  fondo: 'bg-nodo-bg',
+                },
+                {
+                  label: 'Permitidos',
+                  valor: statsHoy.permitido,
+                  clase: 'text-nodo-green-dark',
+                  fondo: 'bg-emerald-50',
+                },
+                {
+                  label: 'Con Adeuda',
+                  valor: statsHoy.denegado,
+                  clase: 'text-nodo-red',
+                  fondo: 'bg-red-50',
+                },
+                {
+                  label: 'Inválidos',
+                  valor: statsHoy.invalido,
+                  clase: 'text-nodo-amber',
+                  fondo: 'bg-amber-50',
+                },
               ].map((s, i) => (
                 <motion.div
                   key={s.label}

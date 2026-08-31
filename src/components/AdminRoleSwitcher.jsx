@@ -45,12 +45,16 @@ export default function AdminRoleSwitcher() {
                   transition={{ type: 'spring', stiffness: 400, damping: 32 }}
                 />
               )}
-              <span className={`relative flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${activo ? 'bg-nodo-cyan/20 text-nodo-cyan' : 'bg-white text-nodo-teal'}`}>
+              <span
+                className={`relative flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${activo ? 'bg-nodo-cyan/20 text-nodo-cyan' : 'bg-white text-nodo-teal'}`}
+              >
                 <Icon size={16} strokeWidth={2.2} />
               </span>
               <span className="relative min-w-0">
                 <span className="block text-sm font-extrabold leading-tight">{r.etiqueta}</span>
-                <span className={`mt-0.5 block text-[11px] font-semibold leading-snug ${activo ? 'text-slate-300' : 'text-slate-500'}`}>
+                <span
+                  className={`mt-0.5 block text-[11px] font-semibold leading-snug ${activo ? 'text-slate-300' : 'text-slate-500'}`}
+                >
                   {r.descripcion}
                 </span>
               </span>

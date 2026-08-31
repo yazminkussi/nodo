@@ -96,7 +96,15 @@ export default function NodoDrive() {
 
   const crearDoc = () => {
     const id = Date.now();
-    const item = { id, carpetaId, tipo: 'doc', nombre: 'Nuevo documento', fecha: todayISO(), autor, contenido: '' };
+    const item = {
+      id,
+      carpetaId,
+      tipo: 'doc',
+      nombre: 'Nuevo documento',
+      fecha: todayISO(),
+      autor,
+      contenido: '',
+    };
     addDriveItem(item);
     setEditando(item);
   };
@@ -152,19 +160,28 @@ export default function NodoDrive() {
               key={f.id}
               onClick={() => setCarpetaId(f.id)}
               className={`rounded-2xl p-4 text-left shadow-card ring-1 transition ${
-                activa ? 'bg-nodo-navy text-white ring-nodo-navy' : 'bg-white ring-nodo-border hover:shadow-lift'
+                activa
+                  ? 'bg-nodo-navy text-white ring-nodo-navy'
+                  : 'bg-white ring-nodo-border hover:shadow-lift'
               }`}
             >
               <div className="flex items-center justify-between">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl text-white" style={{ background: f.color }}>
+                <span
+                  className="flex h-10 w-10 items-center justify-center rounded-xl text-white"
+                  style={{ background: f.color }}
+                >
                   <Icon size={18} />
                 </span>
-                <span className={`text-[11px] font-extrabold ${activa ? 'text-nodo-cyan' : 'text-slate-400'}`}>
+                <span
+                  className={`text-[11px] font-extrabold ${activa ? 'text-nodo-cyan' : 'text-slate-400'}`}
+                >
                   {count} ítems
                 </span>
               </div>
               <p className="mt-3 text-sm font-extrabold leading-tight">{f.nombre}</p>
-              <p className={`mt-1 text-[11px] font-semibold ${activa ? 'text-slate-300' : 'text-slate-500'}`}>
+              <p
+                className={`mt-1 text-[11px] font-semibold ${activa ? 'text-slate-300' : 'text-slate-500'}`}
+              >
                 {f.descripcion}
               </p>
             </button>
@@ -174,7 +191,10 @@ export default function NodoDrive() {
 
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white p-4 shadow-card ring-1 ring-nodo-border">
         <div className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl text-white" style={{ background: carpeta.color }}>
+          <span
+            className="flex h-9 w-9 items-center justify-center rounded-xl text-white"
+            style={{ background: carpeta.color }}
+          >
             <FolderOpen size={16} />
           </span>
           <div>

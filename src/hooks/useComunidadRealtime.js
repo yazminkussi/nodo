@@ -95,7 +95,10 @@ export function useAccesoRealtime() {
             escaneadoPor: fila.escaneado_por,
             metodo: fila.metodo,
             reserva: fila.detalle_reserva
-              ? { espacioNombre: fila.detalle_reserva.split(' · ')[0], hora: fila.detalle_reserva.split(' · ')[1]?.replace(' hs', '') }
+              ? {
+                  espacioNombre: fila.detalle_reserva.split(' · ')[0],
+                  hora: fila.detalle_reserva.split(' · ')[1]?.replace(' hs', ''),
+                }
               : null,
             override: fila.override || false,
           });

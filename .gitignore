@@ -27,5 +27,10 @@ pnpm-debug.log*
 .env
 .env.local
 
-# Fuentes de diseño (solo locales)
+# Fuentes de diseño (solo locales, no se versionan los binarios pesados)
 imagenes/*.ai
+*.ai
+brand/
+
+# Vercel
+.vercel

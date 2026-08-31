@@ -32,7 +32,9 @@ export default function BookingPanel() {
             key={c}
             onClick={() => setFiltro(c)}
             className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors ${
-              filtro === c ? 'bg-nodo-navy text-white shadow-card' : 'bg-white text-slate-500 ring-1 ring-inset ring-nodo-border hover:bg-slate-50'
+              filtro === c
+                ? 'bg-nodo-navy text-white shadow-card'
+                : 'bg-white text-slate-500 ring-1 ring-inset ring-nodo-border hover:bg-slate-50'
             }`}
           >
             {c}
@@ -59,7 +61,9 @@ export default function BookingPanel() {
               >
                 <SpaceIcon icono={esp.icono} className="h-5 w-5" />
               </div>
-              <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-bold text-slate-500">{esp.categoria}</span>
+              <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-bold text-slate-500">
+                {esp.categoria}
+              </span>
             </div>
             <div>
               <h3 className="font-extrabold text-nodo-navy">{esp.nombre}</h3>
@@ -69,10 +73,14 @@ export default function BookingPanel() {
               <span className="inline-flex items-center gap-1.5">
                 <Users size={14} className="text-nodo-cyan" /> {esp.capacidad} personas
               </span>
-              <span className="font-extrabold text-nodo-teal">{formatARS(esp.precioHora)}<span className="font-medium text-slate-400"> / h</span></span>
+              <span className="font-extrabold text-nodo-teal">
+                {formatARS(esp.precioHora)}
+                <span className="font-medium text-slate-400"> / h</span>
+              </span>
             </div>
             <p className="flex items-center gap-1 text-[11px] font-bold text-slate-400">
-              <Clock size={12} /> {nombreDias(esp.horario.dias)} · {esp.horario.apertura} a {esp.horario.cierre}
+              <Clock size={12} /> {nombreDias(esp.horario.dias)} · {esp.horario.apertura} a{' '}
+              {esp.horario.cierre}
             </p>
             <span className="rounded-lg bg-cyan-50 py-2 text-center text-xs font-bold text-nodo-teal transition-colors group-hover:bg-nodo-cyan group-hover:text-white">
               Reservar ahora
@@ -81,7 +89,9 @@ export default function BookingPanel() {
         ))}
       </div>
 
-      {seleccionado && <BookingModal espacio={seleccionado} onClose={() => setSeleccionado(null)} />}
+      {seleccionado && (
+        <BookingModal espacio={seleccionado} onClose={() => setSeleccionado(null)} />
+      )}
     </section>
   );
 }

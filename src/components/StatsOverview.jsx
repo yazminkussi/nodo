@@ -42,7 +42,9 @@ export default function StatsOverview() {
     return acc + slotsDeHorario(e.horario).length;
   }, 0);
   const reservasHoy = reservations.filter((r) => r.fecha === hoy).length;
-  const ocupacion = slotsTotales ? Math.min(100, Math.round((reservasHoy / slotsTotales) * 100)) : 0;
+  const ocupacion = slotsTotales
+    ? Math.min(100, Math.round((reservasHoy / slotsTotales) * 100))
+    : 0;
 
   const tarjetas = [
     {
