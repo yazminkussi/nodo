@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { IdCard, CalendarDays, Newspaper, Sparkles } from 'lucide-react';
 import { Header, SectionNav } from './Navbar';
 import DigitalCard from './DigitalCard';
@@ -24,31 +24,28 @@ export default function SocioPortal() {
       <div className="pt-16">
         <SectionNav sections={secciones} active={seccion} onChange={setSeccion} />
 
-        <AnimatePresence mode="wait">
-          <motion.main
-            key={seccion}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.25 }}
-            className="space-y-8 py-6"
-          >
-            {seccion === 'carnet' && (
-              <>
-                <DigitalCard />
-                <AdBanner />
-              </>
-            )}
-            {seccion === 'reservas' && <BookingPanel />}
-            {seccion === 'talleres' && <ActivitiesPanel />}
-            {seccion === 'novedades' && (
-              <>
-                <Feed />
-                <AdBanner />
-              </>
-            )}
-          </motion.main>
-        </AnimatePresence>
+        <motion.main
+          key={seccion}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.22 }}
+          className="space-y-8 py-6"
+        >
+          {seccion === 'carnet' && (
+            <>
+              <DigitalCard />
+              <AdBanner />
+            </>
+          )}
+          {seccion === 'reservas' && <BookingPanel />}
+          {seccion === 'talleres' && <ActivitiesPanel />}
+          {seccion === 'novedades' && (
+            <>
+              <Feed />
+              <AdBanner />
+            </>
+          )}
+        </motion.main>
       </div>
     </div>
   );

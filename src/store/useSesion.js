@@ -34,6 +34,8 @@ export const useSesion = create((set, get) => ({
     await get()._aplicarSession(session);
 
     supabase.auth.onAuthStateChange((_evento, nuevaSession) => {
+      // Si la persona eligió "modo demo" a mano, no la sacamos de ahí.
+      if (get().estado === 'demo') return;
       get()._aplicarSession(nuevaSession);
     });
   },
