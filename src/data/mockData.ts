@@ -337,6 +337,7 @@ export const ROLES_ADMIN = {
       'acceso',
       'socios',
       'reservas',
+      'novedades',
       'publicidades',
       'planes',
       'drive',
@@ -349,7 +350,7 @@ export const ROLES_ADMIN = {
     etiqueta: 'Admin de Deportes',
     descripcion: 'Gestión de canchas, espacios deportivos y horarios.',
     icono: 'trophy',
-    secciones: ['resumen', 'acceso', 'reservas', 'drive', 'personalizacion'],
+    secciones: ['resumen', 'acceso', 'reservas', 'novedades', 'drive', 'personalizacion'],
     categorias: ['Deportivo'],
   },
   talleres: {
@@ -357,7 +358,7 @@ export const ROLES_ADMIN = {
     etiqueta: 'Admin de Talleres / Cultura',
     descripcion: 'Inscripciones a talleres y actividades culturales.',
     icono: 'palette',
-    secciones: ['resumen', 'acceso', 'reservas', 'drive', 'personalizacion'],
+    secciones: ['resumen', 'acceso', 'reservas', 'novedades', 'drive', 'personalizacion'],
     categorias: ['Cultural'],
   },
 } as const;

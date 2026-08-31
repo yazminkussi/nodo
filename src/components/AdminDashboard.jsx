@@ -9,11 +9,13 @@ import {
   Palette,
   FolderOpen,
   QrCode,
+  Newspaper,
 } from 'lucide-react';
 import { Header, SectionNav } from './Navbar';
 import StatsOverview from './StatsOverview';
 import MemberTable from './MemberTable';
 import ReservationManager from './ReservationManager';
+import NovedadesManager from './NovedadesManager';
 import AdsManager from './AdsManager';
 import B2BOverview from './B2BOverview';
 import CommunitySettings from './CommunitySettings';
@@ -30,6 +32,7 @@ const seccionesBase = [
   { key: 'acceso', label: 'Escanear QR', icon: QrCode },
   { key: 'socios', label: 'Socios', icon: Users },
   { key: 'reservas', label: 'Reservas', icon: CalendarRange },
+  { key: 'novedades', label: 'Novedades', icon: Newspaper },
   { key: 'publicidades', label: 'Publicidades', icon: Store },
   { key: 'planes', label: 'Planes NODO', icon: Building2 },
   { key: 'drive', label: 'Drive Interno', icon: FolderOpen },
@@ -107,6 +110,7 @@ export default function AdminDashboard() {
             {seccion === 'acceso' && <QrAccessControl />}
             {seccion === 'socios' && <MemberTable />}
             {seccion === 'reservas' && <ReservationManager />}
+            {seccion === 'novedades' && <NovedadesManager />}
             {seccion === 'publicidades' && <AdsManager />}
             {seccion === 'planes' && <B2BOverview />}
             {seccion === 'drive' && <NodoDrive />}

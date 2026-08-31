@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
-import { Pin, Megaphone } from 'lucide-react';
-import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
+import { Pin, Megaphone, Loader2 } from 'lucide-react';
+import { useComunidadActual } from '../store/useNodoStore';
+import { useComunidadActiva } from '../store/useSesion';
+import { useNovedades } from '../hooks/useNovedades';
 import { formatFechaCorta } from '../data/mockData';
 
 const colorCategoria = {
@@ -11,9 +13,11 @@ const colorCategoria = {
 };
 
 export default function Feed() {
-  const novedades = useNodoStore((s) => s.novedades);
-  const comunidad = useComunidadActual();
-  const orden = [...novedades].sort((a, b) => b.fecha.localeCompare(a.fecha));
+  const { novedades, cargando } = useNovedades();
+  const comunidadDemo = useComunidadActual();
+  const comunidadReal = useComunidadActiva();
+  const comunidad = comunidadReal || comunidadDemo;
+  const orden = [...novedades].sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)));
 
   return (
     <section className="mx-auto max-w-5xl px-4 sm:px-6">
@@ -25,6 +29,17 @@ export default function Feed() {
           <Megaphone size={13} /> Oficial de {comunidad.nombre}
         </span>
       </div>
+
+      {cargando && orden.length === 0 && (
+        <p className="flex items-center justify-center gap-2 py-10 text-sm text-slate-400">
+          <Loader2 size={16} className="animate-spin" /> Cargando novedades…
+        </p>
+      )}
+      {!cargando && orden.length === 0 && (
+        <p className="rounded-2xl border-2 border-dashed border-nodo-border bg-white px-4 py-10 text-center text-sm text-slate-400">
+          Todavía no hay novedades publicadas.
+        </p>
+      )}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {orden.map((n, i) => (
