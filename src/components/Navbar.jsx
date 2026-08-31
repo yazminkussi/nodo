@@ -5,12 +5,13 @@ import RoleToggle from './RoleToggle';
 import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
 import { useSesion, useComunidadActiva } from '../store/useSesion';
 
-export function NodoLogo({ className = 'h-9 w-9' }) {
+export function NodoLogo({ className = 'h-9 w-9', tone = 'light' }) {
   return (
     <img
       src="/imagenes/nodo_logo.png"
       alt="NODO"
       className={`${className} object-contain`}
+      style={{ filter: tone === 'light' ? 'brightness(0) invert(1)' : 'none' }}
       loading="eager"
     />
   );

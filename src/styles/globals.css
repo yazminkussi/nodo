@@ -3,10 +3,23 @@
 @tailwind utilities;
 
 :root {
-  --nodo-navy: #0f172a;
-  --nodo-green: #10b981;
-  --nodo-red: #ef4444;
-  --nodo-cyan: #06b6d4;
+  /* Paleta del rediseño — también disponible como CSS vars */
+  --lav: #5e52c4;
+  --lav-deep: #3b2fa6;
+  --lav-soft: #ebe9f8;
+  --sun: #e8a33d;
+  --sun-soft: #f9e9cf;
+  --clay: #c56a46;
+  --ink: #292620;
+  --ink-soft: #6b655b;
+  --paper: #f8f6f1;
+  --cloud: #ffffff;
+  --sand: #efeade;
+  --cream: #f3efe6;
+  --line: #e5ddcf;
+  --ok: #2e8b5e;
+  --warn: #d98a2b;
+  --crit: #c0453b;
 }
 
 html {
@@ -14,13 +27,25 @@ html {
 }
 
 body {
-  background-color: #f8fafc;
-  color: #334155;
+  background-color: #f8f6f1;
+  color: #292620;
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Scrollbars finos y discretos */
+.font-display {
+  font-family: 'Bricolage Grotesque', 'Inter', system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* Scrollbars finos y cálidos */
 *::-webkit-scrollbar {
   height: 8px;
   width: 8px;
@@ -29,16 +54,42 @@ body {
   background: transparent;
 }
 *::-webkit-scrollbar-thumb {
-  background: #e2e8f0;
+  background: #e0d7c6;
   border-radius: 999px;
 }
 *::-webkit-scrollbar-thumb:hover {
-  background: #cbd5e1;
+  background: #cdc2ac;
 }
 
 /* Barra inferior en iOS */
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Trazo del nudo (marca) dibujándose */
+@keyframes nodo-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.nodo-knot-draw path {
+  stroke-dasharray: 120;
+  stroke-dashoffset: 120;
+  animation: nodo-draw 1.1s ease forwards;
+}
+
+/* Respeta la preferencia de reducir movimiento en todo el sitio */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
   }
 }
