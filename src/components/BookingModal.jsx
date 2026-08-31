@@ -86,7 +86,7 @@ export default function BookingModal({ espacio, onClose }) {
           onClick={(e) => e.stopPropagation()}
           className="w-full max-w-lg overflow-hidden rounded-t-3xl bg-white shadow-lift sm:rounded-3xl"
         >
-          <div className="flex items-center justify-between border-b border-nodo-border px-5 py-4">
+          <div className="flex items-center justify-between border-b border-line px-5 py-4">
             <div className="flex items-center gap-3">
               <div
                 className="flex h-10 w-10 items-center justify-center rounded-xl text-white"
@@ -95,13 +95,13 @@ export default function BookingModal({ espacio, onClose }) {
                 <SpaceIcon icono={espacio.icono} />
               </div>
               <div>
-                <h3 className="font-extrabold text-nodo-navy">
+                <h3 className="font-extrabold text-ink">
                   {confirmado ? 'Reserva confirmada' : `Reservar · ${espacio.nombre}`}
                 </h3>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-ink-soft">
                   {formatARS(espacio.precioHora)} / hora · {espacio.capacidad} personas
                 </p>
-                <p className="text-[11px] font-bold text-nodo-teal">
+                <p className="text-[11px] font-bold text-lav">
                   {nombreDias(espacio.horario.dias)} · {espacio.horario.apertura} a{' '}
                   {espacio.horario.cierre}
                 </p>
@@ -109,7 +109,7 @@ export default function BookingModal({ espacio, onClose }) {
             </div>
             <button
               onClick={onClose}
-              className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+              className="rounded-full p-2 text-ink-faint transition hover:bg-sand hover:text-ink-soft"
               aria-label="Cerrar"
             >
               <X size={18} />
@@ -120,7 +120,7 @@ export default function BookingModal({ espacio, onClose }) {
             <div className="p-5">
               <div className="relative overflow-hidden rounded-2xl border-2 border-dashed border-nodo-teal/50 bg-gradient-to-br from-cyan-50 to-emerald-50 p-5">
                 <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-nodo-green/20 blur-2xl" />
-                <div className="relative flex items-center gap-2 text-nodo-green-dark">
+                <div className="relative flex items-center gap-2 text-ok">
                   <CheckCircle2 size={20} strokeWidth={2.5} />
                   <p className="text-sm font-extrabold">Pase de ingreso digital</p>
                   <StatusBadge estado="confirmada" className="ml-auto" />
@@ -133,25 +133,24 @@ export default function BookingModal({ espacio, onClose }) {
                     />
                   </div>
                   <div className="flex-1 space-y-1.5 text-sm">
-                    <p className="flex items-center gap-2 text-slate-700">
-                      <UserRound size={14} className="text-nodo-teal" />
+                    <p className="flex items-center gap-2 text-ink">
+                      <UserRound size={14} className="text-lav" />
                       <span className="font-bold">
                         {socio.nombre} {socio.apellido}
                       </span>
                     </p>
-                    <p className="text-slate-600">
-                      <span className="font-semibold text-slate-500">Espacio:</span>{' '}
-                      {espacio.nombre}
+                    <p className="text-ink-soft">
+                      <span className="font-semibold text-ink-soft">Espacio:</span> {espacio.nombre}
                     </p>
-                    <p className="text-slate-600">
-                      <span className="font-semibold text-slate-500">Fecha:</span>{' '}
+                    <p className="text-ink-soft">
+                      <span className="font-semibold text-ink-soft">Fecha:</span>{' '}
                       {formatFechaLarga(fecha)}
                     </p>
-                    <p className="text-slate-600">
-                      <span className="font-semibold text-slate-500">Horario:</span> {inicio} a{' '}
+                    <p className="text-ink-soft">
+                      <span className="font-semibold text-ink-soft">Horario:</span> {inicio} a{' '}
                       {finReserva(inicio)} hs
                     </p>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-ink-faint">
                       Mostrá este pase en la entrada del espacio para ingresar.
                     </p>
                   </div>
@@ -160,13 +159,13 @@ export default function BookingModal({ espacio, onClose }) {
               <div className="mt-4 flex gap-2">
                 <button
                   onClick={() => addToast('Pase guardado en tu carnet digital.', 'info')}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-nodo-navy px-4 py-3 text-sm font-bold text-white transition hover:bg-nodo-navy-2"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-lav-deep px-4 py-3 text-sm font-bold text-white transition hover:bg-lav-deep"
                 >
                   <Download size={16} /> Guardar pase
                 </button>
                 <button
                   onClick={onClose}
-                  className="flex-1 rounded-xl bg-slate-100 px-4 py-3 text-sm font-bold text-slate-600 transition hover:bg-slate-200"
+                  className="flex-1 rounded-xl bg-sand px-4 py-3 text-sm font-bold text-ink-soft transition hover:bg-slate-200"
                 >
                   Listo
                 </button>
@@ -174,7 +173,7 @@ export default function BookingModal({ espacio, onClose }) {
             </div>
           ) : (
             <div className="p-5">
-              <p className="mb-2 text-xs font-bold uppercase tracking-widest text-slate-400">
+              <p className="mb-2 text-xs font-bold uppercase tracking-widest text-ink-faint">
                 Elegí el día
               </p>
               <div className="flex gap-2 overflow-x-auto pb-2">
@@ -192,30 +191,30 @@ export default function BookingModal({ espacio, onClose }) {
                       onClick={() => setFecha(d)}
                       className={`flex min-w-[64px] flex-col items-center rounded-xl px-3 py-2 transition-colors ${
                         activo
-                          ? 'bg-nodo-navy text-white shadow-card'
-                          : 'bg-slate-50 text-slate-500 ring-1 ring-inset ring-nodo-border hover:bg-slate-100'
+                          ? 'bg-lav-deep text-white shadow-card'
+                          : 'bg-paper text-ink-soft ring-1 ring-inset ring-line hover:bg-sand'
                       } ${cerrado && !activo ? 'opacity-45' : ''}`}
                     >
                       <span className="text-[10px] font-semibold uppercase">{diaSemana}</span>
                       <span className="text-lg font-extrabold leading-none">{dd}</span>
                       <span className="text-[10px] font-semibold uppercase">{m}</span>
-                      {esHoy && <span className="text-[9px] font-bold text-nodo-cyan">Hoy</span>}
+                      {esHoy && <span className="text-[9px] font-bold text-lav">Hoy</span>}
                       {cerrado && (
-                        <span className="text-[8px] font-bold text-slate-400">Cerrado</span>
+                        <span className="text-[8px] font-bold text-ink-faint">Cerrado</span>
                       )}
                     </button>
                   );
                 })}
               </div>
 
-              <p className="mb-2 mt-4 text-xs font-bold uppercase tracking-widest text-slate-400">
+              <p className="mb-2 mt-4 text-xs font-bold uppercase tracking-widest text-ink-faint">
                 Elegí el horario
               </p>
               {diaCerrado ? (
-                <div className="flex flex-col items-center gap-2 rounded-2xl border-2 border-dashed border-nodo-border bg-nodo-surface px-4 py-8 text-center">
+                <div className="flex flex-col items-center gap-2 rounded-2xl border-2 border-dashed border-line bg-paper px-4 py-8 text-center">
                   <CalendarX2 size={26} className="text-slate-300" />
-                  <p className="text-sm font-bold text-slate-500">Este espacio no abre ese día</p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-sm font-bold text-ink-soft">Este espacio no abre ese día</p>
+                  <p className="text-xs text-ink-faint">
                     {nombreDias(espacio.horario.dias)} · {espacio.horario.apertura} a{' '}
                     {espacio.horario.cierre}
                   </p>
@@ -234,8 +233,8 @@ export default function BookingModal({ espacio, onClose }) {
                           activo
                             ? 'bg-nodo-green text-white shadow-card'
                             : ocupado
-                              ? 'cursor-not-allowed bg-slate-100 text-slate-300 line-through'
-                              : 'bg-cyan-50 text-nodo-teal ring-1 ring-inset ring-cyan-200 hover:bg-nodo-cyan hover:text-white'
+                              ? 'cursor-not-allowed bg-sand text-slate-300 line-through'
+                              : 'bg-lav-soft text-lav ring-1 ring-inset ring-lav/25 hover:bg-nodo-cyan hover:text-white'
                         }`}
                       >
                         {slot}
@@ -248,7 +247,7 @@ export default function BookingModal({ espacio, onClose }) {
               <button
                 disabled={!inicio}
                 onClick={confirmar}
-                className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-nodo-green px-4 py-3.5 text-sm font-extrabold text-white shadow-card transition hover:bg-nodo-green-dark disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
+                className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-nodo-green px-4 py-3.5 text-sm font-extrabold text-white shadow-card transition hover:bg-nodo-green-dark disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-ink-faint"
               >
                 <CalendarCheck size={17} />
                 {inicio ? `Confirmar reserva · ${inicio} hs` : 'Seleccioná un horario'}

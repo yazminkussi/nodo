@@ -1,20 +1,15 @@
 import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Search,
-  MessageCircle,
-  Eye,
-  RefreshCcw,
-  UserPlus,
-  Loader2,
-  AlertCircle,
-} from 'lucide-react';
+import { Search, MessageCircle, Eye, RefreshCcw, UserPlus, AlertCircle } from 'lucide-react';
 import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
 import { useComunidadActiva } from '../store/useSesion';
 import { useSocios } from '../hooks/useSocios';
 import { StatusBadge } from './StatusBadge';
 import { formatARS } from '../data/mockData';
 import SocioFormModal from './SocioFormModal';
+import SectionTitle from './ui/SectionTitle';
+import Button from './ui/Button';
+import { SkeletonList } from './ui/Skeleton';
 
 const iniciales = (a, b) => `${a.charAt(0)}${b.charAt(0)}`.toUpperCase();
 
@@ -124,35 +119,29 @@ export default function MemberTable() {
 
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6">
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 className="text-lg font-extrabold tracking-tight text-nodo-navy">
-            Gestión de Socios
-          </h2>
-          <p className="text-xs text-slate-500">
-            {alDia} al día · {morosos} adeudan · {members.length} en total
-            {modo === 'demo' && ' · datos de demostración'}
-          </p>
-        </div>
-        <button
-          onClick={abrirAlta}
-          className="inline-flex items-center gap-2 rounded-xl bg-nodo-navy px-4 py-2.5 text-sm font-bold text-white shadow-card transition hover:bg-nodo-navy-2"
-        >
-          <UserPlus size={16} /> Alta de socio
-        </button>
-      </div>
+      <SectionTitle
+        title="Gestión de socios"
+        subtitle={`${alDia} al día · ${morosos} adeudan · ${members.length} en total${
+          modo === 'demo' ? ' · datos de demostración' : ''
+        }`}
+        action={
+          <Button variant="lav" onClick={abrirAlta}>
+            <UserPlus size={16} /> Alta de socio
+          </Button>
+        }
+      />
 
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="relative flex-1">
           <Search
             size={16}
-            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint"
           />
           <input
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
             placeholder="Buscar por nombre, N° de socio o barrio…"
-            className="w-full rounded-xl border-0 bg-white py-2.5 pl-9 pr-3 text-sm text-slate-700 shadow-card ring-1 ring-nodo-border placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
+            className="w-full rounded-xl border border-line bg-cloud py-2.5 pl-9 pr-3 text-sm text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-lav"
           />
         </div>
         <div className="flex gap-2">
@@ -166,8 +155,8 @@ export default function MemberTable() {
               onClick={() => setFiltro(f.key)}
               className={`rounded-full px-3.5 py-2 text-xs font-bold transition-colors ${
                 filtro === f.key
-                  ? 'bg-nodo-navy text-white shadow-card'
-                  : 'bg-white text-slate-500 ring-1 ring-inset ring-nodo-border hover:bg-slate-50'
+                  ? 'bg-lav-deep text-cream'
+                  : 'border border-line bg-cloud text-ink-soft hover:bg-sand'
               }`}
             >
               {f.label}
@@ -177,129 +166,128 @@ export default function MemberTable() {
       </div>
 
       {error && (
-        <div className="mb-4 flex items-center gap-2 rounded-xl bg-red-50 px-4 py-3 text-sm font-semibold text-nodo-red ring-1 ring-inset ring-red-200">
+        <div className="mb-4 flex items-center gap-2 rounded-xl bg-crit-soft px-4 py-3 text-sm font-semibold text-[#9c372f]">
           <AlertCircle size={16} /> No se pudieron cargar los socios: {error.message}
         </div>
       )}
 
-      <div className="overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-nodo-border">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[760px] text-left text-sm">
-            <thead>
-              <tr className="border-b border-nodo-border bg-nodo-surface text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
-                <th className="px-4 py-3">Socio</th>
-                <th className="px-4 py-3">N° Socio</th>
-                <th className="px-4 py-3">Categoría</th>
-                <th className="px-4 py-3">Última cuota</th>
-                <th className="px-4 py-3">Cuota</th>
-                <th className="px-4 py-3">Estado</th>
-                <th className="px-4 py-3 text-right">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              <AnimatePresence>
-                {filtrados.map((m) => (
-                  <motion.tr
-                    key={m.id}
-                    layout
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="border-b border-nodo-border last:border-0 hover:bg-slate-50/70"
-                  >
-                    <td className="px-4 py-3">
-                      <button
-                        onClick={() => modo === 'remoto' && abrirEdicion(m)}
-                        className="flex items-center gap-3 text-left"
-                      >
-                        <div
-                          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-extrabold text-white"
-                          style={{ background: m.color }}
+      {cargando && filtrados.length === 0 ? (
+        <SkeletonList rows={5} />
+      ) : (
+        <div className="overflow-hidden rounded-2xl border border-line bg-cloud shadow-card">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[760px] text-left text-sm">
+              <thead>
+                <tr className="border-b border-line bg-paper text-[11px] font-bold uppercase tracking-wider text-ink-faint">
+                  <th className="px-4 py-3">Socio</th>
+                  <th className="px-4 py-3">N° Socio</th>
+                  <th className="px-4 py-3">Categoría</th>
+                  <th className="px-4 py-3">Última cuota</th>
+                  <th className="px-4 py-3">Cuota</th>
+                  <th className="px-4 py-3">Estado</th>
+                  <th className="px-4 py-3 text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <AnimatePresence>
+                  {filtrados.map((m) => (
+                    <motion.tr
+                      key={m.id}
+                      layout
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="border-b border-line last:border-0 hover:bg-paper"
+                    >
+                      <td className="px-4 py-3">
+                        <button
+                          onClick={() => modo === 'remoto' && abrirEdicion(m)}
+                          className="flex items-center gap-3 text-left"
                         >
-                          {iniciales(m.nombre, m.apellido)}
+                          <div
+                            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-display text-xs font-bold text-white"
+                            style={{ background: m.color }}
+                          >
+                            {iniciales(m.nombre, m.apellido)}
+                          </div>
+                          <div>
+                            <p className="font-bold text-ink">
+                              {m.nombre} {m.apellido}
+                            </p>
+                            <p className="text-[11px] text-ink-faint">{m.localidad}</p>
+                          </div>
+                        </button>
+                      </td>
+                      <td className="px-4 py-3 text-xs font-bold tabular-nums text-ink-soft">
+                        N° {m.numero}
+                      </td>
+                      <td className="px-4 py-3 text-xs font-semibold text-ink-soft">
+                        {m.categoria}
+                      </td>
+                      <td className="px-4 py-3 text-xs text-ink-soft">{m.ultimaCuota || '—'}</td>
+                      <td className="px-4 py-3 text-xs font-bold tabular-nums text-ink-soft">
+                        {formatARS(m.plan)}
+                      </td>
+                      <td className="px-4 py-3">
+                        <StatusBadge estado={m.cuotaAlDia ? 'alDia' : 'moroso'} />
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center justify-end gap-1.5">
+                          {modo === 'demo' && (
+                            <button
+                              onClick={() => verCarnet(m)}
+                              title="Ver carnet digital"
+                              className="rounded-lg p-2 text-lav transition hover:bg-lav-soft"
+                            >
+                              <Eye size={16} />
+                            </button>
+                          )}
+                          {!m.cuotaAlDia && (
+                            <a
+                              href={waLink(m, comunidad.nombre)}
+                              target="_blank"
+                              rel="noreferrer"
+                              title="Recordatorio por WhatsApp"
+                              className="rounded-lg p-2 text-ok transition hover:bg-ok-soft"
+                            >
+                              <MessageCircle size={16} />
+                            </a>
+                          )}
+                          {!m.cuotaAlDia ? (
+                            <button
+                              onClick={() => marcarPago(m)}
+                              title="Registrar pago de cuota"
+                              className="rounded-lg p-2 text-ok transition hover:bg-ok-soft"
+                            >
+                              <RefreshCcw size={16} />
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => cambiarEstado(m)}
+                              title="Marcar como adeuda"
+                              className="rounded-lg p-2 text-warn transition hover:bg-sun-soft"
+                            >
+                              <RefreshCcw size={16} />
+                            </button>
+                          )}
                         </div>
-                        <div>
-                          <p className="font-bold text-nodo-navy">
-                            {m.nombre} {m.apellido}
-                          </p>
-                          <p className="text-[11px] text-slate-400">{m.localidad}</p>
-                        </div>
-                      </button>
-                    </td>
-                    <td className="px-4 py-3 font-mono text-xs font-bold text-slate-500">
-                      N° {m.numero}
-                    </td>
-                    <td className="px-4 py-3 text-xs font-semibold text-slate-600">
-                      {m.categoria}
-                    </td>
-                    <td className="px-4 py-3 text-xs text-slate-500">{m.ultimaCuota || '—'}</td>
-                    <td className="px-4 py-3 text-xs font-bold text-slate-600">
-                      {formatARS(m.plan)}
-                    </td>
-                    <td className="px-4 py-3">
-                      <StatusBadge estado={m.cuotaAlDia ? 'alDia' : 'moroso'} />
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center justify-end gap-1.5">
-                        {modo === 'demo' && (
-                          <button
-                            onClick={() => verCarnet(m)}
-                            title="Ver carnet digital"
-                            className="rounded-lg p-2 text-nodo-teal transition hover:bg-cyan-50"
-                          >
-                            <Eye size={16} />
-                          </button>
-                        )}
-                        {!m.cuotaAlDia && (
-                          <a
-                            href={waLink(m, comunidad.nombre)}
-                            target="_blank"
-                            rel="noreferrer"
-                            title="Recordatorio por WhatsApp"
-                            className="rounded-lg p-2 text-nodo-green-dark transition hover:bg-emerald-50"
-                          >
-                            <MessageCircle size={16} />
-                          </a>
-                        )}
-                        {!m.cuotaAlDia ? (
-                          <button
-                            onClick={() => marcarPago(m)}
-                            title="Registrar pago de cuota"
-                            className="rounded-lg p-2 text-nodo-green-dark transition hover:bg-emerald-50"
-                          >
-                            <RefreshCcw size={16} />
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => cambiarEstado(m)}
-                            title="Marcar como adeuda"
-                            className="rounded-lg p-2 text-nodo-amber transition hover:bg-amber-50"
-                          >
-                            <RefreshCcw size={16} />
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </motion.tr>
-                ))}
-              </AnimatePresence>
-            </tbody>
-          </table>
-        </div>
+                      </td>
+                    </motion.tr>
+                  ))}
+                </AnimatePresence>
+              </tbody>
+            </table>
+          </div>
 
-        {cargando && (
-          <p className="flex items-center justify-center gap-2 px-4 py-10 text-sm text-slate-400">
-            <Loader2 size={16} className="animate-spin" /> Cargando socios…
-          </p>
-        )}
-        {!cargando && filtrados.length === 0 && (
-          <p className="px-4 py-10 text-center text-sm text-slate-400">
-            {members.length === 0
-              ? 'Todavía no hay socios cargados. Usá “Alta de socio” para empezar.'
-              : 'No se encontraron socios con esos criterios.'}
-          </p>
-        )}
-      </div>
+          {!cargando && filtrados.length === 0 && (
+            <p className="px-4 py-10 text-center text-sm text-ink-faint">
+              {members.length === 0
+                ? 'Todavía no hay socios cargados. Usá “Alta de socio” para empezar.'
+                : 'No se encontraron socios con esos criterios.'}
+            </p>
+          )}
+        </div>
+      )}
 
       <AnimatePresence>
         {formAbierto && (

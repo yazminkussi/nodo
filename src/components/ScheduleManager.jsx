@@ -6,8 +6,8 @@ import SpaceIcon from './SpaceIcon';
 import DiasActivosPicker from './DiasActivosPicker';
 
 const campo =
-  'w-full rounded-xl bg-white px-3 py-2.5 text-sm text-slate-700 ring-1 ring-nodo-border focus:outline-none focus:ring-2 focus:ring-nodo-cyan';
-const etiqueta = 'mb-1 block text-xs font-bold text-slate-500';
+  'w-full rounded-xl bg-white px-3 py-2.5 text-sm text-ink ring-1 ring-line focus:outline-none focus:ring-2 focus:ring-nodo-cyan';
+const etiqueta = 'mb-1 block text-xs font-bold text-ink-soft';
 
 export default function ScheduleManager() {
   const espacios = useNodoStore((s) => s.espacios);
@@ -68,8 +68,8 @@ export default function ScheduleManager() {
     <section className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h3 className="font-extrabold text-nodo-navy">Horarios y turnos</h3>
-          <p className="text-xs text-slate-500">
+          <h3 className="font-extrabold text-ink">Horarios y turnos</h3>
+          <p className="text-xs text-ink-soft">
             Configurá días de apertura, franja horaria y duración de turnos por espacio o actividad.
           </p>
         </div>
@@ -81,8 +81,8 @@ export default function ScheduleManager() {
             }}
             className={`flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition ${
               tipo === 'espacios'
-                ? 'bg-nodo-navy text-white shadow-card'
-                : 'bg-white text-slate-500 ring-1 ring-inset ring-nodo-border hover:bg-slate-50'
+                ? 'bg-lav-deep text-white shadow-card'
+                : 'bg-white text-ink-soft ring-1 ring-inset ring-line hover:bg-paper'
             }`}
           >
             <Building2 size={14} /> Espacios
@@ -94,8 +94,8 @@ export default function ScheduleManager() {
             }}
             className={`flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition ${
               tipo === 'actividades'
-                ? 'bg-nodo-navy text-white shadow-card'
-                : 'bg-white text-slate-500 ring-1 ring-inset ring-nodo-border hover:bg-slate-50'
+                ? 'bg-lav-deep text-white shadow-card'
+                : 'bg-white text-ink-soft ring-1 ring-inset ring-line hover:bg-paper'
             }`}
           >
             <Sparkles size={14} /> Actividades
@@ -106,7 +106,7 @@ export default function ScheduleManager() {
       {tipo === 'espacios' && (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
           <div className="lg:col-span-2">
-            <p className="mb-2 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
+            <p className="mb-2 text-[10px] font-extrabold uppercase tracking-widest text-ink-faint">
               Seleccionar espacio
             </p>
             <div className="space-y-2">
@@ -116,8 +116,8 @@ export default function ScheduleManager() {
                   onClick={() => setSelEspacio(e.id)}
                   className={`flex w-full items-center gap-2.5 rounded-xl p-3 text-left transition ${
                     selEspacio === e.id
-                      ? 'bg-nodo-navy text-white shadow-card'
-                      : 'bg-white text-slate-600 ring-1 ring-inset ring-nodo-border hover:bg-slate-50'
+                      ? 'bg-lav-deep text-white shadow-card'
+                      : 'bg-white text-ink-soft ring-1 ring-inset ring-line hover:bg-paper'
                   }`}
                 >
                   <span
@@ -129,7 +129,7 @@ export default function ScheduleManager() {
                   <span className="min-w-0">
                     <span className="block truncate text-sm font-extrabold">{e.nombre}</span>
                     <span
-                      className={`block text-[11px] font-semibold ${selEspacio === e.id ? 'text-slate-300' : 'text-slate-400'}`}
+                      className={`block text-[11px] font-semibold ${selEspacio === e.id ? 'text-slate-300' : 'text-ink-faint'}`}
                     >
                       {nombreDias(e.horario.dias)} · {e.horario.apertura}–{e.horario.cierre}
                     </span>
@@ -139,7 +139,7 @@ export default function ScheduleManager() {
             </div>
           </div>
 
-          <div className="rounded-2xl bg-white p-5 shadow-card ring-1 ring-nodo-border lg:col-span-3">
+          <div className="rounded-2xl bg-white p-5 shadow-card ring-1 ring-line lg:col-span-3">
             {espacio && draft && (
               <>
                 <div className="mb-4 flex items-center gap-2.5">
@@ -150,8 +150,8 @@ export default function ScheduleManager() {
                     <SpaceIcon icono={espacio.icono} className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-extrabold text-nodo-navy">{espacio.nombre}</p>
-                    <p className="text-xs text-slate-500">
+                    <p className="font-extrabold text-ink">{espacio.nombre}</p>
+                    <p className="text-xs text-ink-soft">
                       {espacio.categoria} · Turnos de {duracionLabel(espacio.horario.duracionTurno)}
                     </p>
                   </div>
@@ -200,28 +200,28 @@ export default function ScheduleManager() {
                   </div>
                 </div>
 
-                <div className="mt-4 rounded-2xl bg-nodo-surface p-4 ring-1 ring-inset ring-nodo-border">
-                  <p className="mb-2 flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
+                <div className="mt-4 rounded-2xl bg-paper p-4 ring-1 ring-inset ring-line">
+                  <p className="mb-2 flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-widest text-ink-faint">
                     <ListChecks size={12} /> Turnos disponibles generados
                   </p>
                   <div className="flex flex-wrap gap-1.5">
                     {slotsPreview.map((s) => (
                       <span
                         key={s}
-                        className="rounded-lg bg-white px-2.5 py-1 text-xs font-bold text-nodo-teal ring-1 ring-inset ring-cyan-200"
+                        className="rounded-lg bg-white px-2.5 py-1 text-xs font-bold text-lav ring-1 ring-inset ring-lav/25"
                       >
                         {s}
                       </span>
                     ))}
                   </div>
-                  <p className="mt-2 text-[11px] text-slate-400">
+                  <p className="mt-2 text-[11px] text-ink-faint">
                     {slotsPreview.length} turnos por día · {nombreDias(draft.dias)}
                   </p>
                 </div>
 
                 <button
                   onClick={guardar}
-                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-nodo-navy px-4 py-3 text-sm font-extrabold text-white shadow-card transition hover:bg-nodo-navy-2"
+                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-lav-deep px-4 py-3 text-sm font-extrabold text-white shadow-card transition hover:bg-lav-deep"
                 >
                   <Save size={16} /> Guardar horarios del espacio
                 </button>
@@ -234,7 +234,7 @@ export default function ScheduleManager() {
       {tipo === 'actividades' && (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
           <div className="lg:col-span-2">
-            <p className="mb-2 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
+            <p className="mb-2 text-[10px] font-extrabold uppercase tracking-widest text-ink-faint">
               Seleccionar actividad
             </p>
             <div className="space-y-2">
@@ -244,8 +244,8 @@ export default function ScheduleManager() {
                   onClick={() => setSelActividad(a.id)}
                   className={`flex w-full items-center gap-2.5 rounded-xl p-3 text-left transition ${
                     selActividad === a.id
-                      ? 'bg-nodo-navy text-white shadow-card'
-                      : 'bg-white text-slate-600 ring-1 ring-inset ring-nodo-border hover:bg-slate-50'
+                      ? 'bg-lav-deep text-white shadow-card'
+                      : 'bg-white text-ink-soft ring-1 ring-inset ring-line hover:bg-paper'
                   }`}
                 >
                   <span
@@ -257,7 +257,7 @@ export default function ScheduleManager() {
                   <span className="min-w-0">
                     <span className="block truncate text-sm font-extrabold">{a.nombre}</span>
                     <span
-                      className={`block text-[11px] font-semibold ${selActividad === a.id ? 'text-slate-300' : 'text-slate-400'}`}
+                      className={`block text-[11px] font-semibold ${selActividad === a.id ? 'text-slate-300' : 'text-ink-faint'}`}
                     >
                       {nombreDias(a.dias)} · {a.inicio} hs
                     </span>
@@ -267,7 +267,7 @@ export default function ScheduleManager() {
             </div>
           </div>
 
-          <div className="rounded-2xl bg-white p-5 shadow-card ring-1 ring-nodo-border lg:col-span-3">
+          <div className="rounded-2xl bg-white p-5 shadow-card ring-1 ring-line lg:col-span-3">
             {actividad && draft && (
               <>
                 <div className="mb-4 flex items-center gap-2.5">
@@ -278,8 +278,8 @@ export default function ScheduleManager() {
                     <SpaceIcon icono={actividad.icono} className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-extrabold text-nodo-navy">{actividad.nombre}</p>
-                    <p className="text-xs text-slate-500">
+                    <p className="font-extrabold text-ink">{actividad.nombre}</p>
+                    <p className="text-xs text-ink-soft">
                       {actividad.instructor} · {actividad.categoria}
                     </p>
                   </div>
@@ -316,9 +316,9 @@ export default function ScheduleManager() {
                   </div>
                 </div>
 
-                <div className="mt-4 flex items-center gap-2 rounded-2xl bg-cyan-50 p-4 ring-1 ring-inset ring-cyan-200">
-                  <CalendarDays size={18} className="shrink-0 text-nodo-teal" />
-                  <p className="text-sm font-bold text-nodo-teal">
+                <div className="mt-4 flex items-center gap-2 rounded-2xl bg-lav-soft p-4 ring-1 ring-inset ring-lav/25">
+                  <CalendarDays size={18} className="shrink-0 text-lav" />
+                  <p className="text-sm font-bold text-lav">
                     {nombreDias(draft.dias)} · {draft.inicio} hs · {duracionLabel(draft.duracion)}{' '}
                     por clase
                   </p>
@@ -326,7 +326,7 @@ export default function ScheduleManager() {
 
                 <button
                   onClick={guardar}
-                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-nodo-navy px-4 py-3 text-sm font-extrabold text-white shadow-card transition hover:bg-nodo-navy-2"
+                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-lav-deep px-4 py-3 text-sm font-extrabold text-white shadow-card transition hover:bg-lav-deep"
                 >
                   <Save size={16} /> Guardar horarios de la actividad
                 </button>

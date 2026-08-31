@@ -15,17 +15,17 @@ import { useNodoStore } from '../../store/useNodoStore';
 const badgeResultado = {
   permitido: {
     icono: CheckCircle2,
-    clases: 'bg-emerald-50 text-nodo-green-dark ring-emerald-200',
+    clases: 'bg-ok-soft text-ok ring-emerald-200',
     label: 'Permitido',
   },
   denegado: {
     icono: XCircle,
-    clases: 'bg-red-50 text-nodo-red ring-red-200',
+    clases: 'bg-crit-soft text-crit ring-red-200',
     label: 'Adeuda',
   },
   invalido: {
     icono: AlertTriangle,
-    clases: 'bg-amber-50 text-nodo-amber ring-amber-200',
+    clases: 'bg-sun-soft text-warn ring-amber-200',
     label: 'Inválido',
   },
 };
@@ -64,14 +64,14 @@ export function AccessLogTable() {
     <section>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-nodo-navy text-white">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-lav-deep text-white">
             <History size={17} />
           </span>
           <div>
-            <h3 className="text-sm font-extrabold tracking-tight text-nodo-navy">
+            <h3 className="text-sm font-extrabold tracking-tight text-ink">
               Historial de Ingresos
             </h3>
-            <p className="text-[11px] font-semibold text-slate-400">
+            <p className="text-[11px] font-semibold text-ink-faint">
               {registros.length} eventos registrados en total
             </p>
           </div>
@@ -82,7 +82,7 @@ export function AccessLogTable() {
               clearRegistrosAcceso();
               addToast('Historial de ingresos borrado.', 'info');
             }}
-            className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-bold text-slate-400 transition hover:bg-red-50 hover:text-nodo-red"
+            className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-bold text-ink-faint transition hover:bg-crit-soft hover:text-crit"
           >
             <Trash2 size={14} /> Vaciar
           </button>
@@ -101,13 +101,13 @@ export function AccessLogTable() {
             onClick={() => setFiltro(f.key)}
             className={`rounded-full px-3 py-1.5 text-xs font-bold transition-colors ${
               filtro === f.key
-                ? 'bg-nodo-navy text-white shadow-card'
-                : 'bg-white text-slate-500 ring-1 ring-inset ring-nodo-border hover:bg-slate-50'
+                ? 'bg-lav-deep text-white shadow-card'
+                : 'bg-white text-ink-soft ring-1 ring-inset ring-line hover:bg-paper'
             }`}
           >
             {f.label}
             {f.key !== 'todos' && (
-              <span className={`ml-1 ${filtro === f.key ? 'text-white/60' : 'text-slate-400'}`}>
+              <span className={`ml-1 ${filtro === f.key ? 'text-white/60' : 'text-ink-faint'}`}>
                 {conteo[f.key]}
               </span>
             )}
@@ -115,11 +115,11 @@ export function AccessLogTable() {
         ))}
       </div>
 
-      <div className="overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-nodo-border">
+      <div className="overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-line">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[720px] text-left text-sm">
             <thead>
-              <tr className="border-b border-nodo-border bg-nodo-surface text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
+              <tr className="border-b border-line bg-paper text-[11px] font-extrabold uppercase tracking-wider text-ink-soft">
                 <th className="px-4 py-3">Hora</th>
                 <th className="px-4 py-3">Socio</th>
                 <th className="px-4 py-3">N°</th>
@@ -141,31 +141,31 @@ export function AccessLogTable() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className="border-b border-nodo-border last:border-0 hover:bg-slate-50/70"
+                      className="border-b border-line last:border-0 hover:bg-paper/70"
                       title={r.motivo || ''}
                     >
                       <td className="px-4 py-3">
-                        <span className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500">
+                        <span className="inline-flex items-center gap-1.5 text-xs font-bold text-ink-soft">
                           <Clock size={12} className="text-slate-300" />
                           {formatearFecha(r.timestamp)}
                         </span>
                         {r.reserva && r.resultado === 'permitido' && (
-                          <p className="mt-0.5 text-[10px] font-bold text-nodo-teal">
+                          <p className="mt-0.5 text-[10px] font-bold text-lav">
                             {r.reserva.espacioNombre} · {r.reserva.hora} hs
                           </p>
                         )}
                       </td>
-                      <td className="px-4 py-3 font-bold text-nodo-navy">
+                      <td className="px-4 py-3 font-bold text-ink">
                         {r.nombre || '—'}
-                        <p className="text-[10px] font-semibold text-slate-400">
+                        <p className="text-[10px] font-semibold text-ink-faint">
                           {r.estadoAlIngreso}
                         </p>
                       </td>
-                      <td className="px-4 py-3 font-mono text-xs font-bold text-slate-500">
+                      <td className="px-4 py-3 font-mono text-xs font-bold text-ink-soft">
                         {r.numeroSocio || r.numero || '—'}
                       </td>
                       <td className="px-4 py-3">
-                        <span className="text-xs font-semibold text-slate-600">
+                        <span className="text-xs font-semibold text-ink-soft">
                           {r.estadoAlIngreso}
                         </span>
                       </td>
@@ -177,18 +177,18 @@ export function AccessLogTable() {
                           {cfg.label}
                         </span>
                         {r.override && (
-                          <span className="mt-1 block text-[10px] font-semibold text-slate-400">
+                          <span className="mt-1 block text-[10px] font-semibold text-ink-faint">
                             Ingreso permitido por administración
                           </span>
                         )}
                       </td>
                       <td className="px-4 py-3">
-                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-slate-500">
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-ink-soft">
                           {r.metodo === 'manual' ? <Keyboard size={12} /> : <QrCode size={12} />}
                           {r.metodo === 'manual' ? 'Manual' : 'QR'}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-xs font-semibold text-slate-500">
+                      <td className="px-4 py-3 text-xs font-semibold text-ink-soft">
                         {r.escaneadoPor || '—'}
                       </td>
                     </motion.tr>
@@ -202,14 +202,14 @@ export function AccessLogTable() {
         {registros.length === 0 && (
           <div className="flex flex-col items-center gap-2 px-4 py-12 text-center">
             <History size={28} className="text-slate-300" />
-            <p className="text-sm font-bold text-slate-500">Todavía no hay ingresos registrados</p>
-            <p className="text-xs text-slate-400">
+            <p className="text-sm font-bold text-ink-soft">Todavía no hay ingresos registrados</p>
+            <p className="text-xs text-ink-faint">
               Escaneá un QR o usá el ingreso manual para registrar el primer evento.
             </p>
           </div>
         )}
         {registros.length > 0 && filtrados.length === 0 && (
-          <p className="px-4 py-10 text-center text-sm text-slate-400">
+          <p className="px-4 py-10 text-center text-sm text-ink-faint">
             No hay eventos con ese filtro.
           </p>
         )}

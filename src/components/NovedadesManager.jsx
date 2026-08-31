@@ -26,7 +26,7 @@ export default function NovedadesManager() {
   if (modo === 'demo') {
     return (
       <section className="mx-auto max-w-5xl px-4 sm:px-6">
-        <div className="rounded-2xl border-2 border-dashed border-nodo-border bg-white px-6 py-10 text-center text-sm text-slate-400">
+        <div className="rounded-2xl border-2 border-dashed border-line bg-white px-6 py-10 text-center text-sm text-ink-faint">
           La gestión de novedades se habilita con la cuenta conectada a Supabase.
         </div>
       </section>
@@ -58,8 +58,8 @@ export default function NovedadesManager() {
     <section className="mx-auto max-w-5xl px-4 sm:px-6">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-extrabold tracking-tight text-nodo-navy">Novedades</h2>
-          <p className="text-xs text-slate-500">
+          <h2 className="text-lg font-extrabold tracking-tight text-ink">Novedades</h2>
+          <p className="text-xs text-ink-soft">
             {novedades.length} publicada{novedades.length === 1 ? '' : 's'} · las ve el socio en su
             portal
           </p>
@@ -69,20 +69,20 @@ export default function NovedadesManager() {
             setEnEdicion(null);
             setAbierto(true);
           }}
-          className="inline-flex items-center gap-2 rounded-xl bg-nodo-navy px-4 py-2.5 text-sm font-bold text-white shadow-card transition hover:bg-nodo-navy-2"
+          className="inline-flex items-center gap-2 rounded-xl bg-lav-deep px-4 py-2.5 text-sm font-bold text-white shadow-card transition hover:bg-lav-deep"
         >
           <Plus size={16} /> Nueva novedad
         </button>
       </div>
 
       {error && (
-        <div className="mb-4 flex items-center gap-2 rounded-xl bg-red-50 px-4 py-3 text-sm font-semibold text-nodo-red ring-1 ring-inset ring-red-200">
+        <div className="mb-4 flex items-center gap-2 rounded-xl bg-crit-soft px-4 py-3 text-sm font-semibold text-crit ring-1 ring-inset ring-red-200">
           <AlertCircle size={16} /> {error.message}
         </div>
       )}
 
       {cargando && novedades.length === 0 && (
-        <p className="flex items-center justify-center gap-2 py-10 text-sm text-slate-400">
+        <p className="flex items-center justify-center gap-2 py-10 text-sm text-ink-faint">
           <Loader2 size={16} className="animate-spin" /> Cargando…
         </p>
       )}
@@ -91,25 +91,25 @@ export default function NovedadesManager() {
         {novedades.map((n) => (
           <div
             key={n.id}
-            className="flex items-start gap-3 rounded-2xl bg-white p-4 shadow-card ring-1 ring-nodo-border"
+            className="flex items-start gap-3 rounded-2xl bg-white p-4 shadow-card ring-1 ring-line"
           >
             <span className="text-2xl">{n.emoji}</span>
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
                 {n.destacada && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-extrabold text-nodo-red ring-1 ring-inset ring-red-200">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-crit-soft px-2 py-0.5 text-[10px] font-extrabold text-crit ring-1 ring-inset ring-red-200">
                     <Pin size={10} /> DESTACADA
                   </span>
                 )}
-                <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-500">
+                <span className="rounded-full bg-sand px-2 py-0.5 text-[10px] font-bold text-ink-soft">
                   {n.categoria}
                 </span>
-                <span className="text-[11px] font-semibold text-slate-400">
+                <span className="text-[11px] font-semibold text-ink-faint">
                   {formatFechaCorta(String(n.fecha))}
                 </span>
               </div>
-              <h3 className="mt-1 truncate font-extrabold text-nodo-navy">{n.titulo}</h3>
-              <p className="line-clamp-2 text-sm text-slate-500">{n.contenido}</p>
+              <h3 className="mt-1 truncate font-extrabold text-ink">{n.titulo}</h3>
+              <p className="line-clamp-2 text-sm text-ink-soft">{n.contenido}</p>
             </div>
             <div className="flex shrink-0 gap-1">
               <button
@@ -117,14 +117,14 @@ export default function NovedadesManager() {
                   setEnEdicion(n);
                   setAbierto(true);
                 }}
-                className="rounded-lg p-2 text-nodo-teal transition hover:bg-cyan-50"
+                className="rounded-lg p-2 text-lav transition hover:bg-lav-soft"
                 title="Editar"
               >
                 <Pencil size={15} />
               </button>
               <button
                 onClick={() => borrar(n)}
-                className="rounded-lg p-2 text-nodo-red transition hover:bg-red-50"
+                className="rounded-lg p-2 text-crit transition hover:bg-crit-soft"
                 title="Eliminar"
               >
                 <Trash2 size={15} />
@@ -133,7 +133,7 @@ export default function NovedadesManager() {
           </div>
         ))}
         {!cargando && novedades.length === 0 && (
-          <p className="rounded-2xl border-2 border-dashed border-nodo-border bg-white px-4 py-10 text-center text-sm text-slate-400">
+          <p className="rounded-2xl border-2 border-dashed border-line bg-white px-4 py-10 text-center text-sm text-ink-faint">
             Todavía no publicaste ninguna novedad.
           </p>
         )}
@@ -202,14 +202,14 @@ function NovedadForm({ novedad, onGuardar, onCerrar }) {
         onSubmit={enviar}
         className="w-full max-w-lg overflow-hidden rounded-t-3xl bg-white shadow-lift sm:rounded-3xl"
       >
-        <div className="flex items-center justify-between border-b border-nodo-border px-5 py-4">
-          <h3 className="font-extrabold text-nodo-navy">
+        <div className="flex items-center justify-between border-b border-line px-5 py-4">
+          <h3 className="font-extrabold text-ink">
             {editando ? 'Editar novedad' : 'Nueva novedad'}
           </h3>
           <button
             type="button"
             onClick={onCerrar}
-            className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100"
+            className="rounded-full p-2 text-ink-faint transition hover:bg-sand"
             aria-label="Cerrar"
           >
             <X size={18} />
@@ -217,52 +217,52 @@ function NovedadForm({ novedad, onGuardar, onCerrar }) {
         </div>
 
         <div className="max-h-[70vh] space-y-3 overflow-y-auto p-5">
-          <label className="block text-xs font-bold text-slate-500">
+          <label className="block text-xs font-bold text-ink-soft">
             Título
             <input
               value={datos.titulo}
               onChange={(e) => setDatos((d) => ({ ...d, titulo: e.target.value }))}
-              className="mt-1 w-full rounded-xl border-0 bg-nodo-surface px-3 py-2.5 text-sm text-slate-700 ring-1 ring-inset ring-nodo-border focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
+              className="mt-1 w-full rounded-xl border-0 bg-paper px-3 py-2.5 text-sm text-ink ring-1 ring-inset ring-line focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
               required
             />
           </label>
 
-          <label className="block text-xs font-bold text-slate-500">
+          <label className="block text-xs font-bold text-ink-soft">
             Contenido
             <textarea
               value={datos.contenido}
               onChange={(e) => setDatos((d) => ({ ...d, contenido: e.target.value }))}
               rows={4}
-              className="mt-1 w-full resize-none rounded-xl border-0 bg-nodo-surface px-3 py-2.5 text-sm text-slate-700 ring-1 ring-inset ring-nodo-border focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
+              className="mt-1 w-full resize-none rounded-xl border-0 bg-paper px-3 py-2.5 text-sm text-ink ring-1 ring-inset ring-line focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
             />
           </label>
 
           <div className="grid grid-cols-2 gap-3">
-            <label className="block text-xs font-bold text-slate-500">
+            <label className="block text-xs font-bold text-ink-soft">
               Categoría
               <select
                 value={datos.categoria}
                 onChange={(e) => setDatos((d) => ({ ...d, categoria: e.target.value }))}
-                className="mt-1 w-full rounded-xl border-0 bg-nodo-surface px-3 py-2.5 text-sm text-slate-700 ring-1 ring-inset ring-nodo-border focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
+                className="mt-1 w-full rounded-xl border-0 bg-paper px-3 py-2.5 text-sm text-ink ring-1 ring-inset ring-line focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
               >
                 {CATEGORIAS.map((c) => (
                   <option key={c}>{c}</option>
                 ))}
               </select>
             </label>
-            <label className="block text-xs font-bold text-slate-500">
+            <label className="block text-xs font-bold text-ink-soft">
               Fecha
               <input
                 type="date"
                 value={datos.fecha}
                 onChange={(e) => setDatos((d) => ({ ...d, fecha: e.target.value }))}
-                className="mt-1 w-full rounded-xl border-0 bg-nodo-surface px-3 py-2.5 text-sm text-slate-700 ring-1 ring-inset ring-nodo-border focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
+                className="mt-1 w-full rounded-xl border-0 bg-paper px-3 py-2.5 text-sm text-ink ring-1 ring-inset ring-line focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
               />
             </label>
           </div>
 
           <div>
-            <p className="mb-1.5 text-xs font-bold text-slate-500">Emoji</p>
+            <p className="mb-1.5 text-xs font-bold text-ink-soft">Emoji</p>
             <div className="flex flex-wrap gap-1.5">
               {EMOJIS.map((em) => (
                 <button
@@ -270,7 +270,7 @@ function NovedadForm({ novedad, onGuardar, onCerrar }) {
                   type="button"
                   onClick={() => setDatos((d) => ({ ...d, emoji: em }))}
                   className={`rounded-lg px-2 py-1 text-lg transition ${
-                    datos.emoji === em ? 'bg-nodo-navy' : 'bg-nodo-surface hover:bg-slate-200'
+                    datos.emoji === em ? 'bg-nodo-navy' : 'bg-paper hover:bg-slate-200'
                   }`}
                 >
                   {em}
@@ -279,35 +279,35 @@ function NovedadForm({ novedad, onGuardar, onCerrar }) {
             </div>
           </div>
 
-          <label className="flex items-center gap-2 text-sm font-semibold text-slate-600">
+          <label className="flex items-center gap-2 text-sm font-semibold text-ink-soft">
             <input
               type="checkbox"
               checked={datos.destacada}
               onChange={(e) => setDatos((d) => ({ ...d, destacada: e.target.checked }))}
-              className="h-4 w-4 rounded border-nodo-border text-nodo-teal focus:ring-nodo-cyan"
+              className="h-4 w-4 rounded border-line text-lav focus:ring-nodo-cyan"
             />
             Destacar en el portal del socio
           </label>
 
           {error && (
-            <p className="rounded-lg bg-red-50 px-3 py-2 text-xs font-semibold text-nodo-red">
+            <p className="rounded-lg bg-crit-soft px-3 py-2 text-xs font-semibold text-crit">
               {error}
             </p>
           )}
         </div>
 
-        <div className="flex gap-2 border-t border-nodo-border p-4">
+        <div className="flex gap-2 border-t border-line p-4">
           <button
             type="button"
             onClick={onCerrar}
-            className="flex-1 rounded-xl bg-slate-100 px-4 py-3 text-sm font-bold text-slate-600 transition hover:bg-slate-200"
+            className="flex-1 rounded-xl bg-sand px-4 py-3 text-sm font-bold text-ink-soft transition hover:bg-slate-200"
           >
             Cancelar
           </button>
           <button
             type="submit"
             disabled={guardando}
-            className="flex flex-[2] items-center justify-center gap-2 rounded-xl bg-nodo-navy px-4 py-3 text-sm font-extrabold text-white transition hover:bg-nodo-navy-2 disabled:opacity-60"
+            className="flex flex-[2] items-center justify-center gap-2 rounded-xl bg-lav-deep px-4 py-3 text-sm font-extrabold text-white transition hover:bg-lav-deep disabled:opacity-60"
           >
             {guardando ? (
               <Loader2 size={16} className="animate-spin" />

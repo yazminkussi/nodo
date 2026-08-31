@@ -138,14 +138,14 @@ export default function NodoDrive() {
     <section className="mx-auto max-w-7xl space-y-5 px-4 sm:px-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="flex items-center gap-2 text-lg font-extrabold tracking-tight text-nodo-navy">
-            <HardDrive size={19} className="text-nodo-teal" /> Drive Interno
+          <h2 className="flex items-center gap-2 text-lg font-extrabold tracking-tight text-ink">
+            <HardDrive size={19} className="text-lav" /> Drive Interno
           </h2>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-ink-soft">
             Documentos de gestión, planillas NODO Sheet y textos NODO Doc de la comunidad.
           </p>
         </div>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-extrabold text-nodo-green-dark ring-1 ring-inset ring-emerald-200">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-ok-soft px-3 py-1.5 text-xs font-extrabold text-ok ring-1 ring-inset ring-emerald-200">
           <ShieldCheck size={13} /> Solo administradores
         </span>
       </div>
@@ -161,8 +161,8 @@ export default function NodoDrive() {
               onClick={() => setCarpetaId(f.id)}
               className={`rounded-2xl p-4 text-left shadow-card ring-1 transition ${
                 activa
-                  ? 'bg-nodo-navy text-white ring-nodo-navy'
-                  : 'bg-white ring-nodo-border hover:shadow-lift'
+                  ? 'bg-lav-deep text-white ring-nodo-navy'
+                  : 'bg-white ring-line hover:shadow-lift'
               }`}
             >
               <div className="flex items-center justify-between">
@@ -173,14 +173,14 @@ export default function NodoDrive() {
                   <Icon size={18} />
                 </span>
                 <span
-                  className={`text-[11px] font-extrabold ${activa ? 'text-nodo-cyan' : 'text-slate-400'}`}
+                  className={`text-[11px] font-extrabold ${activa ? 'text-lav' : 'text-ink-faint'}`}
                 >
                   {count} ítems
                 </span>
               </div>
               <p className="mt-3 text-sm font-extrabold leading-tight">{f.nombre}</p>
               <p
-                className={`mt-1 text-[11px] font-semibold ${activa ? 'text-slate-300' : 'text-slate-500'}`}
+                className={`mt-1 text-[11px] font-semibold ${activa ? 'text-slate-300' : 'text-ink-soft'}`}
               >
                 {f.descripcion}
               </p>
@@ -189,7 +189,7 @@ export default function NodoDrive() {
         })}
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white p-4 shadow-card ring-1 ring-nodo-border">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white p-4 shadow-card ring-1 ring-line">
         <div className="flex items-center gap-2.5">
           <span
             className="flex h-9 w-9 items-center justify-center rounded-xl text-white"
@@ -198,8 +198,8 @@ export default function NodoDrive() {
             <FolderOpen size={16} />
           </span>
           <div>
-            <p className="text-sm font-extrabold text-nodo-navy">{carpeta.nombre}</p>
-            <p className="text-[11px] text-slate-400">
+            <p className="text-sm font-extrabold text-ink">{carpeta.nombre}</p>
+            <p className="text-[11px] text-ink-faint">
               {items.length} documento{items.length === 1 ? '' : 's'}
             </p>
           </div>
@@ -213,13 +213,13 @@ export default function NodoDrive() {
           </button>
           <button
             onClick={crearSheet}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-nodo-navy px-3.5 py-2.5 text-xs font-extrabold text-white shadow-card transition hover:bg-nodo-navy-2"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-lav-deep px-3.5 py-2.5 text-xs font-extrabold text-white shadow-card transition hover:bg-lav-deep"
           >
             <Table2 size={15} /> NODO Sheet
           </button>
           <button
             onClick={crearDoc}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-nodo-navy px-3.5 py-2.5 text-xs font-extrabold text-white shadow-card transition hover:bg-nodo-navy-2"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-lav-deep px-3.5 py-2.5 text-xs font-extrabold text-white shadow-card transition hover:bg-lav-deep"
           >
             <FileText size={15} /> NODO Doc
           </button>
@@ -239,10 +239,10 @@ export default function NodoDrive() {
 
       <div className="space-y-2.5">
         {items.length === 0 && (
-          <div className="rounded-2xl border-2 border-dashed border-nodo-border bg-white p-10 text-center">
+          <div className="rounded-2xl border-2 border-dashed border-line bg-white p-10 text-center">
             <Folder size={28} className="mx-auto text-slate-300" />
-            <p className="mt-2 text-sm font-bold text-nodo-navy">Carpeta vacía</p>
-            <p className="text-xs text-slate-400">
+            <p className="mt-2 text-sm font-bold text-ink">Carpeta vacía</p>
+            <p className="text-xs text-ink-faint">
               Subí archivos o creá una planilla NODO Sheet o un documento NODO Doc.
             </p>
           </div>
@@ -259,7 +259,7 @@ export default function NodoDrive() {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.97 }}
-                className="flex items-center gap-3 rounded-2xl bg-white p-3.5 shadow-card ring-1 ring-nodo-border"
+                className="flex items-center gap-3 rounded-2xl bg-white p-3.5 shadow-card ring-1 ring-line"
               >
                 <span
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white"
@@ -268,8 +268,8 @@ export default function NodoDrive() {
                   <Icon size={17} />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-extrabold text-nodo-navy">{it.nombre}</p>
-                  <p className="text-[11px] font-semibold text-slate-400">
+                  <p className="truncate text-sm font-extrabold text-ink">{it.nombre}</p>
+                  <p className="text-[11px] font-semibold text-ink-faint">
                     {it.tipo === 'archivo'
                       ? `${it.mime?.split('/')[0]?.toUpperCase() || 'Archivo'} · ${formatearBytes(it.tamano)}`
                       : it.tipo === 'sheet'
@@ -284,7 +284,7 @@ export default function NodoDrive() {
                     <button
                       onClick={() => setEditando({ ...it })}
                       title="Editar"
-                      className="rounded-lg p-2 text-nodo-teal transition hover:bg-cyan-50"
+                      className="rounded-lg p-2 text-lav transition hover:bg-lav-soft"
                     >
                       <Pencil size={16} />
                     </button>
@@ -292,7 +292,7 @@ export default function NodoDrive() {
                     <button
                       onClick={() => descargar(it)}
                       title="Descargar"
-                      className="rounded-lg p-2 text-nodo-teal transition hover:bg-cyan-50"
+                      className="rounded-lg p-2 text-lav transition hover:bg-lav-soft"
                     >
                       <Download size={16} />
                     </button>
@@ -300,7 +300,7 @@ export default function NodoDrive() {
                   <button
                     onClick={() => eliminar(it)}
                     title="Eliminar"
-                    className="rounded-lg p-2 text-slate-400 transition hover:bg-red-50 hover:text-nodo-red"
+                    className="rounded-lg p-2 text-ink-faint transition hover:bg-crit-soft hover:text-crit"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -329,7 +329,7 @@ export default function NodoDrive() {
               onClick={(e) => e.stopPropagation()}
               className="flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-t-3xl bg-nodo-bg shadow-lift sm:rounded-3xl"
             >
-              <div className="flex flex-wrap items-center gap-3 border-b border-nodo-border bg-white px-5 py-4">
+              <div className="flex flex-wrap items-center gap-3 border-b border-line bg-white px-5 py-4">
                 <span
                   className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-white"
                   style={{ background: carpeta.color }}
@@ -340,7 +340,7 @@ export default function NodoDrive() {
                   value={editando.nombre}
                   onChange={(e) => setEditando({ ...editando, nombre: e.target.value })}
                   aria-label="Nombre del documento"
-                  className="min-w-0 flex-1 rounded-lg bg-nodo-surface px-3 py-2 text-sm font-extrabold text-nodo-navy focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
+                  className="min-w-0 flex-1 rounded-lg bg-paper px-3 py-2 text-sm font-extrabold text-ink focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
                 />
                 <div className="flex shrink-0 items-center gap-1.5">
                   <button
@@ -355,14 +355,14 @@ export default function NodoDrive() {
                       setEditando(null);
                     }}
                     title="Eliminar documento"
-                    className="rounded-xl p-2.5 text-slate-400 transition hover:bg-red-50 hover:text-nodo-red"
+                    className="rounded-xl p-2.5 text-ink-faint transition hover:bg-crit-soft hover:text-crit"
                   >
                     <Trash2 size={16} />
                   </button>
                   <button
                     onClick={() => setEditando(null)}
                     title="Cerrar"
-                    className="rounded-xl p-2.5 text-slate-400 transition hover:bg-slate-100"
+                    className="rounded-xl p-2.5 text-ink-faint transition hover:bg-sand"
                   >
                     <X size={16} />
                   </button>

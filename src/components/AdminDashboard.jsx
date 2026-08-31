@@ -65,27 +65,27 @@ export default function AdminDashboard() {
   const rol = ROLES_ADMIN[adminRole];
 
   return (
-    <div className="min-h-screen bg-nodo-bg pb-16">
+    <div className="min-h-screen bg-paper pb-16">
       <Header />
       <div className="pt-16">
         <SectionNav sections={secciones} active={seccion} onChange={setSeccion} />
 
         <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6">
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white p-4 shadow-card ring-1 ring-nodo-border">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-cloud p-4 shadow-card">
             <div>
-              <h1 className="text-lg font-extrabold tracking-tight text-nodo-navy">
-                Panel de Administración
+              <h1 className="font-display text-xl font-bold tracking-tight text-ink">
+                Panel de administración
               </h1>
-              <p className="text-xs text-slate-500">
-                Bienvenido {saludo} · {comunidad.nombre} · {comunidad.plan}
+              <p className="text-xs text-ink-soft">
+                Hola {saludo} · {comunidad.nombre} · {comunidad.plan}
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-cyan-50 px-3 py-1.5 text-xs font-extrabold text-nodo-teal ring-1 ring-inset ring-cyan-200">
+              <span className="inline-flex items-center gap-1.5 rounded-lg bg-lav-soft px-3 py-1.5 text-xs font-bold text-lav-deep">
                 {rol?.etiqueta}
               </span>
               {morosos.length > 0 && (
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1.5 text-xs font-extrabold text-nodo-red ring-1 ring-inset ring-red-200">
+                <span className="inline-flex items-center gap-1.5 rounded-lg bg-crit-soft px-3 py-1.5 text-xs font-bold text-[#9c372f]">
                   {morosos.length} socios adeudan · enviá recordatorios por WhatsApp
                 </span>
               )}

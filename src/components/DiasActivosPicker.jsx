@@ -16,8 +16,8 @@ export default function DiasActivosPicker({ dias, onChange }) {
               onClick={() => toggle(d.n)}
               className={`rounded-lg px-2.5 py-1.5 text-xs font-bold transition-colors ${
                 activo
-                  ? 'bg-nodo-navy text-white shadow-card'
-                  : 'bg-white text-slate-500 ring-1 ring-inset ring-nodo-border hover:bg-slate-50'
+                  ? 'bg-lav-deep text-white shadow-card'
+                  : 'bg-white text-ink-soft ring-1 ring-inset ring-line hover:bg-paper'
               }`}
               title={d.largo}
             >
@@ -30,21 +30,21 @@ export default function DiasActivosPicker({ dias, onChange }) {
         <button
           type="button"
           onClick={() => onChange([0, 1, 2, 3, 4, 5, 6])}
-          className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-bold text-slate-500 ring-1 ring-inset ring-nodo-border transition hover:bg-slate-200"
+          className="rounded-full bg-sand px-2.5 py-1 text-[10px] font-bold text-ink-soft ring-1 ring-inset ring-line transition hover:bg-slate-200"
         >
           Todos los días
         </button>
         <button
           type="button"
           onClick={() => onChange([1, 2, 3, 4, 5])}
-          className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-bold text-slate-500 ring-1 ring-inset ring-nodo-border transition hover:bg-slate-200"
+          className="rounded-full bg-sand px-2.5 py-1 text-[10px] font-bold text-ink-soft ring-1 ring-inset ring-line transition hover:bg-slate-200"
         >
           Lunes a viernes
         </button>
         <button
           type="button"
           onClick={() => onChange([6, 0])}
-          className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-bold text-slate-500 ring-1 ring-inset ring-nodo-border transition hover:bg-slate-200"
+          className="rounded-full bg-sand px-2.5 py-1 text-[10px] font-bold text-ink-soft ring-1 ring-inset ring-line transition hover:bg-slate-200"
         >
           Fin de semana
         </button>

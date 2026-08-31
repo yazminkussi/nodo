@@ -12,7 +12,7 @@ export default function B2BOverview() {
   return (
     <section className="mx-auto max-w-7xl space-y-10 px-4 sm:px-6">
       <div className="rounded-3xl bg-gradient-to-br from-nodo-navy via-nodo-navy-2 to-[#0B1222] p-6 text-white shadow-lift sm:p-10">
-        <span className="inline-flex items-center gap-2 rounded-full bg-nodo-cyan/15 px-3 py-1 text-xs font-extrabold text-nodo-cyan ring-1 ring-inset ring-nodo-cyan/30">
+        <span className="inline-flex items-center gap-2 rounded-full bg-nodo-cyan/15 px-3 py-1 text-xs font-extrabold text-lav ring-1 ring-inset ring-nodo-cyan/30">
           <Rocket size={13} /> NODO para instituciones
         </span>
         <h2 className="mt-3 max-w-2xl text-2xl font-extrabold leading-tight tracking-tight sm:text-3xl">
@@ -36,11 +36,11 @@ export default function B2BOverview() {
                 whileHover={{ y: -3 }}
                 className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10"
               >
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-nodo-cyan/20 text-nodo-cyan">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-nodo-cyan/20 text-lav">
                   <Icon size={17} />
                 </div>
                 <p className="mt-3 font-extrabold">{v.titulo}</p>
-                <p className="mt-1 text-xs leading-relaxed text-slate-400">{v.detalle}</p>
+                <p className="mt-1 text-xs leading-relaxed text-ink-faint">{v.detalle}</p>
               </motion.div>
             );
           })}
@@ -48,7 +48,7 @@ export default function B2BOverview() {
       </div>
 
       <div>
-        <h3 className="mb-5 text-center text-xl font-extrabold tracking-tight text-nodo-navy">
+        <h3 className="mb-5 text-center text-xl font-extrabold tracking-tight text-ink">
           Planes comerciales
         </h3>
         <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
@@ -61,8 +61,8 @@ export default function B2BOverview() {
               whileHover={{ y: -4 }}
               className={`relative flex flex-col rounded-3xl p-6 ${
                 plan.destacado
-                  ? 'bg-nodo-navy text-white shadow-lift ring-2 ring-nodo-cyan'
-                  : 'bg-white text-nodo-navy shadow-card ring-1 ring-nodo-border'
+                  ? 'bg-lav-deep text-white shadow-lift ring-2 ring-nodo-cyan'
+                  : 'bg-white text-ink shadow-card ring-1 ring-line'
               }`}
             >
               {plan.destacado && (
@@ -72,14 +72,14 @@ export default function B2BOverview() {
               )}
               <h4 className="text-lg font-extrabold">{plan.nombre}</h4>
               <p
-                className={`text-xs font-semibold ${plan.destacado ? 'text-slate-400' : 'text-slate-500'}`}
+                className={`text-xs font-semibold ${plan.destacado ? 'text-ink-faint' : 'text-ink-soft'}`}
               >
                 {plan.socios}
               </p>
               <p className="mt-4 text-3xl font-extrabold tracking-tight">
                 {formatARS(plan.precioMensual)}
                 <span
-                  className={`ml-1 text-xs font-medium ${plan.destacado ? 'text-slate-400' : 'text-slate-400'}`}
+                  className={`ml-1 text-xs font-medium ${plan.destacado ? 'text-ink-faint' : 'text-ink-faint'}`}
                 >
                   / mes
                 </span>
@@ -90,11 +90,9 @@ export default function B2BOverview() {
                     <Check
                       size={16}
                       strokeWidth={3}
-                      className={`mt-0.5 shrink-0 ${plan.destacado ? 'text-nodo-green' : 'text-nodo-teal'}`}
+                      className={`mt-0.5 shrink-0 ${plan.destacado ? 'text-ok' : 'text-lav'}`}
                     />
-                    <span className={plan.destacado ? 'text-slate-200' : 'text-slate-600'}>
-                      {f}
-                    </span>
+                    <span className={plan.destacado ? 'text-slate-200' : 'text-ink-soft'}>{f}</span>
                   </li>
                 ))}
               </ul>
@@ -105,7 +103,7 @@ export default function B2BOverview() {
                 className={`mt-6 flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-extrabold transition ${
                   plan.destacado
                     ? 'bg-nodo-cyan text-white hover:bg-cyan-600'
-                    : 'bg-nodo-surface text-nodo-navy ring-1 ring-inset ring-nodo-border hover:bg-slate-100'
+                    : 'bg-paper text-ink ring-1 ring-inset ring-line hover:bg-sand'
                 }`}
               >
                 Solicitar demo <ArrowRight size={15} />
@@ -113,7 +111,7 @@ export default function B2BOverview() {
             </motion.div>
           ))}
         </div>
-        <p className="mt-5 text-center text-xs text-slate-400">
+        <p className="mt-5 text-center text-xs text-ink-faint">
           Precios expresados en pesos argentinos. {comunidad.ciudad} · IVA incluido · Sin
           permanencia.
         </p>

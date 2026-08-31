@@ -3,9 +3,9 @@ import { CheckCircle2, AlertTriangle, Info, X } from 'lucide-react';
 import { useNodoStore } from '../store/useNodoStore';
 
 const config = {
-  success: { icon: CheckCircle2, ring: 'ring-emerald-200', text: 'text-nodo-green-dark' },
-  error: { icon: AlertTriangle, ring: 'ring-red-200', text: 'text-nodo-red' },
-  info: { icon: Info, ring: 'ring-cyan-200', text: 'text-nodo-teal' },
+  success: { icon: CheckCircle2, text: 'text-ok' },
+  error: { icon: AlertTriangle, text: 'text-crit' },
+  info: { icon: Info, text: 'text-lav' },
 };
 
 export default function Toasts() {
@@ -16,7 +16,7 @@ export default function Toasts() {
     <div className="pointer-events-none fixed inset-x-0 top-20 z-[60] flex flex-col items-center gap-2 px-4">
       <AnimatePresence>
         {toasts.map((t) => {
-          const { icon: Icon, ring, text } = config[t.tipo] || config.info;
+          const { icon: Icon, text } = config[t.tipo] || config.info;
           return (
             <motion.div
               key={t.id}
@@ -24,13 +24,13 @@ export default function Toasts() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -12, scale: 0.95 }}
               transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-              className={`pointer-events-auto flex items-center gap-2.5 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-lift ring-1 ${ring}`}
+              className="pointer-events-auto flex items-center gap-2.5 rounded-xl border border-line bg-cloud px-4 py-3 text-sm font-semibold text-ink shadow-lift"
             >
               <Icon size={18} className={text} strokeWidth={2.2} />
               <span>{t.mensaje}</span>
               <button
                 onClick={() => removeToast(t.id)}
-                className="ml-1 text-slate-400 hover:text-slate-600"
+                className="ml-1 text-ink-faint hover:text-ink"
                 aria-label="Cerrar"
               >
                 <X size={14} />

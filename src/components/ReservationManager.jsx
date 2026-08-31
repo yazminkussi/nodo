@@ -88,13 +88,11 @@ export default function ReservationManager() {
     <section className="mx-auto max-w-7xl px-4 sm:px-6">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-extrabold tracking-tight text-nodo-navy">
-            Control de Reservas
-          </h2>
-          <p className="text-xs text-slate-500">
+          <h2 className="text-lg font-extrabold tracking-tight text-ink">Control de Reservas</h2>
+          <p className="text-xs text-ink-soft">
             Grilla sincronizada con los horarios configurados por espacio.
             {categoriasPermitidas && (
-              <span className="ml-1 inline-flex items-center gap-1 font-bold text-nodo-teal">
+              <span className="ml-1 inline-flex items-center gap-1 font-bold text-lav">
                 <Filter size={11} /> Solo {categoriasPermitidas.join(' y ')}
               </span>
             )}
@@ -125,44 +123,43 @@ export default function ReservationManager() {
               }}
               className={`flex min-w-[64px] flex-col items-center rounded-xl px-3 py-2 transition-colors ${
                 activo
-                  ? 'bg-nodo-navy text-white shadow-card'
-                  : 'bg-white text-slate-500 ring-1 ring-inset ring-nodo-border hover:bg-slate-50'
+                  ? 'bg-lav-deep text-white shadow-card'
+                  : 'bg-white text-ink-soft ring-1 ring-inset ring-line hover:bg-paper'
               }`}
             >
               <span className="text-[10px] font-semibold uppercase">{diaSemana}</span>
               <span className="text-lg font-extrabold leading-none">{dd}</span>
               <span className="text-[10px] font-semibold uppercase">{m}</span>
-              {esHoy && <span className="text-[9px] font-bold text-nodo-cyan">Hoy</span>}
+              {esHoy && <span className="text-[9px] font-bold text-lav">Hoy</span>}
             </button>
           );
         })}
       </div>
 
-      <div className="overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-nodo-border">
-        <div className="flex items-center gap-4 border-b border-nodo-border bg-nodo-surface px-4 py-2.5">
-          <span className="text-xs font-bold text-slate-500">{formatFechaLarga(dia)}</span>
-          <span className="ml-auto flex items-center gap-1 text-[11px] font-semibold text-slate-400">
+      <div className="overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-line">
+        <div className="flex items-center gap-4 border-b border-line bg-paper px-4 py-2.5">
+          <span className="text-xs font-bold text-ink-soft">{formatFechaLarga(dia)}</span>
+          <span className="ml-auto flex items-center gap-1 text-[11px] font-semibold text-ink-faint">
             <span className="h-2.5 w-2.5 rounded-sm bg-nodo-green" /> Reservado
           </span>
-          <span className="flex items-center gap-1 text-[11px] font-semibold text-slate-400">
-            <span className="h-2.5 w-2.5 rounded-sm bg-nodo-surface ring-1 ring-nodo-border" />{' '}
-            Libre
+          <span className="flex items-center gap-1 text-[11px] font-semibold text-ink-faint">
+            <span className="h-2.5 w-2.5 rounded-sm bg-paper ring-1 ring-line" /> Libre
           </span>
-          <span className="flex items-center gap-1 text-[11px] font-semibold text-slate-400">
-            <span className="h-2.5 w-2.5 rounded-sm bg-slate-50" /> Cerrado
+          <span className="flex items-center gap-1 text-[11px] font-semibold text-ink-faint">
+            <span className="h-2.5 w-2.5 rounded-sm bg-paper" /> Cerrado
           </span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[820px] border-collapse text-xs">
             <thead>
               <tr>
-                <th className="sticky left-0 z-10 w-44 border-b border-r border-nodo-border bg-white px-3 py-2.5 text-left text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
+                <th className="sticky left-0 z-10 w-44 border-b border-r border-line bg-white px-3 py-2.5 text-left text-[10px] font-extrabold uppercase tracking-wider text-ink-soft">
                   Espacio
                 </th>
                 {slotsDelDia.map((h) => (
                   <th
                     key={h}
-                    className="border-b border-nodo-border bg-white px-1 py-2.5 text-center text-[10px] font-bold text-slate-400"
+                    className="border-b border-line bg-white px-1 py-2.5 text-center text-[10px] font-bold text-ink-faint"
                   >
                     {h}
                   </th>
@@ -172,7 +169,7 @@ export default function ReservationManager() {
             <tbody>
               {espaciosVisibles.map((esp) => (
                 <tr key={esp.id}>
-                  <td className="sticky left-0 z-10 border-b border-r border-nodo-border bg-white px-3 py-2.5">
+                  <td className="sticky left-0 z-10 border-b border-r border-line bg-white px-3 py-2.5">
                     <div className="flex items-center gap-2">
                       <div
                         className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-white"
@@ -180,7 +177,7 @@ export default function ReservationManager() {
                       >
                         <SpaceIcon icono={esp.icono} className="h-3.5 w-3.5" />
                       </div>
-                      <span className="whitespace-nowrap text-[11px] font-bold text-nodo-navy">
+                      <span className="whitespace-nowrap text-[11px] font-bold text-ink">
                         {esp.nombre}
                       </span>
                     </div>
@@ -188,8 +185,8 @@ export default function ReservationManager() {
                   {slotsDelDia.map((h) => {
                     if (!esSlotDe(esp, h)) {
                       return (
-                        <td key={h} className="border-b border-nodo-border p-0.5">
-                          <span className="flex h-8 w-full items-center justify-center rounded-md bg-slate-50 text-slate-300">
+                        <td key={h} className="border-b border-line p-0.5">
+                          <span className="flex h-8 w-full items-center justify-center rounded-md bg-paper text-slate-300">
                             <CalendarX2 size={11} />
                           </span>
                         </td>
@@ -199,7 +196,7 @@ export default function ReservationManager() {
                     const esHoyPasado =
                       dia === hoy && Number(h.split(':')[0]) <= new Date().getHours();
                     return (
-                      <td key={h} className="border-b border-nodo-border p-0.5">
+                      <td key={h} className="border-b border-line p-0.5">
                         <button
                           disabled={!reserva}
                           onClick={() => reserva && setSeleccion(reserva)}
@@ -207,8 +204,8 @@ export default function ReservationManager() {
                             reserva
                               ? 'bg-nodo-green text-white shadow-sm hover:bg-nodo-green-dark'
                               : esHoyPasado
-                                ? 'bg-slate-50 text-slate-300'
-                                : 'bg-nodo-surface ring-1 ring-inset ring-nodo-border/60 hover:bg-cyan-50'
+                                ? 'bg-paper text-slate-300'
+                                : 'bg-paper ring-1 ring-inset ring-line/60 hover:bg-lav-soft'
                           }`}
                           title={reserva ? `${reserva.socioNombre} · ${h} hs` : h}
                         >
@@ -230,15 +227,15 @@ export default function ReservationManager() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}
-            className="mt-4 flex flex-col gap-3 rounded-2xl bg-white p-4 shadow-card ring-1 ring-nodo-border sm:flex-row sm:items-center"
+            className="mt-4 flex flex-col gap-3 rounded-2xl bg-white p-4 shadow-card ring-1 ring-line sm:flex-row sm:items-center"
           >
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-50 text-nodo-teal">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-lav-soft text-lav">
                 <UserRound size={18} />
               </div>
               <div>
-                <p className="font-extrabold text-nodo-navy">{seleccion.socioNombre}</p>
-                <p className="text-xs text-slate-500">
+                <p className="font-extrabold text-ink">{seleccion.socioNombre}</p>
+                <p className="text-xs text-ink-soft">
                   {espacios.find((e) => e.id === seleccion.espacioId)?.nombre} · {seleccion.inicio}{' '}
                   hs
                 </p>
@@ -251,7 +248,7 @@ export default function ReservationManager() {
                 addToast('Reserva cancelada.', 'info');
                 setSeleccion(null);
               }}
-              className="ml-auto inline-flex items-center gap-2 rounded-xl bg-red-50 px-4 py-2 text-xs font-bold text-nodo-red ring-1 ring-inset ring-red-200 transition hover:bg-red-100"
+              className="ml-auto inline-flex items-center gap-2 rounded-xl bg-crit-soft px-4 py-2 text-xs font-bold text-crit ring-1 ring-inset ring-red-200 transition hover:bg-red-100"
             >
               <Trash2 size={14} /> Cancelar reserva
             </button>
@@ -277,15 +274,15 @@ export default function ReservationManager() {
               onClick={(e) => e.stopPropagation()}
               className="w-full max-w-md rounded-t-3xl bg-white p-5 shadow-lift sm:rounded-3xl"
             >
-              <h3 className="mb-4 flex items-center gap-2 font-extrabold text-nodo-navy">
-                <CalendarDays size={18} className="text-nodo-teal" /> Nueva reserva ·{' '}
+              <h3 className="mb-4 flex items-center gap-2 font-extrabold text-ink">
+                <CalendarDays size={18} className="text-lav" /> Nueva reserva ·{' '}
                 {formatFechaLarga(dia)}
               </h3>
-              <label className="mb-1 block text-xs font-bold text-slate-500">Socio</label>
+              <label className="mb-1 block text-xs font-bold text-ink-soft">Socio</label>
               <select
                 value={form.socioId}
                 onChange={(e) => setForm({ ...form, socioId: e.target.value })}
-                className="mb-3 w-full rounded-xl bg-white px-3 py-2.5 text-sm text-slate-700 ring-1 ring-nodo-border focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
+                className="mb-3 w-full rounded-xl bg-white px-3 py-2.5 text-sm text-ink ring-1 ring-line focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
               >
                 <option value="">Seleccionar socio…</option>
                 {members.map((m) => (
@@ -294,11 +291,11 @@ export default function ReservationManager() {
                   </option>
                 ))}
               </select>
-              <label className="mb-1 block text-xs font-bold text-slate-500">Espacio</label>
+              <label className="mb-1 block text-xs font-bold text-ink-soft">Espacio</label>
               <select
                 value={form.espacioId}
                 onChange={(e) => setForm({ ...form, espacioId: e.target.value, inicio: '' })}
-                className="mb-3 w-full rounded-xl bg-white px-3 py-2.5 text-sm text-slate-700 ring-1 ring-nodo-border focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
+                className="mb-3 w-full rounded-xl bg-white px-3 py-2.5 text-sm text-ink ring-1 ring-line focus:outline-none focus:ring-2 focus:ring-nodo-cyan"
               >
                 <option value="">Seleccionar espacio…</option>
                 {espaciosVisibles.map((e) => (
@@ -307,9 +304,9 @@ export default function ReservationManager() {
                   </option>
                 ))}
               </select>
-              <label className="mb-1 block text-xs font-bold text-slate-500">Horario</label>
+              <label className="mb-1 block text-xs font-bold text-ink-soft">Horario</label>
               {espacioForm && !diaActivo(espacioForm.horario.dias, dia) ? (
-                <p className="mb-4 rounded-xl bg-slate-50 px-3 py-2.5 text-xs font-bold text-slate-400">
+                <p className="mb-4 rounded-xl bg-paper px-3 py-2.5 text-xs font-bold text-ink-faint">
                   Este espacio no abre ese día. Elegí otro espacio o fecha.
                 </p>
               ) : (
@@ -326,8 +323,8 @@ export default function ReservationManager() {
                           activo
                             ? 'bg-nodo-green text-white'
                             : ocupado
-                              ? 'cursor-not-allowed bg-slate-100 text-slate-300 line-through'
-                              : 'bg-cyan-50 text-nodo-teal ring-1 ring-inset ring-cyan-200 hover:bg-nodo-cyan hover:text-white'
+                              ? 'cursor-not-allowed bg-sand text-slate-300 line-through'
+                              : 'bg-lav-soft text-lav ring-1 ring-inset ring-lav/25 hover:bg-nodo-cyan hover:text-white'
                         }`}
                       >
                         {h}
