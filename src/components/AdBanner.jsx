@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Store, MapPin, Percent } from 'lucide-react';
 import { useNodoStore } from '../store/useNodoStore';
+import Chip from './ui/Chip';
 
 export default function AdBanner() {
   const ads = useNodoStore((s) => s.ads);
@@ -9,12 +10,12 @@ export default function AdBanner() {
   return (
     <section className="mx-auto max-w-5xl px-4 sm:px-6">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-extrabold tracking-tight text-nodo-navy">
+        <h2 className="font-display text-xl font-bold tracking-tight text-ink">
           Comercios del barrio
         </h2>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-nodo-amber ring-1 ring-inset ring-amber-200">
-          <Percent size={13} /> Descuentos para socios
-        </span>
+        <Chip tono="sun" icon={Percent}>
+          Descuentos para socios
+        </Chip>
       </div>
 
       <div className="flex snap-x gap-4 overflow-x-auto pb-2">
@@ -25,8 +26,8 @@ export default function AdBanner() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.05, duration: 0.3 }}
             whileHover={{ y: -3 }}
-            className={`relative w-64 shrink-0 snap-start overflow-hidden rounded-2xl bg-white p-4 shadow-card ring-1 transition-shadow hover:shadow-lift ${
-              ad.destacada ? 'ring-2 ring-nodo-amber/50' : 'ring-nodo-border'
+            className={`relative w-64 shrink-0 snap-start overflow-hidden rounded-2xl bg-cloud p-4 shadow-card transition-shadow hover:shadow-lift ${
+              ad.destacada ? 'ring-2 ring-sun/50' : 'ring-1 ring-line'
             }`}
           >
             <div
@@ -43,12 +44,12 @@ export default function AdBanner() {
                 <Store size={16} strokeWidth={2.2} />
               </div>
               <div>
-                <p className="text-sm font-extrabold text-nodo-navy">{ad.negocio}</p>
-                <p className="text-[11px] font-semibold text-slate-400">{ad.rubro}</p>
+                <p className="text-sm font-bold text-ink">{ad.negocio}</p>
+                <p className="text-[11px] font-semibold text-ink-faint">{ad.rubro}</p>
               </div>
             </div>
-            <p className="mt-2.5 text-xs leading-relaxed text-slate-500">{ad.descripcion}</p>
-            <p className="mt-2 flex items-center gap-1 text-[11px] font-bold text-nodo-teal">
+            <p className="mt-2.5 text-xs leading-relaxed text-ink-soft">{ad.descripcion}</p>
+            <p className="mt-2 flex items-center gap-1 text-[11px] font-bold text-lav">
               <MapPin size={11} /> {ad.barrio}
             </p>
           </motion.div>

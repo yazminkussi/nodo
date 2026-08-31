@@ -46,7 +46,7 @@ export function PWAInstallButton() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
-            className="flex items-center gap-1 rounded-full bg-red-500/20 px-2 py-1 text-[11px] font-bold text-red-300"
+            className="flex items-center gap-1 rounded-full bg-crit/25 px-2 py-1 text-[11px] font-bold text-crit-soft"
             title="Estás sin conexión. NODO funciona offline."
           >
             <WifiOff size={12} /> Offline
@@ -111,7 +111,7 @@ export function CommunityBadge() {
           <span className="block truncate text-xs font-extrabold text-white">
             {comunidad.nombre}
           </span>
-          <span className="block truncate text-[10px] font-semibold text-slate-400">
+          <span className="block truncate text-[10px] font-semibold text-cream/55">
             {barrio || comunidad.tipo} · {comunidad.plan}
           </span>
         </span>
@@ -153,13 +153,13 @@ export function CommunityBadge() {
           <span className="block truncate text-xs font-extrabold text-white">
             {comunidad.nombre}
           </span>
-          <span className="block truncate text-[10px] font-semibold text-slate-400">
+          <span className="block truncate text-[10px] font-semibold text-cream/55">
             {barrio || comunidad.tipo} · {comunidad.plan}
           </span>
         </span>
         <ChevronDown
           size={14}
-          className={`shrink-0 text-slate-400 transition-transform ${abierto ? 'rotate-180' : ''}`}
+          className={`shrink-0 text-cream/55 transition-transform ${abierto ? 'rotate-180' : ''}`}
         />
       </button>
 
@@ -174,7 +174,7 @@ export function CommunityBadge() {
             aria-label="Cambiar de comunidad"
             className="absolute left-0 top-full z-50 mt-2 w-72 overflow-hidden rounded-2xl bg-white p-1.5 shadow-lift ring-1 ring-nodo-border"
           >
-            <li className="px-3 py-2 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
+            <li className="px-3 py-2 text-[10px] font-extrabold uppercase tracking-widest text-ink-faint">
               Comunidad activa
             </li>
             {comunidades.map((c) => {
@@ -186,7 +186,7 @@ export function CommunityBadge() {
                     aria-selected={activa}
                     onClick={() => cambiar(c.id)}
                     className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left transition ${
-                      activa ? 'bg-cyan-50 ring-1 ring-inset ring-cyan-200' : 'hover:bg-slate-50'
+                      activa ? 'bg-lav-soft ring-1 ring-inset ring-lav/25' : 'hover:bg-slate-50'
                     }`}
                   >
                     {c.logo ? (
@@ -243,7 +243,7 @@ export function CuentaMenu() {
     return (
       <button
         onClick={salirModoDemo}
-        className="flex items-center gap-1.5 rounded-full border border-white/20 px-3 py-1.5 text-xs font-semibold text-slate-300 transition hover:bg-white/10"
+        className="flex items-center gap-1.5 rounded-full border border-white/20 px-3 py-1.5 text-xs font-semibold text-cream/70 transition hover:bg-white/10"
         title="Salir del modo demo"
       >
         Modo demo
@@ -263,11 +263,11 @@ export function CuentaMenu() {
         aria-haspopup="menu"
         aria-expanded={abierto}
       >
-        <UserCircle2 size={20} className="shrink-0 text-slate-300" />
+        <UserCircle2 size={20} className="shrink-0 text-cream/70" />
         <span className="hidden max-w-[9rem] truncate text-xs font-semibold sm:block">
           {nombre}
         </span>
-        <ChevronDown size={13} className={`text-slate-400 ${abierto ? 'rotate-180' : ''}`} />
+        <ChevronDown size={13} className={`text-cream/55 ${abierto ? 'rotate-180' : ''}`} />
       </button>
       <AnimatePresence>
         {abierto && (
@@ -281,12 +281,12 @@ export function CuentaMenu() {
           >
             <div className="px-3 py-2">
               <p className="truncate text-sm font-extrabold text-nodo-navy">{nombre}</p>
-              <p className="truncate text-[11px] text-slate-400">{email}</p>
+              <p className="truncate text-[11px] text-ink-faint">{email}</p>
             </div>
             <button
               role="menuitem"
               onClick={salir}
-              className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-nodo-red transition hover:bg-red-50"
+              className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-crit transition hover:bg-crit-soft"
             >
               <LogOut size={15} /> Cerrar sesión
             </button>
@@ -299,19 +299,16 @@ export function CuentaMenu() {
 
 export function Header() {
   return (
-    <header className="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-nodo-navy/90 backdrop-blur-md">
+    <header className="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-lav-deep/95 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 sm:px-6">
-        <div className="flex min-w-0 items-center gap-3">
-          <NodoLogo />
-          <div className="hidden min-w-0 leading-tight sm:block">
-            <p className="text-sm font-extrabold tracking-tight text-white">NODO</p>
-            <p className="truncate text-[11px] text-slate-400">
-              Experiencia Digital para Comunidades
-            </p>
-          </div>
+        <div className="flex min-w-0 items-center gap-2.5">
+          <NodoLogo size={30} />
+          <p className="hidden font-display text-lg font-bold lowercase leading-none text-cream sm:block">
+            nodo
+          </p>
         </div>
 
-        <div className="h-8 w-px shrink-0 bg-white/15" />
+        <div className="h-7 w-px shrink-0 bg-white/15" />
 
         <CommunityBadge />
 
@@ -328,7 +325,7 @@ export function Header() {
 export function SectionNav({ sections, active, onChange }) {
   return (
     <>
-      <div className="sticky top-16 z-30 border-b border-nodo-border bg-nodo-bg/95 backdrop-blur">
+      <div className="sticky top-16 z-30 border-b border-line bg-paper/95 backdrop-blur">
         <nav
           className="mx-auto flex max-w-7xl items-center gap-1 overflow-x-auto px-4 py-3 sm:px-6"
           aria-label="Secciones"
@@ -337,12 +334,17 @@ export function SectionNav({ sections, active, onChange }) {
             <button
               key={key}
               onClick={() => onChange(key)}
-              className={`flex shrink-0 items-center gap-2 rounded-full px-3.5 py-2 text-sm font-semibold transition-colors ${
-                active === key
-                  ? 'bg-nodo-navy text-white shadow-card'
-                  : 'text-slate-500 hover:bg-white hover:text-nodo-navy'
+              className={`relative flex shrink-0 items-center gap-2 rounded-full px-3.5 py-2 text-sm font-semibold transition-colors ${
+                active === key ? 'text-cream' : 'text-ink-soft hover:text-lav-deep'
               }`}
             >
+              {active === key && (
+                <motion.span
+                  layoutId="section-pill"
+                  className="absolute inset-0 -z-10 rounded-full bg-lav-deep shadow-card"
+                  transition={{ type: 'spring', stiffness: 400, damping: 34 }}
+                />
+              )}
               <Icon size={16} strokeWidth={2.2} />
               <span className="hidden sm:inline">{label}</span>
               <span className="sm:hidden">{label.split(' ')[0]}</span>
