@@ -11,7 +11,11 @@ y el proyecto usa [versionado semántico](https://semver.org/lang/es/).
   multi-tenant con Row Level Security, y capa de datos (`src/lib/api`) con
   fallback a modo demo.
 - Entidades contra la base: comunidades, perfiles, membresías, socios,
-  novedades, espacios y reservas.
+  novedades, espacios, reservas, actividades / talleres e inscripciones.
+- Actividades y talleres reales: catálogo administrable, inscripción de socios
+  desde la app y control de cupo en la base (trigger + índice único).
+- Tests E2E con Playwright (modo demo): login, portal del socio, panel admin,
+  reserva de espacio e inscripción a talleres.
 - Panel de Equipo: el SuperAdmin invita administradores (Deportes / Talleres)
   por email; el rol se activa al iniciar sesión.
 - Rediseño visual completo: paleta lavanda de marca + Bricolage Grotesque,

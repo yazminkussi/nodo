@@ -2,17 +2,19 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Users, Clock, UserRound, CheckCircle2, PlusCircle, XCircle, Sparkles } from 'lucide-react';
 import { useNodoStore } from '../store/useNodoStore';
+import { useSesion } from '../store/useSesion';
+import { useActividadesData } from '../hooks/useActividadesData';
 import { formatARS, nombreDias, duracionLabel } from '../data/mockData';
 import SpaceIcon from './SpaceIcon';
 
 const categorias = ['Todos', 'Deportivo', 'Cultural', 'Recreativo'];
 
 export default function ActivitiesPanel() {
-  const actividades = useNodoStore((s) => s.actividades);
-  const inscripciones = useNodoStore((s) => s.inscripciones);
-  const addInscripcion = useNodoStore((s) => s.addInscripcion);
-  const cancelInscripcion = useNodoStore((s) => s.cancelInscripcion);
-  const socio = useNodoStore((s) => s.members.find((m) => m.id === s.socioActualId));
+  const { actividades, inscripciones, addInscripcion, cancelInscripcion } = useActividadesData();
+  const socioDemo = useNodoStore((s) => s.members.find((m) => m.id === s.socioActualId));
+  const miSocio = useSesion((s) => s.miSocio);
+  const sesionActiva = useSesion((s) => s.estado) === 'activo';
+  const socio = sesionActiva ? miSocio : socioDemo;
   const addToast = useNodoStore((s) => s.addToast);
 
   const [filtro, setFiltro] = useState('Todos');
@@ -136,28 +138,39 @@ export default function ActivitiesPanel() {
                   </div>
 
                   <button
-                    onClick={() => {
-                      if (inscripto) {
-                        const insc = inscripciones.find(
-                          (i) =>
-                            i.actividadId === act.id &&
-                            i.socioId === socio?.id &&
-                            i.estado === 'activa'
-                        );
-                        cancelInscripcion(insc.id);
-                        addToast('Te desinscribiste de la actividad.', 'info');
-                      } else if (llena) {
+                    onClick={async () => {
+                      if (!socio) {
                         addToast(
-                          'Cupo completo. Consultá en recepción por la lista de espera.',
+                          'Necesitás una ficha de socio vinculada para inscribirte.',
                           'info'
                         );
-                      } else {
-                        addInscripcion({
-                          actividadId: act.id,
-                          socioId: socio.id,
-                          socioNombre: `${socio.nombre} ${socio.apellido}`,
-                        });
-                        addToast(`Inscripción confirmada en ${act.nombre}.`, 'success');
+                        return;
+                      }
+                      try {
+                        if (inscripto) {
+                          const insc = inscripciones.find(
+                            (i) =>
+                              i.actividadId === act.id &&
+                              i.socioId === socio?.id &&
+                              i.estado === 'activa'
+                          );
+                          if (insc) await cancelInscripcion(insc.id);
+                          addToast('Te desinscribiste de la actividad.', 'info');
+                        } else if (llena) {
+                          addToast(
+                            'Cupo completo. Consultá en recepción por la lista de espera.',
+                            'info'
+                          );
+                        } else {
+                          await addInscripcion({
+                            actividadId: act.id,
+                            socioId: socio.id,
+                            socioNombre: `${socio.nombre} ${socio.apellido}`,
+                          });
+                          addToast(`Inscripción confirmada en ${act.nombre}.`, 'success');
+                        }
+                      } catch (e) {
+                        addToast(e?.message || 'No se pudo completar la operación.', 'error');
                       }
                     }}
                     className={`mt-4 flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-extrabold transition ${
@@ -220,9 +233,13 @@ export default function ActivitiesPanel() {
                     </p>
                   </div>
                   <button
-                    onClick={() => {
-                      cancelInscripcion(ins.id);
-                      addToast(`Te desinscribiste de ${act.nombre}.`, 'info');
+                    onClick={async () => {
+                      try {
+                        await cancelInscripcion(ins.id);
+                        addToast(`Te desinscribiste de ${act.nombre}.`, 'info');
+                      } catch (e) {
+                        addToast(e?.message || 'No se pudo cancelar la inscripción.', 'error');
+                      }
                     }}
                     className="rounded-xl bg-crit-soft px-3 py-2 text-xs font-bold text-crit ring-1 ring-inset ring-red-200 transition hover:bg-red-100"
                   >

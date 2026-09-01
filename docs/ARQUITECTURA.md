@@ -45,21 +45,26 @@ erDiagram
     comunidades ||--o{ reservas : agenda
     espacios ||--o{ reservas : "se reserva"
     socios ||--o| reservas : reserva
+    comunidades ||--o{ actividades : dicta
+    actividades ||--o{ inscripciones : "reúne"
+    socios ||--o{ inscripciones : "se inscribe"
     comunidades ||--|| comunidad_config : "marca en vivo"
     comunidades ||--o{ registros_acceso : "control QR"
 ```
 
-| Tabla              | Qué guarda                                                                         |
-| ------------------ | ---------------------------------------------------------------------------------- |
-| `comunidades`      | Cada club / centro cultural. Clave: slug legible (`la-union`).                     |
-| `perfiles`         | Persona logueada. Se crea por trigger al registrarse. `id` = `auth.users.id`.      |
-| `membresias`       | Rol (`socio` \| `superadmin` \| `deportes` \| `talleres`) por (perfil, comunidad). |
-| `socios`           | Ficha del socio en una comunidad. `perfil_id` opcional (vínculo con la cuenta).    |
-| `espacios`         | Canchas / salas. `horario` es JSON (apertura, cierre, duración, días).             |
-| `reservas`         | Turno de un socio en un espacio. Índice único evita doble reserva.                 |
-| `novedades`        | Comunicados de la comunidad.                                                       |
-| `comunidad_config` | Logo + nombre "en vivo", sincronizados por Realtime.                               |
-| `registros_acceso` | Historial de escaneos de QR en la puerta.                                          |
+| Tabla              | Qué guarda                                                                          |
+| ------------------ | ----------------------------------------------------------------------------------- |
+| `comunidades`      | Cada club / centro cultural. Clave: slug legible (`la-union`).                      |
+| `perfiles`         | Persona logueada. Se crea por trigger al registrarse. `id` = `auth.users.id`.       |
+| `membresias`       | Rol (`socio` \| `superadmin` \| `deportes` \| `talleres`) por (perfil, comunidad).  |
+| `socios`           | Ficha del socio en una comunidad. `perfil_id` opcional (vínculo con la cuenta).     |
+| `espacios`         | Canchas / salas. `horario` es JSON (apertura, cierre, duración, días).              |
+| `reservas`         | Turno de un socio en un espacio. Índice único evita doble reserva.                  |
+| `actividades`      | Talleres / cursos de la comunidad. `dias` es JSON; `cupo_maximo` limita inscriptos. |
+| `inscripciones`    | Socio anotado en una actividad. Índice único + trigger de cupo en la base.          |
+| `novedades`        | Comunicados de la comunidad.                                                        |
+| `comunidad_config` | Logo + nombre "en vivo", sincronizados por Realtime.                                |
+| `registros_acceso` | Historial de escaneos de QR en la puerta.                                           |
 
 Migraciones versionadas en `supabase/migrations/`, numeradas y aplicadas en orden.
 
@@ -79,14 +84,15 @@ Flujo de una consulta: `supabase.from('socios')` + JWT → PostgREST arma el SQL
 Postgres aplica la política (`using ( es_admin(comunidad_id) OR perfil_id = auth.uid() )`)
 → devuelve **sólo las filas de la comunidad del usuario**.
 
-| Tabla                    | Leer                               | Escribir                        |
-| ------------------------ | ---------------------------------- | ------------------------------- |
-| `perfiles`               | fila propia                        | fila propia                     |
-| `comunidades`            | miembros                           | superadmin                      |
-| `membresias`             | la propia · admins de la comunidad | superadmin                      |
-| `socios`                 | admins (todas) · el socio su ficha | superadmin                      |
-| `novedades` / `espacios` | miembros                           | cualquier admin                 |
-| `reservas`               | miembros                           | el socio la suya · admins todas |
+| Tabla                        | Leer                               | Escribir                        |
+| ---------------------------- | ---------------------------------- | ------------------------------- |
+| `perfiles`                   | fila propia                        | fila propia                     |
+| `comunidades`                | miembros                           | superadmin                      |
+| `membresias`                 | la propia · admins de la comunidad | superadmin                      |
+| `socios`                     | admins (todas) · el socio su ficha | superadmin                      |
+| `novedades` / `espacios`     | miembros                           | cualquier admin                 |
+| `actividades`                | miembros                           | cualquier admin                 |
+| `reservas` / `inscripciones` | miembros                           | el socio la suya · admins todas |
 
 **Pendiente conocido:** el QR del carnet se firma con HMAC en el cliente (secreto
 visible en el bundle). Solución planificada: mover firma y verificación a una Edge
@@ -135,9 +141,9 @@ Los componentes no hablan con Supabase directamente:
 ## 8. Estado
 
 **Contra la base real:** auth, comunidades + membresías, socios, novedades,
-espacios + reservas.
+espacios + reservas, actividades / talleres + inscripciones.
 
-**Todavía en demo:** actividades / talleres, publicidades, NODO Drive.
+**Todavía en demo:** publicidades, NODO Drive.
 
 **Hoja de ruta:** firma del QR server-side, roles reales + invitaciones, tests
 (Vitest + Playwright) + TypeScript incremental, service worker → Workbox.
