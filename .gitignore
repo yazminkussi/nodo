@@ -38,3 +38,6 @@ brand/
 # Archivos de trabajo temporales
 scratch_*
 coverage
+test-results
+playwright-report
+.playwright

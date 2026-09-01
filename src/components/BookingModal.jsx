@@ -202,6 +202,7 @@ export default function BookingModal({ espacio, onClose }) {
                   return (
                     <button
                       key={d}
+                      data-testid="dia-reserva"
                       onClick={() => setFecha(d)}
                       className={`flex min-w-[64px] flex-col items-center rounded-xl px-3 py-2 transition-colors ${
                         activo
@@ -241,6 +242,7 @@ export default function BookingModal({ espacio, onClose }) {
                     return (
                       <button
                         key={slot}
+                        data-testid="slot-reserva"
                         disabled={ocupado}
                         onClick={() => setInicio(slot)}
                         className={`rounded-lg px-2 py-2 text-sm font-bold transition-colors ${

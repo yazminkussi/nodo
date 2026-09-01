@@ -6,3 +6,6 @@ brand
 *.ai
 CHANGELOG.md
 coverage
+test-results
+playwright-report
+e2e
