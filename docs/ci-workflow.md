@@ -9,8 +9,9 @@ Hay dos:
 
 - **`ci.yml`** — lint, typecheck, formato, tests unitarios y build. Rápido.
 - **`e2e.yml`** — tests de punta a punta con Playwright (modo demo). Más lento,
-  corre en paralelo. Su contenido está versionado en `.github/workflows/e2e.yml`
-  del repo; agregalo desde la web una vez.
+  corre en paralelo. Todavía no está en GitHub: su contenido está en
+  `docs/workflows/e2e.yml` del repo. Creá el archivo `.github/workflows/e2e.yml`
+  desde la web (**el repo → Add file → Create new file**) y pegá ese contenido.
 
 ## Contenido actual (con el paso de tests)
 
