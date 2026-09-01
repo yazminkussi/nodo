@@ -11,6 +11,7 @@ import { create } from 'zustand';
 import { supabase, supabaseDisponible } from '../lib/supabaseClient';
 import { cargarPerfil, cargarMembresias } from '../lib/api/sesion';
 import { reclamarSocio, miSocioDe } from '../lib/api/socios';
+import { aceptarInvitaciones } from '../lib/api/equipo';
 import { salir as salirAuth } from '../lib/authService';
 
 export const useSesion = create((set, get) => ({
@@ -54,7 +55,7 @@ export const useSesion = create((set, get) => ({
     }
     set({ session, estado: 'activo' });
     // Vincula la ficha de socio por email (si corresponde) antes de leer roles.
-    await reclamarSocio();
+    await Promise.all([reclamarSocio(), aceptarInvitaciones()]);
     await get()._cargarContexto();
   },
 
@@ -68,7 +69,7 @@ export const useSesion = create((set, get) => ({
   /** Recarga perfil + membresías + ficha propia (p. ej. después de correr el seed). */
   refrescar: async () => {
     if (get().estado !== 'activo') return;
-    await reclamarSocio();
+    await Promise.all([reclamarSocio(), aceptarInvitaciones()]);
     await get()._cargarContexto();
   },
 

@@ -10,12 +10,14 @@ import {
   FolderOpen,
   QrCode,
   Newspaper,
+  ShieldCheck,
 } from 'lucide-react';
 import { Header, SectionNav } from './Navbar';
 import StatsOverview from './StatsOverview';
 import MemberTable from './MemberTable';
 import ReservationManager from './ReservationManager';
 import NovedadesManager from './NovedadesManager';
+import EquipoManager from './EquipoManager';
 import AdsManager from './AdsManager';
 import B2BOverview from './B2BOverview';
 import CommunitySettings from './CommunitySettings';
@@ -35,6 +37,7 @@ const seccionesBase = [
   { key: 'novedades', label: 'Novedades', icon: Newspaper },
   { key: 'publicidades', label: 'Publicidades', icon: Store },
   { key: 'planes', label: 'Planes NODO', icon: Building2 },
+  { key: 'equipo', label: 'Equipo', icon: ShieldCheck },
   { key: 'drive', label: 'Drive Interno', icon: FolderOpen },
   { key: 'personalizacion', label: 'Personalización', icon: Palette },
 ];
@@ -113,6 +116,7 @@ export default function AdminDashboard() {
             {seccion === 'novedades' && <NovedadesManager />}
             {seccion === 'publicidades' && <AdsManager />}
             {seccion === 'planes' && <B2BOverview />}
+            {seccion === 'equipo' && <EquipoManager />}
             {seccion === 'drive' && <NodoDrive />}
             {seccion === 'personalizacion' && <CommunitySettings />}
           </motion.main>
