@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Pencil, Trash2, Users, Clock, UserRound, X, ChevronDown, Power } from 'lucide-react';
 import { useNodoStore } from '../store/useNodoStore';
+import { useActividadesData } from '../hooks/useActividadesData';
+import { useReservasData } from '../hooks/useReservasData';
 import { ROLES_ADMIN, formatARS, nombreDias, duracionLabel } from '../data/mockData';
 import SpaceIcon, { ICONOS_ESPACIO } from './SpaceIcon';
 import DiasActivosPicker from './DiasActivosPicker';
@@ -23,13 +25,15 @@ const campo =
 const etiqueta = 'mb-1 block text-xs font-bold text-ink-soft';
 
 export default function ActivityManager() {
-  const actividades = useNodoStore((s) => s.actividades);
-  const espacios = useNodoStore((s) => s.espacios);
-  const addActividad = useNodoStore((s) => s.addActividad);
-  const updateActividad = useNodoStore((s) => s.updateActividad);
-  const removeActividad = useNodoStore((s) => s.removeActividad);
-  const inscripciones = useNodoStore((s) => s.inscripciones);
-  const cancelInscripcion = useNodoStore((s) => s.cancelInscripcion);
+  const {
+    actividades,
+    inscripciones,
+    addActividad,
+    updateActividad,
+    removeActividad,
+    cancelInscripcion,
+  } = useActividadesData();
+  const { espacios } = useReservasData();
   const addToast = useNodoStore((s) => s.addToast);
   const adminRole = useNodoStore((s) => s.adminRole);
 
@@ -69,7 +73,7 @@ export default function ActivityManager() {
     setModal(act.id);
   };
 
-  const guardar = () => {
+  const guardar = async () => {
     if (!form.nombre.trim() || !form.instructor.trim()) {
       addToast('Completá nombre e instructor.', 'error');
       return;
@@ -80,14 +84,18 @@ export default function ActivityManager() {
       instructor: form.instructor.trim(),
       espacioId: form.espacioId || undefined,
     };
-    if (modal === 'nuevo') {
-      addActividad(payload);
-      addToast(`Actividad ${payload.nombre} creada.`, 'success');
-    } else {
-      updateActividad(modal, payload);
-      addToast(`Actividad ${payload.nombre} actualizada.`, 'success');
+    try {
+      if (modal === 'nuevo') {
+        await addActividad(payload);
+        addToast(`Actividad ${payload.nombre} creada.`, 'success');
+      } else {
+        await updateActividad(modal, payload);
+        addToast(`Actividad ${payload.nombre} actualizada.`, 'success');
+      }
+      setModal(null);
+    } catch (e) {
+      addToast(e?.message || 'No se pudo guardar la actividad.', 'error');
     }
-    setModal(null);
   };
 
   return (
@@ -144,12 +152,16 @@ export default function ActivityManager() {
                     </div>
                   </div>
                   <button
-                    onClick={() => {
-                      updateActividad(act.id, { activa: !act.activa });
-                      addToast(
-                        act.activa ? `${act.nombre} pausada.` : `${act.nombre} reactivada.`,
-                        'info'
-                      );
+                    onClick={async () => {
+                      try {
+                        await updateActividad(act.id, { activa: !act.activa });
+                        addToast(
+                          act.activa ? `${act.nombre} pausada.` : `${act.nombre} reactivada.`,
+                          'info'
+                        );
+                      } catch (e) {
+                        addToast(e?.message || 'No se pudo actualizar.', 'error');
+                      }
                     }}
                     className={`flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-extrabold ring-1 ring-inset transition ${
                       act.activa
@@ -203,9 +215,13 @@ export default function ActivityManager() {
                     <Pencil size={13} />
                   </button>
                   <button
-                    onClick={() => {
-                      removeActividad(act.id);
-                      addToast(`Actividad ${act.nombre} eliminada.`, 'info');
+                    onClick={async () => {
+                      try {
+                        await removeActividad(act.id);
+                        addToast(`Actividad ${act.nombre} eliminada.`, 'info');
+                      } catch (e) {
+                        addToast(e?.message || 'No se pudo eliminar.', 'error');
+                      }
                     }}
                     className="flex items-center justify-center rounded-xl bg-crit-soft px-2.5 py-2 text-xs font-bold text-crit ring-1 ring-inset ring-red-200 transition hover:bg-red-100"
                   >
@@ -232,9 +248,13 @@ export default function ActivityManager() {
                           >
                             <span className="font-semibold text-ink-soft">{ins.socioNombre}</span>
                             <button
-                              onClick={() => {
-                                cancelInscripcion(ins.id);
-                                addToast(`Inscripción de ${ins.socioNombre} cancelada.`, 'info');
+                              onClick={async () => {
+                                try {
+                                  await cancelInscripcion(ins.id);
+                                  addToast(`Inscripción de ${ins.socioNombre} cancelada.`, 'info');
+                                } catch (e) {
+                                  addToast(e?.message || 'No se pudo cancelar.', 'error');
+                                }
                               }}
                               className="rounded-lg bg-crit-soft px-2 py-1 font-bold text-crit ring-1 ring-inset ring-red-200 hover:bg-red-100"
                             >

@@ -53,6 +53,8 @@ Reemplazar los datos ficticios por una base de datos real con identidad de usuar
 - Capa de datos `src/lib/api/` que sustituye a `mockData`; Zustand pasa a cachear.
 - Migraciones versionadas (`supabase/migrations`) + seed con los datos demo.
 - Modo demo conservado como fallback explícito.
+- Contra la base real: auth, comunidades + membresías, socios, novedades,
+  espacios + reservas, actividades + inscripciones. Falta: publicidades, Drive.
 - **Entregable:** diagrama entidad-relación + documento de arquitectura (24/9).
 
 ### Fase 2 — Roles y permisos real · M (2–3 sesiones)
@@ -73,9 +75,9 @@ Reemplazar los datos ficticios por una base de datos real con identidad de usuar
 
 ### Fase 4 — Pruebas, tipos y automatización · M–L (4–6 sesiones)
 
-- Vitest + Testing Library: utilidades, servicios y store.
-- Playwright: 3 flujos E2E (login, reservar espacio, escanear acceso).
-- TypeScript incremental: `.jsx → .tsx` por módulo.
+- [x] Vitest + Testing Library: utilidades, servicios y store.
+- [x] Playwright: flujos E2E (login, portal socio, panel admin, reserva, talleres).
+- TypeScript incremental: `.jsx → .tsx` por módulo (capa de datos hecha).
 - Prettier + lint-staged + Husky (pre-commit); CI bloquea merge si fallan tests.
 - **Entregable:** suite de tests + pipeline verde.
 
