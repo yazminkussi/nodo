@@ -1,8 +1,20 @@
 /* Capa de datos de novedades contra Supabase. */
 
-import { supabase, supabaseDisponible } from '../supabaseClient';
+import { supabaseDisponible, requireSupabase } from '../supabaseClient';
+import type { Fila } from './tipos';
 
-export function filaANovedad(f) {
+export interface NovedadUI {
+  id: string;
+  comunidadId: string;
+  titulo: string;
+  contenido: string;
+  categoria: string;
+  emoji: string;
+  destacada: boolean;
+  fecha: string;
+}
+
+export function filaANovedad(f: Fila): NovedadUI {
   return {
     id: f.id,
     comunidadId: f.comunidad_id,
@@ -11,12 +23,12 @@ export function filaANovedad(f) {
     categoria: f.categoria,
     emoji: f.emoji ?? '📣',
     destacada: f.destacada,
-    fecha: f.fecha, // ISO 'YYYY-MM-DD', compatible con el resto de la app
+    fecha: f.fecha,
   };
 }
 
-function novedadAFila(patch) {
-  const fila = {};
+function novedadAFila(patch: Partial<NovedadUI>): Fila {
+  const fila: Fila = {};
   if (patch.titulo !== undefined) fila.titulo = patch.titulo;
   if (patch.contenido !== undefined) fila.contenido = patch.contenido;
   if (patch.categoria !== undefined) fila.categoria = patch.categoria;
@@ -26,9 +38,9 @@ function novedadAFila(patch) {
   return fila;
 }
 
-export async function listarNovedades(comunidadId) {
+export async function listarNovedades(comunidadId: string): Promise<NovedadUI[]> {
   if (!supabaseDisponible || !comunidadId) return [];
-  const { data, error } = await supabase
+  const { data, error } = await requireSupabase()
     .from('novedades')
     .select('*')
     .eq('comunidad_id', comunidadId)
@@ -38,18 +50,22 @@ export async function listarNovedades(comunidadId) {
   return (data ?? []).map(filaANovedad);
 }
 
-export async function crearNovedad(comunidadId, novedad) {
+export async function crearNovedad(
+  comunidadId: string,
+  novedad: Partial<NovedadUI>
+): Promise<NovedadUI> {
+  const sb = requireSupabase();
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await sb.auth.getUser();
   const fila = { ...novedadAFila(novedad), comunidad_id: comunidadId, autor_id: user?.id ?? null };
-  const { data, error } = await supabase.from('novedades').insert(fila).select().single();
+  const { data, error } = await sb.from('novedades').insert(fila).select().single();
   if (error) throw error;
   return filaANovedad(data);
 }
 
-export async function actualizarNovedad(id, patch) {
-  const { data, error } = await supabase
+export async function actualizarNovedad(id: string, patch: Partial<NovedadUI>): Promise<NovedadUI> {
+  const { data, error } = await requireSupabase()
     .from('novedades')
     .update(novedadAFila(patch))
     .eq('id', id)
@@ -59,7 +75,7 @@ export async function actualizarNovedad(id, patch) {
   return filaANovedad(data);
 }
 
-export async function eliminarNovedad(id) {
-  const { error } = await supabase.from('novedades').delete().eq('id', id);
+export async function eliminarNovedad(id: string): Promise<void> {
+  const { error } = await requireSupabase().from('novedades').delete().eq('id', id);
   if (error) throw error;
 }

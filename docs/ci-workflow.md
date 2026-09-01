@@ -31,6 +31,8 @@ jobs:
         run: npm ci
       - name: Lint
         run: npm run lint
+      - name: Typecheck
+        run: npm run typecheck
       - name: Formato (Prettier)
         run: npm run format:check
       - name: Tests

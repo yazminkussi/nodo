@@ -1,4 +1,5 @@
 module.exports = {
+  root: true,
   env: {
     browser: true,
     es2022: true,
@@ -40,5 +41,6 @@ module.exports = {
       },
     },
   ],
-  ignorePatterns: ['dist', 'node_modules', 'coverage', 'public/sw.js'],
+  // Los archivos .ts los valida `npm run typecheck` (tsc --noEmit).
+  ignorePatterns: ['dist', 'node_modules', 'coverage', 'public/sw.js', '*.ts', '*.tsx'],
 };

@@ -1,9 +1,24 @@
 /* Capa de datos de espacios contra Supabase. */
 
-import { supabase, supabaseDisponible } from '../supabaseClient';
+import { supabaseDisponible, requireSupabase } from '../supabaseClient';
 import { HORARIO_DEFECTO } from '../../data/mockData';
+import type { Fila, HorarioConfig } from './tipos';
 
-export function filaAEspacio(f) {
+export interface EspacioUI {
+  id: string;
+  comunidadId: string;
+  nombre: string;
+  descripcion: string;
+  capacidad: number;
+  precioHora: number;
+  icono: string;
+  color: string;
+  categoria: string;
+  disponible: boolean;
+  horario: HorarioConfig;
+}
+
+export function filaAEspacio(f: Fila): EspacioUI {
   return {
     id: f.id,
     comunidadId: f.comunidad_id,
@@ -19,8 +34,8 @@ export function filaAEspacio(f) {
   };
 }
 
-function espacioAFila(patch) {
-  const fila = {};
+function espacioAFila(patch: Partial<EspacioUI>): Fila {
+  const fila: Fila = {};
   if (patch.nombre !== undefined) fila.nombre = patch.nombre;
   if (patch.descripcion !== undefined) fila.descripcion = patch.descripcion;
   if (patch.capacidad !== undefined) fila.capacidad = patch.capacidad;
@@ -33,9 +48,9 @@ function espacioAFila(patch) {
   return fila;
 }
 
-export async function listarEspacios(comunidadId) {
+export async function listarEspacios(comunidadId: string): Promise<EspacioUI[]> {
   if (!supabaseDisponible || !comunidadId) return [];
-  const { data, error } = await supabase
+  const { data, error } = await requireSupabase()
     .from('espacios')
     .select('*')
     .eq('comunidad_id', comunidadId)
@@ -44,15 +59,18 @@ export async function listarEspacios(comunidadId) {
   return (data ?? []).map(filaAEspacio);
 }
 
-export async function crearEspacio(comunidadId, espacio) {
+export async function crearEspacio(
+  comunidadId: string,
+  espacio: Partial<EspacioUI>
+): Promise<EspacioUI> {
   const fila = { ...espacioAFila(espacio), comunidad_id: comunidadId };
-  const { data, error } = await supabase.from('espacios').insert(fila).select().single();
+  const { data, error } = await requireSupabase().from('espacios').insert(fila).select().single();
   if (error) throw error;
   return filaAEspacio(data);
 }
 
-export async function actualizarEspacio(id, patch) {
-  const { data, error } = await supabase
+export async function actualizarEspacio(id: string, patch: Partial<EspacioUI>): Promise<EspacioUI> {
+  const { data, error } = await requireSupabase()
     .from('espacios')
     .update(espacioAFila(patch))
     .eq('id', id)
@@ -62,7 +80,7 @@ export async function actualizarEspacio(id, patch) {
   return filaAEspacio(data);
 }
 
-export async function eliminarEspacio(id) {
-  const { error } = await supabase.from('espacios').delete().eq('id', id);
+export async function eliminarEspacio(id: string): Promise<void> {
+  const { error } = await requireSupabase().from('espacios').delete().eq('id', id);
   if (error) throw error;
 }
