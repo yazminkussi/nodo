@@ -340,6 +340,7 @@ export const ROLES_ADMIN = {
       'novedades',
       'publicidades',
       'planes',
+      'equipo',
       'drive',
       'personalizacion',
     ],
