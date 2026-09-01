@@ -16,6 +16,9 @@ y el proyecto usa [versionado semántico](https://semver.org/lang/es/).
   desde la app y control de cupo en la base (trigger + índice único).
 - Tests E2E con Playwright (modo demo): login, portal del socio, panel admin,
   reserva de espacio e inscripción a talleres.
+- PWA con Workbox (`vite-plugin-pwa`): precache del app-shell + caché en runtime
+  de los datos de Supabase (`NetworkFirst`) y de la marca. Arranca offline.
+  Reemplaza el `public/sw.js` escrito a mano. Ver `docs/PWA.md`.
 - Panel de Equipo: el SuperAdmin invita administradores (Deportes / Talleres)
   por email; el rol se activa al iniciar sesión.
 - Rediseño visual completo: paleta lavanda de marca + Bricolage Grotesque,

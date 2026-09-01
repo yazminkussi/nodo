@@ -42,5 +42,5 @@ module.exports = {
     },
   ],
   // Los archivos .ts los valida `npm run typecheck` (tsc --noEmit).
-  ignorePatterns: ['dist', 'node_modules', 'coverage', 'public/sw.js', '*.ts', '*.tsx'],
+  ignorePatterns: ['dist', 'dev-dist', 'node_modules', 'coverage', '*.ts', '*.tsx'],
 };

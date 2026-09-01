@@ -57,7 +57,7 @@ La hoja de ruta completa de profesionalización está en [`docs/HOJA-DE-RUTA.md`
 | Iconos           | lucide-react                                     |
 | QR               | `qrcode` (generación) + `html5-qrcode` (escaneo) |
 | Backend opcional | Supabase (Postgres, Realtime, Storage)           |
-| PWA              | Manifest + Service Worker                        |
+| PWA              | vite-plugin-pwa + Workbox                        |
 | Deploy           | Vercel                                           |
 
 ## Cómo correr en local
@@ -112,7 +112,7 @@ src/
 ├── data/              Datos de demostración y utilidades de dominio
 ├── utils/             Helpers (payload del QR, imágenes, feedback)
 └── styles/            Estilos globales
-public/                Assets estáticos, manifest, service worker, iconos
+public/                Assets estáticos e iconos (manifest y SW los genera vite-plugin-pwa)
 supabase/              Esquema SQL
 docs/                  Hoja de ruta y documentación del proyecto
 brand/                 Fuentes de diseño (.ai) — no versionadas

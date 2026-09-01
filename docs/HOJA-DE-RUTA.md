@@ -93,10 +93,10 @@ Reemplazar los datos ficticios por una base de datos real con identidad de usuar
 
 ### Fase 6 — PWA sólida y performance · S–M (2–3 sesiones)
 
-- Reemplazar el `sw.js` manual por `vite-plugin-pwa` (Workbox).
+- [x] Reemplazar el `sw.js` manual por `vite-plugin-pwa` (Workbox) — ver [`docs/PWA.md`](PWA.md).
+- [x] Offline real para el carnet y las novedades (precache + NetworkFirst de datos).
 - Code splitting por ruta/sección.
 - Presupuesto Lighthouse medido en CI.
-- Offline real para el carnet y las novedades.
 - **Entregable:** reporte Lighthouse antes/después.
 
 ### Fase 7 — Observabilidad y despliegue productivo · S–M (2–3 sesiones)

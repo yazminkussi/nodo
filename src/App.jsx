@@ -24,17 +24,25 @@ export default function App() {
   useComunidadRealtime();
   useAccesoRealtime();
 
+  // El banner de actualización de la PWA registra el service worker y se muestra
+  // en cualquier pantalla (incluido el login) cuando hay una versión nueva.
+  const banner = <PwaUpdateBanner />;
+
   if (estado === 'cargando') {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-nodo-navy">
-        <Loader2 className="animate-spin text-nodo-cyan" size={28} />
-      </div>
+      <>
+        {banner}
+        <div className="flex min-h-screen items-center justify-center bg-nodo-navy">
+          <Loader2 className="animate-spin text-nodo-cyan" size={28} />
+        </div>
+      </>
     );
   }
 
   if (estado === 'anonimo') {
     return (
       <>
+        {banner}
         <Toasts />
         <LoginScreen />
       </>
@@ -44,8 +52,8 @@ export default function App() {
   // 'activo' o 'demo' → app completa
   return (
     <div className="min-h-screen bg-nodo-bg font-sans text-slate-800 antialiased">
+      {banner}
       <Toasts />
-      <PwaUpdateBanner />
       <motion.div
         key={role}
         initial={{ opacity: 0 }}
