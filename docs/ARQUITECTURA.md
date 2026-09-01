@@ -16,16 +16,16 @@ backend gestionado. No hay servidor propio.
 - **Modo demo:** sin credenciales de Supabase la app cae a datos de ejemplo en memoria
   (Zustand + mock). Sirve para desarrollo, evaluación y demos sin conexión.
 
-| Capa | Tecnología |
-|---|---|
-| UI | React 18, Vite 5 |
-| Estilos | Tailwind CSS 3 (tokens) |
-| Estado | Zustand |
-| Animación | Framer Motion (respeta `prefers-reduced-motion`) |
-| Backend | Supabase (Postgres + Auth + Realtime + Storage) |
-| API | PostgREST (REST automática con RLS) |
-| PWA | Manifest + Service Worker |
-| Hosting / CI | Vercel + GitHub Actions |
+| Capa         | Tecnología                                       |
+| ------------ | ------------------------------------------------ |
+| UI           | React 18, Vite 5                                 |
+| Estilos      | Tailwind CSS 3 (tokens)                          |
+| Estado       | Zustand                                          |
+| Animación    | Framer Motion (respeta `prefers-reduced-motion`) |
+| Backend      | Supabase (Postgres + Auth + Realtime + Storage)  |
+| API          | PostgREST (REST automática con RLS)              |
+| PWA          | Manifest + Service Worker                        |
+| Hosting / CI | Vercel + GitHub Actions                          |
 
 ## 2. Modelo de datos
 
@@ -49,17 +49,17 @@ erDiagram
     comunidades ||--o{ registros_acceso : "control QR"
 ```
 
-| Tabla | Qué guarda |
-|---|---|
-| `comunidades` | Cada club / centro cultural. Clave: slug legible (`la-union`). |
-| `perfiles` | Persona logueada. Se crea por trigger al registrarse. `id` = `auth.users.id`. |
-| `membresias` | Rol (`socio` \| `superadmin` \| `deportes` \| `talleres`) por (perfil, comunidad). |
-| `socios` | Ficha del socio en una comunidad. `perfil_id` opcional (vínculo con la cuenta). |
-| `espacios` | Canchas / salas. `horario` es JSON (apertura, cierre, duración, días). |
-| `reservas` | Turno de un socio en un espacio. Índice único evita doble reserva. |
-| `novedades` | Comunicados de la comunidad. |
-| `comunidad_config` | Logo + nombre "en vivo", sincronizados por Realtime. |
-| `registros_acceso` | Historial de escaneos de QR en la puerta. |
+| Tabla              | Qué guarda                                                                         |
+| ------------------ | ---------------------------------------------------------------------------------- |
+| `comunidades`      | Cada club / centro cultural. Clave: slug legible (`la-union`).                     |
+| `perfiles`         | Persona logueada. Se crea por trigger al registrarse. `id` = `auth.users.id`.      |
+| `membresias`       | Rol (`socio` \| `superadmin` \| `deportes` \| `talleres`) por (perfil, comunidad). |
+| `socios`           | Ficha del socio en una comunidad. `perfil_id` opcional (vínculo con la cuenta).    |
+| `espacios`         | Canchas / salas. `horario` es JSON (apertura, cierre, duración, días).             |
+| `reservas`         | Turno de un socio en un espacio. Índice único evita doble reserva.                 |
+| `novedades`        | Comunicados de la comunidad.                                                       |
+| `comunidad_config` | Logo + nombre "en vivo", sincronizados por Realtime.                               |
+| `registros_acceso` | Historial de escaneos de QR en la puerta.                                          |
 
 Migraciones versionadas en `supabase/migrations/`, numeradas y aplicadas en orden.
 
@@ -69,24 +69,24 @@ El aislamiento entre comunidades **lo hace PostgreSQL**, no el frontend. Cada ta
 con datos de comunidad tiene políticas RLS que se apoyan en 3 funciones
 (`SECURITY DEFINER` para evitar recursión contra `membresias`):
 
-| Función | `true` si el usuario… |
-|---|---|
-| `es_miembro(comunidad)` | tiene membresía activa (cualquier rol) |
-| `es_admin(comunidad)` | rol `superadmin`, `deportes` o `talleres` |
-| `es_superadmin(comunidad)` | rol exactamente `superadmin` |
+| Función                    | `true` si el usuario…                     |
+| -------------------------- | ----------------------------------------- |
+| `es_miembro(comunidad)`    | tiene membresía activa (cualquier rol)    |
+| `es_admin(comunidad)`      | rol `superadmin`, `deportes` o `talleres` |
+| `es_superadmin(comunidad)` | rol exactamente `superadmin`              |
 
 Flujo de una consulta: `supabase.from('socios')` + JWT → PostgREST arma el SQL →
 Postgres aplica la política (`using ( es_admin(comunidad_id) OR perfil_id = auth.uid() )`)
 → devuelve **sólo las filas de la comunidad del usuario**.
 
-| Tabla | Leer | Escribir |
-|---|---|---|
-| `perfiles` | fila propia | fila propia |
-| `comunidades` | miembros | superadmin |
-| `membresias` | la propia · admins de la comunidad | superadmin |
-| `socios` | admins (todas) · el socio su ficha | superadmin |
-| `novedades` / `espacios` | miembros | cualquier admin |
-| `reservas` | miembros | el socio la suya · admins todas |
+| Tabla                    | Leer                               | Escribir                        |
+| ------------------------ | ---------------------------------- | ------------------------------- |
+| `perfiles`               | fila propia                        | fila propia                     |
+| `comunidades`            | miembros                           | superadmin                      |
+| `membresias`             | la propia · admins de la comunidad | superadmin                      |
+| `socios`                 | admins (todas) · el socio su ficha | superadmin                      |
+| `novedades` / `espacios` | miembros                           | cualquier admin                 |
+| `reservas`               | miembros                           | el socio la suya · admins todas |
 
 **Pendiente conocido:** el QR del carnet se firma con HMAC en el cliente (secreto
 visible en el bundle). Solución planificada: mover firma y verificación a una Edge
@@ -114,23 +114,23 @@ Los componentes no hablan con Supabase directamente:
 
 ## 6. Despliegue
 
-| Etapa | Qué pasa |
-|---|---|
-| push a una rama | CI (lint + format + build) + preview de Vercel con URL propia |
-| merge a `main` | Vercel compila y publica en producción, sin pasos manuales |
-| cambios de base | migraciones SQL numeradas en `supabase/migrations/` |
-| variables | `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` en Vercel (la anon key es pública por diseño) |
+| Etapa           | Qué pasa                                                                                     |
+| --------------- | -------------------------------------------------------------------------------------------- |
+| push a una rama | CI (lint + format + build) + preview de Vercel con URL propia                                |
+| merge a `main`  | Vercel compila y publica en producción, sin pasos manuales                                   |
+| cambios de base | migraciones SQL numeradas en `supabase/migrations/`                                          |
+| variables       | `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` en Vercel (la anon key es pública por diseño) |
 
 ## 7. Decisiones técnicas
 
-| Decisión | Por qué | Alternativa descartada |
-|---|---|---|
-| Supabase vs backend propio | Auth + base + realtime + storage listos; RLS resuelve el multi-tenant | API Node propia: más control, mucho más para mantener |
-| RLS en la base, no en el front | El aislamiento no depende de que el cliente "se porte bien" | Filtrar por `comunidad_id` en cada query: frágil |
-| PWA vs app nativa | Una base de código, sin tiendas, update instantáneo | React Native: doble mantenimiento |
-| Modo demo como fallback real | Desarrollar y presentar sin conexión | Depender siempre de Supabase |
-| Ficha de socio ≠ cuenta | Un socio existe aunque no se registre; vínculo posterior por email | Exigir cuenta: excluye a la mayoría |
-| Zustand vs Redux | Estado global mínimo, API chica | Redux Toolkit: demasiada estructura |
+| Decisión                       | Por qué                                                               | Alternativa descartada                                |
+| ------------------------------ | --------------------------------------------------------------------- | ----------------------------------------------------- |
+| Supabase vs backend propio     | Auth + base + realtime + storage listos; RLS resuelve el multi-tenant | API Node propia: más control, mucho más para mantener |
+| RLS en la base, no en el front | El aislamiento no depende de que el cliente "se porte bien"           | Filtrar por `comunidad_id` en cada query: frágil      |
+| PWA vs app nativa              | Una base de código, sin tiendas, update instantáneo                   | React Native: doble mantenimiento                     |
+| Modo demo como fallback real   | Desarrollar y presentar sin conexión                                  | Depender siempre de Supabase                          |
+| Ficha de socio ≠ cuenta        | Un socio existe aunque no se registre; vínculo posterior por email    | Exigir cuenta: excluye a la mayoría                   |
+| Zustand vs Redux               | Estado global mínimo, API chica                                       | Redux Toolkit: demasiada estructura                   |
 
 ## 8. Estado
 
