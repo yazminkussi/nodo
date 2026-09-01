@@ -1,9 +1,17 @@
-# Workflow de CI
+# Workflows de CI
 
-El archivo vive en `.github/workflows/ci.yml` en GitHub. No se puede modificar por
+Los archivos viven en `.github/workflows/` en GitHub. No se pueden modificar por
 `git push` desde acá porque el token de la máquina no tiene el scope `workflow`;
-se edita desde la web de GitHub (**el repo → `.github/workflows/ci.yml` → lápiz de
+se editan desde la web de GitHub (**el repo → `.github/workflows/…` → lápiz de
 editar**) o habilitando el scope con `gh auth refresh -h github.com -s workflow`.
+
+Hay dos:
+
+- **`ci.yml`** — lint, typecheck, formato, tests unitarios y build. Rápido.
+- **`e2e.yml`** — tests de punta a punta con Playwright (modo demo). Más lento,
+  corre en paralelo. Todavía no está en GitHub: su contenido está en
+  `docs/workflows/e2e.yml` del repo. Creá el archivo `.github/workflows/e2e.yml`
+  desde la web (**el repo → Add file → Create new file**) y pegá ese contenido.
 
 ## Contenido actual (con el paso de tests)
 
