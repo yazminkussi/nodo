@@ -30,8 +30,7 @@ Para probar la integración con Supabase, copiá `.env.example` a `.env.local` (
    - `chore: configura Prettier y CI`
 4. Antes de abrir el PR:
    ```bash
-   npm run lint
-   npm run format:check
+   npm run check   # lint + typecheck + formato + tests
    npm run build
    ```
 5. Abrí el Pull Request contra `main`. La CI corre lint + formato + build. No se mergea con la CI en rojo.

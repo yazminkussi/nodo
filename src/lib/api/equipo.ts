@@ -1,19 +1,20 @@
 /* Equipo de administración: administradores actuales + invitaciones. */
 
-import { supabase, supabaseDisponible } from '../supabaseClient';
+import { supabaseDisponible, requireSupabase } from '../supabaseClient';
+import type { Fila, MiembroEquipo, RolMembresia } from './tipos';
 
 /** Convierte las invitaciones pendientes del email en membresías (al iniciar sesión). */
-export async function aceptarInvitaciones() {
+export async function aceptarInvitaciones(): Promise<void> {
   if (!supabaseDisponible) return;
-  const { error } = await supabase.rpc('aceptar_invitaciones');
+  const { error } = await requireSupabase().rpc('aceptar_invitaciones');
   if (error) console.warn('NODO: no se pudieron aceptar invitaciones.', error.message);
 }
 
-export async function listarEquipo(comunidadId) {
+export async function listarEquipo(comunidadId: string): Promise<MiembroEquipo[]> {
   if (!supabaseDisponible || !comunidadId) return [];
-  const { data, error } = await supabase.rpc('equipo_de', { cid: comunidadId });
+  const { data, error } = await requireSupabase().rpc('equipo_de', { cid: comunidadId });
   if (error) throw error;
-  return (data ?? []).map((r) => ({
+  return ((data ?? []) as Fila[]).map((r) => ({
     membresiaId: r.membresia_id,
     perfilId: r.perfil_id,
     rol: r.rol,
@@ -24,9 +25,9 @@ export async function listarEquipo(comunidadId) {
   }));
 }
 
-export async function listarInvitaciones(comunidadId) {
+export async function listarInvitaciones(comunidadId: string): Promise<Fila[]> {
   if (!supabaseDisponible || !comunidadId) return [];
-  const { data, error } = await supabase
+  const { data, error } = await requireSupabase()
     .from('invitaciones')
     .select('*')
     .eq('comunidad_id', comunidadId)
@@ -36,11 +37,15 @@ export async function listarInvitaciones(comunidadId) {
   return data ?? [];
 }
 
-export async function crearInvitacion(comunidadId, { email, rol, categorias = [] }) {
+export async function crearInvitacion(
+  comunidadId: string,
+  { email, rol, categorias = [] }: { email: string; rol: RolMembresia; categorias?: string[] }
+): Promise<Fila> {
+  const sb = requireSupabase();
   const {
     data: { user },
-  } = await supabase.auth.getUser();
-  const { data, error } = await supabase
+  } = await sb.auth.getUser();
+  const { data, error } = await sb
     .from('invitaciones')
     .insert({
       comunidad_id: comunidadId,
@@ -58,12 +63,15 @@ export async function crearInvitacion(comunidadId, { email, rol, categorias = []
   return data;
 }
 
-export async function revocarInvitacion(id) {
-  const { error } = await supabase.from('invitaciones').update({ estado: 'revocada' }).eq('id', id);
+export async function revocarInvitacion(id: string): Promise<void> {
+  const { error } = await requireSupabase()
+    .from('invitaciones')
+    .update({ estado: 'revocada' })
+    .eq('id', id);
   if (error) throw error;
 }
 
-export async function quitarAdmin(membresiaId) {
-  const { error } = await supabase.from('membresias').delete().eq('id', membresiaId);
+export async function quitarAdmin(membresiaId: string): Promise<void> {
+  const { error } = await requireSupabase().from('membresias').delete().eq('id', membresiaId);
   if (error) throw error;
 }
