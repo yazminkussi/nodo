@@ -24,7 +24,7 @@ backend gestionado. No hay servidor propio.
 | Animación    | Framer Motion (respeta `prefers-reduced-motion`) |
 | Backend      | Supabase (Postgres + Auth + Realtime + Storage)  |
 | API          | PostgREST (REST automática con RLS)              |
-| PWA          | Manifest + Service Worker                        |
+| PWA          | vite-plugin-pwa + Workbox (precache + runtime)   |
 | Hosting / CI | Vercel + GitHub Actions                          |
 
 ## 2. Modelo de datos
@@ -117,6 +117,10 @@ Los componentes no hablan con Supabase directamente:
 - Identidad: lavanda de marca `#32328E`, acento sol, fondo papel; títulos en
   Bricolage Grotesque; logo SVG que se dibuja al entrar.
 - Accesibilidad: `MotionConfig reducedMotion="user"` + regla global; foco visible.
+- PWA: `vite-plugin-pwa` genera el service worker con Workbox (precache del
+  app-shell + `NetworkFirst` para los datos de Supabase). Arranca offline;
+  banner de "versión nueva" al detectar un build más reciente. Detalle en
+  [`docs/PWA.md`](PWA.md).
 
 ## 6. Despliegue
 
