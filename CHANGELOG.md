@@ -7,6 +7,17 @@ y el proyecto usa [versionado semántico](https://semver.org/lang/es/).
 ## [Sin publicar]
 
 ### Agregado
+- Backend real con Supabase: autenticación (email + magic link), esquema
+  multi-tenant con Row Level Security, y capa de datos (`src/lib/api`) con
+  fallback a modo demo.
+- Entidades contra la base: comunidades, perfiles, membresías, socios,
+  novedades, espacios y reservas.
+- Panel de Equipo: el SuperAdmin invita administradores (Deportes / Talleres)
+  por email; el rol se activa al iniciar sesión.
+- Rediseño visual completo: paleta lavanda de marca + Bricolage Grotesque,
+  logo vectorial animado, componentes base en `src/components/ui`.
+- Tests unitarios con Vitest (utilidades, payload del QR, mapeos de API, store).
+- `docs/ARQUITECTURA.md` — documento de arquitectura.
 - `README.md`, `CONTRIBUTING.md`, `CHANGELOG.md` y `LICENSE` (MIT).
 - Configuración de Prettier (`.prettierrc.json`, `.prettierignore`) y `.editorconfig`.
 - Integración continua en GitHub Actions: lint + formato + build en cada push y PR.
