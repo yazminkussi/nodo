@@ -1,23 +1,11 @@
-# Workflow de CI (pendiente de agregar)
+# Workflow de CI
 
-El archivo `.github/workflows/ci.yml` no se pudo subir por `git push` porque el
-token de GitHub de la máquina no tiene el scope `workflow`.
+El archivo vive en `.github/workflows/ci.yml` en GitHub. No se puede modificar por
+`git push` desde acá porque el token de la máquina no tiene el scope `workflow`;
+se edita desde la web de GitHub (**el repo → `.github/workflows/ci.yml` → lápiz de
+editar**) o habilitando el scope con `gh auth refresh -h github.com -s workflow`.
 
-## Opción A — agregarlo desde la web de GitHub
-
-1. En el repo → **Add file → Create new file**.
-2. Nombre: `.github/workflows/ci.yml`
-3. Pegá el contenido de abajo y commiteá.
-
-## Opción B — habilitar el scope y subirlo por git
-
-```bash
-gh auth refresh -h github.com -s workflow
-```
-
-Confirmá en el navegador, después avisá y se sube desde acá.
-
----
+## Contenido actual (con el paso de tests)
 
 ```yaml
 name: CI
@@ -29,28 +17,24 @@ on:
 
 jobs:
   verificar:
-    name: Lint · Formato · Build
+    name: Lint · Formato · Tests · Build
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Configurar Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
-
       - name: Instalar dependencias
         run: npm ci
-
       - name: Lint
         run: npm run lint
-
       - name: Formato (Prettier)
         run: npm run format:check
-
+      - name: Tests
+        run: npm test
       - name: Build
         run: npm run build
 ```

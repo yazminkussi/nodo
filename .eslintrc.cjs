@@ -24,5 +24,21 @@ module.exports = {
     'react/react-in-jsx-scope': 'off',
     'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
   },
-  ignorePatterns: ['dist', 'node_modules', 'public/sw.js'],
+  overrides: [
+    {
+      files: ['**/*.{test,spec}.{js,jsx}', 'vitest.config.js'],
+      env: { node: true },
+      globals: {
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        vi: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+      },
+    },
+  ],
+  ignorePatterns: ['dist', 'node_modules', 'coverage', 'public/sw.js'],
 };
