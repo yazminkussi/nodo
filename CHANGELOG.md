@@ -19,6 +19,8 @@ y el proyecto usa [versionado semántico](https://semver.org/lang/es/).
 - PWA con Workbox (`vite-plugin-pwa`): precache del app-shell + caché en runtime
   de los datos de Supabase (`NetworkFirst`) y de la marca. Arranca offline.
   Reemplaza el `public/sw.js` escrito a mano. Ver `docs/PWA.md`.
+- Code splitting: `SocioPortal` y `AdminDashboard` con `React.lazy`; librerías
+  grandes (`react-dom`, `framer-motion`, `supabase`) en chunks propios.
 - Panel de Equipo: el SuperAdmin invita administradores (Deportes / Talleres)
   por email; el rol se activa al iniciar sesión.
 - Rediseño visual completo: paleta lavanda de marca + Bricolage Grotesque,

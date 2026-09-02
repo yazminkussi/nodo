@@ -102,5 +102,16 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: false,
+    rollupOptions: {
+      output: {
+        // Librerías grandes en su propio chunk: se cachean entre deploys y no
+        // se re-descargan cuando sólo cambia el código de la app.
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          motion: ['framer-motion'],
+          supabase: ['@supabase/supabase-js'],
+        },
+      },
+    },
   },
 });
