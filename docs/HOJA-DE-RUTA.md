@@ -95,7 +95,7 @@ Reemplazar los datos ficticios por una base de datos real con identidad de usuar
 
 - [x] Reemplazar el `sw.js` manual por `vite-plugin-pwa` (Workbox) — ver [`docs/PWA.md`](PWA.md).
 - [x] Offline real para el carnet y las novedades (precache + NetworkFirst de datos).
-- Code splitting por ruta/sección.
+- [x] Code splitting por ruta/sección (`React.lazy` de portal/admin + `manualChunks`).
 - Presupuesto Lighthouse medido en CI.
 - **Entregable:** reporte Lighthouse antes/después.
 

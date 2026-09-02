@@ -1,14 +1,29 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import { useNodoStore } from './store/useNodoStore';
 import { useSesion } from './store/useSesion';
-import SocioPortal from './components/SocioPortal';
-import AdminDashboard from './components/AdminDashboard';
 import LoginScreen from './components/auth/LoginScreen';
 import Toasts from './components/Toast';
 import PwaUpdateBanner from './components/PwaUpdateBanner';
 import { useComunidadRealtime, useAccesoRealtime } from './hooks/useComunidadRealtime';
+
+// El portal del socio y el panel de administración se cargan bajo demanda:
+// un socio nunca descarga el panel admin (y viceversa).
+const SocioPortal = lazy(() => import('./components/SocioPortal'));
+const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
+
+function PantallaCarga({ oscura = false }) {
+  return (
+    <div
+      className={`flex min-h-screen items-center justify-center ${
+        oscura ? 'bg-nodo-navy' : 'bg-nodo-bg'
+      }`}
+    >
+      <Loader2 className="animate-spin text-nodo-cyan" size={28} />
+    </div>
+  );
+}
 
 export default function App() {
   const role = useNodoStore((s) => s.role);
@@ -32,9 +47,7 @@ export default function App() {
     return (
       <>
         {banner}
-        <div className="flex min-h-screen items-center justify-center bg-nodo-navy">
-          <Loader2 className="animate-spin text-nodo-cyan" size={28} />
-        </div>
+        <PantallaCarga oscura />
       </>
     );
   }
@@ -54,14 +67,16 @@ export default function App() {
     <div className="min-h-screen bg-nodo-bg font-sans text-slate-800 antialiased">
       {banner}
       <Toasts />
-      <motion.div
-        key={role}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.18 }}
-      >
-        {role === 'socio' ? <SocioPortal /> : <AdminDashboard />}
-      </motion.div>
+      <Suspense fallback={<PantallaCarga />}>
+        <motion.div
+          key={role}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.18 }}
+        >
+          {role === 'socio' ? <SocioPortal /> : <AdminDashboard />}
+        </motion.div>
+      </Suspense>
     </div>
   );
 }

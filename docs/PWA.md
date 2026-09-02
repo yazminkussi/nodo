@@ -51,6 +51,22 @@ npm run build && npm run preview
 4. **Lighthouse → Progressive Web App**: instalable, tiene manifest válido,
    responde 200 offline, service worker registrado.
 
+## Code splitting
+
+El bundle también se partió ([`vite.config.js`](../vite.config.js)):
+
+- `LoginScreen` carga al toque; `SocioPortal` y `AdminDashboard` con
+  `React.lazy` / `Suspense` → **un socio nunca descarga el panel de
+  administración** (~146 kB) y un admin no descarga el portal del socio.
+- El escáner QR (`html5-qrcode`, ~320 kB) ya venía con `import()` dinámico: sólo
+  baja cuando se abre "Escanear".
+- `react-dom`, `framer-motion` y `@supabase/supabase-js` van en chunks propios
+  (`manualChunks`): un deploy que sólo cambia código de la app no obliga a
+  re-descargar ~470 kB de librerías.
+
+Carga inicial de un socio: **~200 kB gzip** (antes: bundle único de ~227 kB gzip
+que además incluía todo el panel admin).
+
 ## Antes / después
 
 | Métrica                           | `sw.js` a mano              | Workbox (`vite-plugin-pwa`)      |
@@ -60,6 +76,7 @@ npm run build && npm run preview
 | Estrategias por tipo de recurso   | `fetch` handler propio      | reglas declarativas de Workbox   |
 | Riesgo de servir un chunk viejo   | alto (nombres sin hash)     | nulo (revisión por contenido)    |
 | Líneas de código de SW a mantener | ~165                        | 0 (generado)                     |
+| Carga inicial del socio           | bundle único (admin incl.)  | shell + portal, admin aparte     |
 
 _(Completá con los puntajes reales de Lighthouse PWA/Performance antes y después
 cuando corras la auditoría para la entrega.)_
