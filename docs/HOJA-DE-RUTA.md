@@ -67,11 +67,12 @@ Reemplazar los datos ficticios por una base de datos real con identidad de usuar
 
 ### Fase 3 — Seguridad del control de acceso · M (2–3 sesiones)
 
-- Firma/verificación del QR en una Edge Function; el secreto sólo en el servidor.
-- Validación del ingreso server-side (cuota y reserva consultadas al escanear).
-- TTL corto + _nonce_ de un solo uso.
-- Rate limiting + auditoría.
-- **Entregable:** nota técnica de seguridad.
+- [x] Firma/verificación del QR en Edge Functions (`carnet-token`,
+      `verificar-carnet`); el secreto sólo en el servidor (`CARNET_SECRET`).
+- [x] Validación del ingreso server-side (cuota y reserva consultadas al escanear) + registro en `registros_acceso` desde la función.
+- [x] TTL corto (15 min). Falta el _nonce_ de un solo uso.
+- Rate limiting explícito sobre las funciones.
+- **Entregable:** [`docs/SEGURIDAD-QR.md`](SEGURIDAD-QR.md) — nota técnica + modelo de amenaza.
 
 ### Fase 4 — Pruebas, tipos y automatización · M–L (4–6 sesiones)
 

@@ -24,6 +24,11 @@ y el proyecto usa [versionado semántico](https://semver.org/lang/es/).
 - Migración a TypeScript de la capa de datos (`src/lib/api`), la máquina de
   sesión (`useSesion`), el store demo (`useNodoStore`) y todos los hooks.
   `tsc --noEmit` corre en CI.
+- Seguridad del carnet QR: firma y verificación en Edge Functions
+  (`carnet-token`, `verificar-carnet`) con el secreto sólo en el servidor. El
+  panel de control de acceso valida el ingreso contra la base (cuota + reserva)
+  y registra el evento server-side. Ver `docs/SEGURIDAD-QR.md`. El modo demo
+  mantiene la firma local.
 - Panel de Equipo: el SuperAdmin invita administradores (Deportes / Talleres)
   por email; el rol se activa al iniciar sesión.
 - Rediseño visual completo: paleta lavanda de marca + Bricolage Grotesque,

@@ -94,9 +94,13 @@ Postgres aplica la política (`using ( es_admin(comunidad_id) OR perfil_id = aut
 | `actividades`                | miembros                           | cualquier admin                 |
 | `reservas` / `inscripciones` | miembros                           | el socio la suya · admins todas |
 
-**Pendiente conocido:** el QR del carnet se firma con HMAC en el cliente (secreto
-visible en el bundle). Solución planificada: mover firma y verificación a una Edge
-Function con el secreto sólo del servidor.
+**Firma del carnet QR:** con sesión real, la firma y la verificación del QR las
+hacen dos Edge Functions (`carnet-token`, `verificar-carnet`) con un secreto que
+vive sólo en el servidor (`CARNET_SECRET`) — el cliente ya no puede fabricar un
+carnet válido. El escáner del panel de acceso valida contra la base (cuota +
+reserva) y registra el ingreso ahí mismo. Detalle y modelo de amenaza en
+[`docs/SEGURIDAD-QR.md`](SEGURIDAD-QR.md). En modo demo la firma sigue siendo
+local (sin backend real, no hay nada que falsificar).
 
 ## 4. Capa de datos y modo demo
 

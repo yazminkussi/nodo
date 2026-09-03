@@ -5,6 +5,7 @@ import { useNodoStore, useProximaReserva, useComunidadActual } from '../store/us
 import { useSesion, useComunidadActiva } from '../store/useSesion';
 import { QrSvg } from '../utils/qr';
 import { createQrPayload } from '../utils/qrPayload';
+import { pedirTokenCarnet } from '../lib/api/carnet';
 import { formatFechaLarga, formatARS, mesesAdeudados } from '../data/mockData';
 import { NodoLogo } from './Navbar';
 import Chip from './ui/Chip';
@@ -34,15 +35,29 @@ export default function DigitalCard() {
 
   useEffect(() => {
     let activo = true;
-    if (socioId != null && communityId != null) {
-      createQrPayload({ memberId: socioId, communityId }).then((payload) => {
+    if (socioId == null || communityId == null) return undefined;
+
+    // Con sesión real el payload lo firma el servidor (Edge Function): el
+    // secreto ya no viaja en el bundle. En demo se firma localmente.
+    const generar = async () => {
+      try {
+        const payload = remoto
+          ? (await pedirTokenCarnet(communityId)).payload
+          : await createQrPayload({ memberId: socioId, communityId });
         if (activo) setQrPayload(payload);
-      });
-    }
+      } catch {
+        if (activo) setQrPayload(null);
+      }
+    };
+
+    generar();
+    // Renovar antes de que venza (TTL 15 min).
+    const t = setInterval(generar, 13 * 60 * 1000);
     return () => {
       activo = false;
+      clearInterval(t);
     };
-  }, [socioId, communityId, socio?.numero]);
+  }, [socioId, communityId, socio?.numero, remoto]);
 
   if (!socio) {
     if (remoto) {
