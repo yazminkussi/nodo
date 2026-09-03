@@ -12,7 +12,9 @@ import {
   actualizarEspacio,
   eliminarEspacio,
 } from '../lib/api/espacios';
+import type { EspacioUI } from '../lib/api/espacios';
 import { listarReservas, crearReserva, cancelarReserva } from '../lib/api/reservas';
+import type { ReservaUI, NuevaReserva } from '../lib/api/reservas';
 
 export function useReservasData() {
   const estado = useSesion((s) => s.estado);
@@ -30,13 +32,13 @@ export function useReservasData() {
   const demoIsSlotTaken = useNodoStore((s) => s.isSlotTaken);
 
   // --- remoto ---
-  const [espacios, setEspacios] = useState([]);
-  const [reservas, setReservas] = useState([]);
+  const [espacios, setEspacios] = useState<EspacioUI[]>([]);
+  const [reservas, setReservas] = useState<ReservaUI[]>([]);
   const [cargando, setCargando] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<unknown>(null);
 
   const recargar = useCallback(() => {
-    if (!esRemoto) return;
+    if (!esRemoto || !comunidadId) return;
     setCargando(true);
     setError(null);
     Promise.all([listarEspacios(comunidadId), listarReservas(comunidadId)])
@@ -69,7 +71,7 @@ export function useReservasData() {
     };
   }
 
-  const isSlotTaken = (espacioId, fecha, inicio) =>
+  const isSlotTaken = (espacioId: string, fecha: string, inicio: string) =>
     reservas.some(
       (r) => r.espacioId === espacioId && r.fecha === fecha && r.inicio <= inicio && r.fin > inicio
     );
@@ -83,16 +85,16 @@ export function useReservasData() {
     reservas,
     isSlotTaken,
 
-    addEspacio: async (espacio) => {
-      const nuevo = await crearEspacio(comunidadId, espacio);
+    addEspacio: async (espacio: Partial<EspacioUI>) => {
+      const nuevo = await crearEspacio(comunidadId as string, espacio);
       setEspacios((prev) => [...prev, nuevo]);
       return nuevo;
     },
-    updateEspacio: async (id, patch) => {
+    updateEspacio: async (id: string, patch: Partial<EspacioUI>) => {
       const upd = await actualizarEspacio(id, patch);
       setEspacios((prev) => prev.map((e) => (e.id === id ? upd : e)));
     },
-    removeEspacio: async (id) => {
+    removeEspacio: async (id: string) => {
       await eliminarEspacio(id);
       setEspacios((prev) => prev.filter((e) => e.id !== id));
     },
@@ -105,9 +107,9 @@ export function useReservasData() {
       inicio,
       duracion = 1,
       concepto,
-    }) => {
+    }: Omit<NuevaReserva, 'comunidadId'>) => {
       const reserva = await crearReserva({
-        comunidadId,
+        comunidadId: comunidadId as string,
         espacioId,
         socioId,
         socioNombre,
@@ -119,7 +121,7 @@ export function useReservasData() {
       setReservas((prev) => [...prev, reserva]);
       return reserva;
     },
-    cancelReservation: async (id) => {
+    cancelReservation: async (id: string) => {
       await cancelarReserva(id);
       setReservas((prev) => prev.filter((r) => r.id !== id));
     },
@@ -127,5 +129,5 @@ export function useReservasData() {
 }
 
 /* Helper: fin de un turno a partir del inicio y la duración. */
-export const finTurno = (inicio, duracionHoras) =>
+export const finTurno = (inicio: string, duracionHoras: number) =>
   minAstring(horaAmin(inicio) + duracionHoras * 60);
