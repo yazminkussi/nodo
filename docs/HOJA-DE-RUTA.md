@@ -77,7 +77,8 @@ Reemplazar los datos ficticios por una base de datos real con identidad de usuar
 
 - [x] Vitest + Testing Library: utilidades, servicios y store.
 - [x] Playwright: flujos E2E (login, portal socio, panel admin, reserva, talleres).
-- TypeScript incremental: `.jsx → .tsx` por módulo (capa de datos hecha).
+- TypeScript incremental: capa de datos (`lib/api`), máquina de sesión y hooks
+  (`store/`, `hooks/`) ya en `.ts`. Falta migrar los componentes `.jsx → .tsx`.
 - Prettier + lint-staged + Husky (pre-commit); CI bloquea merge si fallan tests.
 - **Entregable:** suite de tests + pipeline verde.
 

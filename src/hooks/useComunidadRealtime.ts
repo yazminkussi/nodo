@@ -10,12 +10,13 @@
 
 import { useEffect, useRef } from 'react';
 import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
-import { supabase, supabaseDisponible } from '../lib/supabaseClient';
+import { supabase } from '../lib/supabaseClient';
 import { cargarComunidadConfig } from '../lib/brandService';
+import type { Fila } from '../lib/api/tipos';
 
 // Añade un cache-buster (etag) a la URL pública del logo para que el navegador
 // y el service worker no sirvan una versión "vieja" cuando el Admin la actualiza.
-function bustearLogo(url, etag) {
+function bustearLogo(url?: string | null, etag?: string | null): string | null | undefined {
   if (!url || url.startsWith('data:')) return url;
   const sufijo = etag || 'x';
   const sep = url.includes('?') ? '&' : '?';
@@ -26,21 +27,23 @@ export function useComunidadRealtime() {
   const comunidad = useComunidadActual();
   const comunidadId = comunidad?.id;
   const aplicarMarcaRemota = useNodoStore((s) => s.aplicarMarcaRemota);
-  const inicializadoRef = useRef(new Set());
+  const inicializadoRef = useRef(new Set<string>());
 
   useEffect(() => {
-    if (!supabaseDisponible || !comunidadId) return undefined;
+    if (!supabase || !comunidadId) return undefined;
+    const sb = supabase;
 
-    const aplicarConfig = (fila) => {
+    const aplicarConfig = (fila: Fila | null | undefined) => {
       if (!fila) return;
-      const patch = {};
-      if (fila.logo_url) patch.logo = bustearLogo(fila.logo_url, fila.logo_etag);
+      const patch: { logo?: string; logoEtag?: string; nombre?: string } = {};
+      const logo = fila.logo_url ? bustearLogo(fila.logo_url, fila.logo_etag) : null;
+      if (logo) patch.logo = logo;
       if (fila.logo_etag) patch.logoEtag = fila.logo_etag;
       if (fila.nombre) patch.nombre = fila.nombre;
       aplicarMarcaRemota(comunidadId, patch);
     };
 
-    const canal = supabase
+    const canal = sb
       .channel(`nodo-marca-${comunidadId}`)
       .on(
         'postgres_changes',
@@ -62,7 +65,7 @@ export function useComunidadRealtime() {
     }
 
     return () => {
-      supabase.removeChannel(canal).catch(() => {});
+      sb.removeChannel(canal).catch(() => {});
     };
   }, [comunidadId, aplicarMarcaRemota]);
 }
@@ -71,15 +74,16 @@ export function useAccesoRealtime() {
   const addRegistroAcceso = useNodoStore((s) => s.addRegistroAcceso);
 
   useEffect(() => {
-    if (!supabaseDisponible) return undefined;
+    if (!supabase) return undefined;
+    const sb = supabase;
 
-    const canal = supabase
+    const canal = sb
       .channel('nodo-acceso')
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'registros_acceso' },
         (payload) => {
-          const fila = payload.new;
+          const fila: Fila = payload.new;
           if (!fila) return;
           addRegistroAcceso({
             id: fila.id || Date.now(),
@@ -107,7 +111,7 @@ export function useAccesoRealtime() {
       .subscribe();
 
     return () => {
-      supabase.removeChannel(canal).catch(() => {});
+      sb.removeChannel(canal).catch(() => {});
     };
   }, [addRegistroAcceso]);
 }
