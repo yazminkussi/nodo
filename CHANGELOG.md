@@ -21,6 +21,9 @@ y el proyecto usa [versionado semántico](https://semver.org/lang/es/).
   Reemplaza el `public/sw.js` escrito a mano. Ver `docs/PWA.md`.
 - Code splitting: `SocioPortal` y `AdminDashboard` con `React.lazy`; librerías
   grandes (`react-dom`, `framer-motion`, `supabase`) en chunks propios.
+- Migración a TypeScript de la capa de datos (`src/lib/api`), la máquina de
+  sesión (`useSesion`), el store demo (`useNodoStore`) y todos los hooks.
+  `tsc --noEmit` corre en CI.
 - Panel de Equipo: el SuperAdmin invita administradores (Deportes / Talleres)
   por email; el rol se activa al iniciar sesión.
 - Rediseño visual completo: paleta lavanda de marca + Bricolage Grotesque,

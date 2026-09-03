@@ -15,10 +15,134 @@ import {
   horaAmin,
   minAstring,
 } from '../data/mockData';
+import type {
+  Socio,
+  Espacio,
+  Actividad,
+  Inscripcion,
+  Reserva,
+  Novedad,
+  Publicidad,
+  Comunidad,
+  DriveItem,
+  AdminRoleKey,
+} from '../data/mockData';
+
+/** La comunidad en el store puede llevar el etag del logo (sync de marca). */
+export type ComunidadStore = Comunidad & { logoEtag?: string | null };
+
+export type TipoToast = 'success' | 'error' | 'info';
+export interface Toast {
+  id: number;
+  mensaje: string;
+  tipo: TipoToast;
+}
+
+export interface RegistroAcceso {
+  id: number | string;
+  socioId?: number | string | null;
+  numeroSocio?: string;
+  nombre?: string;
+  comunidadId?: string;
+  comunidadNombre?: string;
+  timestamp?: string;
+  estadoAlIngreso?: string;
+  resultado?: string;
+  motivo?: string;
+  escaneadoPor?: string;
+  metodo?: string;
+  reserva?: { espacioNombre?: string; hora?: string } | null;
+  override?: boolean;
+}
+
+interface MarcaPatch {
+  logo?: string;
+  logoEtag?: string | null;
+  nombre?: string;
+}
+
+interface NuevaInscripcionDemo {
+  actividadId: number;
+  socioId: number;
+  socioNombre: string;
+}
+
+interface NuevaReservaDemo {
+  espacioId: number;
+  socioId?: number;
+  socioNombre: string;
+  fecha?: string;
+  inicio: string;
+  concepto?: string;
+  duracion?: number;
+}
+
+interface NodoStore {
+  role: 'socio' | 'admin';
+  setRole: (role: 'socio' | 'admin') => void;
+
+  adminRole: AdminRoleKey;
+  setAdminRole: (adminRole: AdminRoleKey) => void;
+
+  comunidades: ComunidadStore[];
+  comunidadActualId: string;
+  setComunidadActual: (comunidadActualId: string) => void;
+  updateComunidad: (id: string, patch: Partial<ComunidadStore>) => void;
+  aplicarMarcaRemota: (id: string, patch: MarcaPatch) => void;
+  _marcaRev?: number;
+
+  socioActualId: number;
+  setSocioActual: (socioActualId: number) => void;
+
+  members: Socio[];
+  toggleCuotaStatus: (id: number) => void;
+  registrarPago: (id: number) => void;
+  membersByNumero: (socioId: number) => Socio | undefined;
+
+  espacios: Espacio[];
+  addEspacio: (espacio: Omit<Espacio, 'id'>) => void;
+  updateEspacio: (id: number, patch: Partial<Espacio>) => void;
+  removeEspacio: (id: number) => void;
+
+  actividades: Actividad[];
+  addActividad: (actividad: Omit<Actividad, 'id'>) => void;
+  updateActividad: (id: number, patch: Partial<Actividad>) => void;
+  removeActividad: (id: number) => void;
+
+  inscripciones: Inscripcion[];
+  addInscripcion: (nueva: NuevaInscripcionDemo) => Inscripcion;
+  cancelInscripcion: (id: number) => void;
+  isInscripto: (actividadId: number, socioId: number) => boolean;
+  inscriptosDe: (actividadId: number) => Inscripcion[];
+
+  novedades: Novedad[];
+
+  reservations: Reserva[];
+  addReservation: (nueva: NuevaReservaDemo) => Reserva;
+  cancelReservation: (id: number) => void;
+  isSlotTaken: (espacioId: number, fecha: string, inicio: string) => boolean;
+
+  ads: Publicidad[];
+  addAd: (ad: Omit<Publicidad, 'id'>) => void;
+  removeAd: (id: number) => void;
+
+  driveItems: DriveItem[];
+  addDriveItem: (item: Partial<DriveItem> & { id?: number }) => void;
+  updateDriveItem: (id: number, patch: Partial<DriveItem>) => void;
+  removeDriveItem: (id: number) => void;
+
+  registrosAcceso: RegistroAcceso[];
+  addRegistroAcceso: (reg: RegistroAcceso) => void;
+  clearRegistrosAcceso: () => void;
+
+  toasts: Toast[];
+  addToast: (mensaje: string, tipo?: TipoToast) => void;
+  removeToast: (id: number) => void;
+}
 
 let toastId = 0;
 
-export const useNodoStore = create(
+export const useNodoStore = create<NodoStore>()(
   persist(
     (set, get) => ({
       /* ---- vista actual ---- */
@@ -112,7 +236,7 @@ export const useNodoStore = create(
       /* ---- inscripciones a actividades ---- */
       inscripciones: inscripcionesIniciales,
       addInscripcion: ({ actividadId, socioId, socioNombre }) => {
-        const inscripcion = {
+        const inscripcion: Inscripcion = {
           id: Date.now(),
           actividadId,
           socioId,
@@ -150,10 +274,10 @@ export const useNodoStore = create(
         concepto,
         duracion = 1,
       }) => {
-        const reserva = {
+        const reserva: Reserva = {
           id: Date.now(),
           espacioId,
-          socioId,
+          socioId: socioId as number,
           socioNombre,
           fecha: fecha || todayISO(),
           inicio,
@@ -181,7 +305,7 @@ export const useNodoStore = create(
       driveItems: driveItemsIniciales,
       addDriveItem: (item) =>
         set((state) => ({
-          driveItems: [...state.driveItems, { ...item, id: item.id ?? Date.now() }],
+          driveItems: [...state.driveItems, { ...item, id: item.id ?? Date.now() } as DriveItem],
         })),
       updateDriveItem: (id, patch) =>
         set((state) => ({
@@ -220,7 +344,7 @@ export const useNodoStore = create(
     {
       name: 'nodo-store',
       version: 4,
-      merge: (persisted, current) => ({ ...current, ...persisted }),
+      merge: (persisted, current) => ({ ...current, ...(persisted as Partial<NodoStore>) }),
       partialize: (state) => ({
         role: state.role,
         adminRole: state.adminRole,
@@ -240,10 +364,10 @@ export const useNodoStore = create(
   )
 );
 
-export const useComunidadActual = () =>
+export const useComunidadActual = (): ComunidadStore =>
   useNodoStore((s) => s.comunidades.find((c) => c.id === s.comunidadActualId) || s.comunidades[0]);
 
-export const useProximaReserva = (socioId) => {
+export const useProximaReserva = (socioId: number) => {
   const reservations = useNodoStore((s) => s.reservations);
   const espacios = useNodoStore((s) => s.espacios);
   const hoy = todayISO();

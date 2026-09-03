@@ -6,11 +6,16 @@
    Se carga con import dinámico para mantener el bundle del build liviano y
    evitar conflictos de resolución de módulos en Vite. */
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type MutableRefObject } from 'react';
 
-let moduloPromise = null;
+type Html5QrcodeCtor = (typeof import('html5-qrcode'))['Html5Qrcode'];
+type Html5QrcodeInstance = InstanceType<Html5QrcodeCtor>;
+type Facing = 'environment' | 'user';
+type EstadoScanner = 'idle' | 'iniciando' | 'escaneando' | 'detenido' | 'error';
 
-function cargarModulo() {
+let moduloPromise: Promise<Html5QrcodeCtor> | null = null;
+
+function cargarModulo(): Promise<Html5QrcodeCtor> {
   if (!moduloPromise) {
     moduloPromise = import('html5-qrcode').then((m) => m.Html5Qrcode);
   }
@@ -19,15 +24,15 @@ function cargarModulo() {
 
 const configBasica = {
   fps: 10,
-  qrbox: (w, h) => {
+  qrbox: (w: number, h: number) => {
     const lado = Math.floor(Math.min(w, h) * 0.7);
     return { width: lado, height: lado };
   },
   aspectRatio: 1.0,
 };
 
-function normalizarError(err) {
-  const msg = err?.message || String(err || '');
+function normalizarError(err: unknown): string {
+  const msg = (err as { message?: string } | null)?.message || String(err || '');
   if (/NotAllowedError|Permission denied|denied|bloquead/i.test(msg)) {
     return 'Permiso de cámara denegado. Habilitá la cámara desde el navegador y volvé a intentar.';
   }
@@ -43,7 +48,10 @@ function normalizarError(err) {
   return msg || 'Error inesperado al iniciar la cámara.';
 }
 
-async function detenerSilencioso(scannerRef, detenidoRef) {
+async function detenerSilencioso(
+  scannerRef: MutableRefObject<Html5QrcodeInstance | null>,
+  detenidoRef: MutableRefObject<boolean>
+) {
   detenidoRef.current = true;
   const scanner = scannerRef.current;
   scannerRef.current = null;
@@ -57,13 +65,13 @@ async function detenerSilencioso(scannerRef, detenidoRef) {
   }
 }
 
-export function useQrScanner(elementId) {
-  const scannerRef = useRef(null);
-  const onResultRef = useRef(null);
+export function useQrScanner(elementId: string) {
+  const scannerRef = useRef<Html5QrcodeInstance | null>(null);
+  const onResultRef = useRef<((texto: string) => void) | null>(null);
   const detenidoRef = useRef(false);
 
-  const [estado, setEstado] = useState('idle'); // idle | iniciando | escaneando | detenido | error
-  const [error, setError] = useState(null);
+  const [estado, setEstado] = useState<EstadoScanner>('idle');
+  const [error, setError] = useState<string | null>(null);
   const [camaraFrontal, setCamaraFrontal] = useState(false);
   const [linternaDisponible, setLinternaDisponible] = useState(false);
   const [linternaEncendida, setLinternaEncendida] = useState(false);
@@ -83,7 +91,7 @@ export function useQrScanner(elementId) {
   }, []);
 
   const iniciar = useCallback(
-    async (onResult, facing = 'environment') => {
+    async (onResult: (texto: string) => void, facing: Facing = 'environment') => {
       if (scannerRef.current) await detener();
       if (!onResult) return;
       onResultRef.current = onResult;
@@ -102,7 +110,7 @@ export function useQrScanner(elementId) {
         await scanner.start(
           { facingMode: facing === 'environment' ? 'environment' : 'user' },
           configBasica,
-          (texto) => {
+          (texto: string) => {
             if (detenidoRef.current || !onResultRef.current) return;
             onResultRef.current(texto);
           },
@@ -127,7 +135,9 @@ export function useQrScanner(elementId) {
         }
 
         try {
-          await scanner.applyVideoConstraints({ advanced: [{ torch: false }] });
+          await scanner.applyVideoConstraints({
+            advanced: [{ torch: false }],
+          } as unknown as MediaTrackConstraints);
           setLinternaDisponible(true);
         } catch {
           setLinternaDisponible(false);
@@ -156,7 +166,7 @@ export function useQrScanner(elementId) {
       await scanner.applyVideoConstraints({
         facingMode: siguienteFrontal ? 'user' : 'environment',
         advanced: [{ torch: linternaEncendida }],
-      });
+      } as unknown as MediaTrackConstraints);
       setCamaraFrontal(siguienteFrontal);
       setLinternaEncendida(false);
     } catch {
@@ -169,7 +179,9 @@ export function useQrScanner(elementId) {
     if (!scanner || !scanner.isScanning) return;
     const siguiente = !linternaEncendida;
     try {
-      await scanner.applyVideoConstraints({ advanced: [{ torch: siguiente }] });
+      await scanner.applyVideoConstraints({
+        advanced: [{ torch: siguiente }],
+      } as unknown as MediaTrackConstraints);
       setLinternaEncendida(siguiente);
     } catch {
       setLinternaDisponible(false);
