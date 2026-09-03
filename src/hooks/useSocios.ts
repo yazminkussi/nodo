@@ -17,8 +17,25 @@ import {
   registrarPagoSocio,
   cambiarEstadoCuota,
 } from '../lib/api/socios';
+import type { SocioUI } from '../lib/api/socios';
+import type { Socio } from '../data/mockData';
 
-export function useSocios() {
+type SocioVista = SocioUI | Socio;
+
+export interface UseSociosResult {
+  modo: 'demo' | 'remoto';
+  socios: SocioVista[];
+  cargando: boolean;
+  error: unknown;
+  recargar: () => void;
+  registrarPago: (id: string | number) => void | Promise<void>;
+  toggleCuota: (id: string | number) => void | Promise<void>;
+  crear: ((socio: Partial<SocioUI>) => Promise<SocioUI>) | null;
+  actualizar: ((id: string, patch: Partial<SocioUI>) => Promise<void>) | null;
+  eliminar: ((id: string) => Promise<void>) | null;
+}
+
+export function useSocios(): UseSociosResult {
   const estado = useSesion((s) => s.estado);
   const comunidadId = useSesion((s) => s.comunidadActivaId);
   const esRemoto = estado === 'activo' && Boolean(comunidadId);
@@ -29,12 +46,12 @@ export function useSocios() {
   const demoRegistrarPago = useNodoStore((s) => s.registrarPago);
 
   // --- remoto ---
-  const [socios, setSocios] = useState([]);
+  const [socios, setSocios] = useState<SocioUI[]>([]);
   const [cargando, setCargando] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<unknown>(null);
 
   const recargar = useCallback(() => {
-    if (!esRemoto) return;
+    if (!esRemoto || !comunidadId) return;
     setCargando(true);
     setError(null);
     listarSocios(comunidadId)
@@ -62,7 +79,7 @@ export function useSocios() {
     };
   }
 
-  const reemplazar = (s) => setSocios((prev) => prev.map((x) => (x.id === s.id ? s : x)));
+  const reemplazar = (s: SocioUI) => setSocios((prev) => prev.map((x) => (x.id === s.id ? s : x)));
 
   return {
     modo: 'remoto',
@@ -70,13 +87,13 @@ export function useSocios() {
     cargando,
     error,
     recargar,
-    registrarPago: async (id) => reemplazar(await registrarPagoSocio(id)),
+    registrarPago: async (id) => reemplazar(await registrarPagoSocio(String(id))),
     toggleCuota: async (id) => {
       const actual = socios.find((x) => x.id === id);
-      reemplazar(await cambiarEstadoCuota(id, !actual.cuotaAlDia));
+      reemplazar(await cambiarEstadoCuota(String(id), !actual?.cuotaAlDia));
     },
     crear: async (socio) => {
-      const nuevo = await crearSocio(comunidadId, socio);
+      const nuevo = await crearSocio(comunidadId as string, socio);
       setSocios((prev) => [...prev, nuevo]);
       return nuevo;
     },

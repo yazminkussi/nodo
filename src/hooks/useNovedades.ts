@@ -9,20 +9,35 @@ import {
   actualizarNovedad,
   eliminarNovedad,
 } from '../lib/api/novedades';
+import type { NovedadUI } from '../lib/api/novedades';
+import type { Novedad } from '../data/mockData';
 
-export function useNovedades() {
+type NovedadVista = NovedadUI | Novedad;
+
+export interface UseNovedadesResult {
+  modo: 'demo' | 'remoto';
+  novedades: NovedadVista[];
+  cargando: boolean;
+  error: unknown;
+  recargar: () => void;
+  crear: ((novedad: Partial<NovedadUI>) => Promise<NovedadUI>) | null;
+  actualizar: ((id: string, patch: Partial<NovedadUI>) => Promise<void>) | null;
+  eliminar: ((id: string) => Promise<void>) | null;
+}
+
+export function useNovedades(): UseNovedadesResult {
   const estado = useSesion((s) => s.estado);
   const comunidadId = useSesion((s) => s.comunidadActivaId);
   const esRemoto = estado === 'activo' && Boolean(comunidadId);
 
   const demoNovedades = useNodoStore((s) => s.novedades);
 
-  const [novedades, setNovedades] = useState([]);
+  const [novedades, setNovedades] = useState<NovedadUI[]>([]);
   const [cargando, setCargando] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<unknown>(null);
 
   const recargar = useCallback(() => {
-    if (!esRemoto) return;
+    if (!esRemoto || !comunidadId) return;
     setCargando(true);
     setError(null);
     listarNovedades(comunidadId)
@@ -48,7 +63,8 @@ export function useNovedades() {
     };
   }
 
-  const reemplazar = (n) => setNovedades((prev) => prev.map((x) => (x.id === n.id ? n : x)));
+  const reemplazar = (n: NovedadUI) =>
+    setNovedades((prev) => prev.map((x) => (x.id === n.id ? n : x)));
 
   return {
     modo: 'remoto',
@@ -57,7 +73,7 @@ export function useNovedades() {
     error,
     recargar,
     crear: async (novedad) => {
-      const nueva = await crearNovedad(comunidadId, novedad);
+      const nueva = await crearNovedad(comunidadId as string, novedad);
       setNovedades((prev) => [nueva, ...prev]);
       return nueva;
     },

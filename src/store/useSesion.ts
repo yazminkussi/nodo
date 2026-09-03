@@ -8,23 +8,50 @@
 */
 
 import { create } from 'zustand';
+import type { Session } from '@supabase/supabase-js';
 import { supabase, supabaseDisponible } from '../lib/supabaseClient';
 import { cargarPerfil, cargarMembresias } from '../lib/api/sesion';
 import { reclamarSocio, miSocioDe } from '../lib/api/socios';
+import type { SocioUI } from '../lib/api/socios';
 import { aceptarInvitaciones } from '../lib/api/equipo';
 import { salir as salirAuth } from '../lib/authService';
+import type { Perfil, Membresia, RolMembresia } from '../lib/api/tipos';
 
-export const useSesion = create((set, get) => ({
-  estado: supabaseDisponible ? 'cargando' : 'demo',
+export type EstadoSesion = 'cargando' | 'demo' | 'anonimo' | 'activo';
+
+interface SesionState {
+  estado: EstadoSesion;
+  session: Session | null;
+  perfil: Perfil | null;
+  membresias: Membresia[];
+  comunidadActivaId: string | null;
+  miSocio: SocioUI | null;
+
+  init: () => Promise<void>;
+  _aplicarSession: (session: Session | null) => Promise<void>;
+  _cargarContexto: () => Promise<void>;
+  refrescar: () => Promise<void>;
+  setComunidadActiva: (comunidadActivaId: string) => Promise<void>;
+  entrarModoDemo: () => void;
+  salirModoDemo: () => void;
+  salir: () => Promise<void>;
+}
+
+const VACIO = {
   session: null,
   perfil: null,
-  membresias: [],
+  membresias: [] as Membresia[],
   comunidadActivaId: null,
-  miSocio: null, // ficha de socio de la cuenta en la comunidad activa
+  miSocio: null,
+};
+
+export const useSesion = create<SesionState>((set, get) => ({
+  estado: supabaseDisponible ? 'cargando' : 'demo',
+  ...VACIO,
 
   /** Se llama una vez al montar la app. */
   init: async () => {
-    if (!supabaseDisponible) {
+    if (!supabaseDisponible || !supabase) {
       set({ estado: 'demo' });
       return;
     }
@@ -43,14 +70,7 @@ export const useSesion = create((set, get) => ({
 
   _aplicarSession: async (session) => {
     if (!session) {
-      set({
-        estado: 'anonimo',
-        session: null,
-        perfil: null,
-        membresias: [],
-        comunidadActivaId: null,
-        miSocio: null,
-      });
+      set({ estado: 'anonimo', ...VACIO });
       return;
     }
     set({ session, estado: 'activo' });
@@ -89,27 +109,20 @@ export const useSesion = create((set, get) => ({
 
   salir: async () => {
     await salirAuth();
-    set({
-      estado: 'anonimo',
-      session: null,
-      perfil: null,
-      membresias: [],
-      comunidadActivaId: null,
-      miSocio: null,
-    });
+    set({ estado: 'anonimo', ...VACIO });
   },
 }));
 
 /* ---- selectores derivados ---- */
 
-export const useMembresiaActiva = () =>
+export const useMembresiaActiva = (): Membresia | null =>
   useSesion((s) => s.membresias.find((m) => m.comunidad?.id === s.comunidadActivaId) || null);
 
 export const useComunidadActiva = () => useMembresiaActiva()?.comunidad || null;
 
-export const useRolActivo = () => useMembresiaActiva()?.rol || null;
+export const useRolActivo = (): RolMembresia | null => useMembresiaActiva()?.rol || null;
 
-export const useEsAdmin = () => {
+export const useEsAdmin = (): boolean => {
   const rol = useRolActivo();
   return rol === 'superadmin' || rol === 'deportes' || rol === 'talleres';
 };
