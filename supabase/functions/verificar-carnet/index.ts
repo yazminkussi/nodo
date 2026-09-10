@@ -68,7 +68,10 @@ function igualdadSegura(a: string, b: string): boolean {
 }
 
 type Verificacion =
-  | { ok: true; data: { memberId: string | number; communityId: string; ts: number } }
+  | {
+      ok: true;
+      data: { memberId: string | number; communityId: string; ts: number; qrToken: string };
+    }
   | { ok: false; error: string; expirado?: boolean };
 
 async function verificarCarnet(secret: string, raw: string): Promise<Verificacion> {
@@ -83,7 +86,7 @@ async function verificarCarnet(secret: string, raw: string): Promise<Verificacio
   const esperada = await hmacHex(secret, dataB64);
   if (!igualdadSegura(esperada, sig)) return { ok: false, error: 'Firma inválida' };
 
-  let data: { memberId: string | number; communityId: string; ts: number };
+  let data: { memberId: string | number; communityId: string; ts: number; qrToken: string };
   try {
     data = JSON.parse(new TextDecoder().decode(unb64url(dataB64)));
   } catch {
@@ -187,14 +190,30 @@ Deno.serve(async (req) => {
       comunidadIncorrecta = true;
       motivo = 'El QR pertenece a otra institución.';
     } else {
-      const { data } = await admin
-        .from('socios')
-        .select('*')
-        .eq('id', verif.data.memberId)
-        .eq('comunidad_id', comunidadId)
-        .maybeSingle();
-      socio = data;
-      if (!socio) motivo = 'No se encontró un socio con este carnet.';
+      // Nonce de un solo uso: registrar el token de este QR. Si ya está,
+      // es un intento de reutilización dentro de la ventana de 15 min.
+      const { error: nonceErr } = await admin.from('qr_usados').insert({
+        qr_token: verif.data.qrToken,
+        comunidad_id: comunidadId,
+        socio_id: verif.data.memberId,
+      });
+      if (
+        nonceErr &&
+        (nonceErr.code === '23505' || /duplicate key/i.test(nonceErr.message ?? ''))
+      ) {
+        motivo = 'Este QR ya se usó. Pedile al socio que abra su carnet de nuevo.';
+      }
+
+      if (!motivo) {
+        const { data } = await admin
+          .from('socios')
+          .select('*')
+          .eq('id', verif.data.memberId)
+          .eq('comunidad_id', comunidadId)
+          .maybeSingle();
+        socio = data;
+        if (!socio) motivo = 'No se encontró un socio con este carnet.';
+      }
     }
   }
 

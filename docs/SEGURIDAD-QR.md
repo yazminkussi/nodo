@@ -57,13 +57,15 @@ Propiedades:
   membresía `superadmin` / `deportes` / `talleres` en esa comunidad.
 - **TTL de 15 min** limita la ventana de reproducción de un QR filtrado
   (fotografiado, reenviado).
+- **Nonce de un solo uso** (migración 0012). Cada QR trae un token aleatorio;
+  al escanearlo, `verificar-carnet` lo registra en `qr_usados`. Un segundo
+  escaneo del mismo QR choca con la clave primaria y se rechaza como
+  reutilización. Como el carnet regenera el token cada vez que se abre y cada
+  13 min, el socio siempre tiene uno fresco. Un trigger limpia los tokens de
+  más de 1 hora.
 
 ### Qué queda fuera de alcance (por ahora)
 
-- **Nonce de un solo uso.** El `qrToken` viaja pero no se invalida tras el
-  primer escaneo: dentro de la ventana de 15 min el mismo QR entra dos veces.
-  Mitigación futura: tabla `qr_usados(qr_token, usado_en)` y rechazo si ya
-  figura.
 - **Rate limiting** explícito sobre `verificar-carnet`.
 - El `CARNET_SECRET` es único global; una rotación obliga a que todos los
   carnets vigentes se regeneren (aceptable con TTL de 15 min).
@@ -93,6 +95,10 @@ Panel → **Edge Functions** → **Deploy a new function** (vía editor):
 
 `SUPABASE_URL`, `SUPABASE_ANON_KEY` y `SUPABASE_SERVICE_ROLE_KEY` ya los inyecta
 Supabase; no hay que configurarlos.
+
+> Si ya tenías `verificar-carnet` deployada de antes, **volvé a pegar el archivo
+> y redeploy** para que tome el nonce de un solo uso (necesita también la
+> migración 0012).
 
 ### 3. Probar
 

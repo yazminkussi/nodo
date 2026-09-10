@@ -80,7 +80,8 @@ Reemplazar los datos ficticios por una base de datos real con identidad de usuar
 - [x] Firma/verificación del QR en Edge Functions (`carnet-token`,
       `verificar-carnet`); el secreto sólo en el servidor (`CARNET_SECRET`).
 - [x] Validación del ingreso server-side (cuota y reserva consultadas al escanear) + registro en `registros_acceso` desde la función.
-- [x] TTL corto (15 min). Falta el _nonce_ de un solo uso.
+- [x] TTL corto (15 min) + _nonce_ de un solo uso (migración 0012, tabla
+      `qr_usados`).
 - Rate limiting explícito sobre las funciones.
 - **Entregable:** [`docs/SEGURIDAD-QR.md`](SEGURIDAD-QR.md) — nota técnica + modelo de amenaza.
 
