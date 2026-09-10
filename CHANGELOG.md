@@ -39,6 +39,10 @@ y el proyecto usa [versionado semántico](https://semver.org/lang/es/).
 - Selector de comunidad en la app real para quien tiene más de una membresía.
 - El rol de administración en la UI ahora sale de la membresía real
   (`useAdminRol`); el selector local queda sólo para el modo demo.
+- Email de invitación de administrador: Edge Function `enviar-invitacion`
+  (Resend). Si no hay email configurado, la invitación se crea igual y la app
+  lo dice. Botón para reenviar. Guía completa en `docs/EMAIL.md` (incluye el
+  SMTP propio para los emails de auth).
 - Seguridad del carnet QR: firma y verificación en Edge Functions
   (`carnet-token`, `verificar-carnet`) con el secreto sólo en el servidor. El
   panel de control de acceso valida el ingreso contra la base (cuota + reserva)

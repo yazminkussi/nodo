@@ -7,6 +7,7 @@ import {
   listarEquipo,
   listarInvitaciones,
   crearInvitacion,
+  enviarInvitacion,
   revocarInvitacion,
   quitarAdmin,
 } from '../lib/api/equipo';
@@ -84,8 +85,18 @@ export default function EquipoManager() {
   }
 
   const invitar = async ({ email, rol }) => {
-    await crearInvitacion(comunidadId, { email, rol, categorias: rolInfo(rol).categorias });
-    addToast(`Invitación enviada a ${email}.`, 'success');
+    const inv = await crearInvitacion(comunidadId, {
+      email,
+      rol,
+      categorias: rolInfo(rol).categorias,
+    });
+    const { enviado } = await enviarInvitacion(inv.id);
+    addToast(
+      enviado
+        ? `Le enviamos un email a ${email}.`
+        : `Invitación creada. Avisale a ${email} que se registre en NODO con ese email.`,
+      'success'
+    );
     setAbierto(false);
     recargar();
   };
@@ -192,6 +203,21 @@ export default function EquipoManager() {
                     {formatFechaCorta(String(inv.creada_en).slice(0, 10))}
                   </p>
                 </div>
+                <button
+                  onClick={async () => {
+                    const { enviado } = await enviarInvitacion(inv.id);
+                    addToast(
+                      enviado
+                        ? `Reenviamos el email a ${inv.email}.`
+                        : 'Configurá el envío de emails para reenviar automáticamente (ver docs/EMAIL.md).',
+                      enviado ? 'success' : 'info'
+                    );
+                  }}
+                  className="rounded-lg p-2 text-ink-faint transition hover:bg-sand hover:text-lav"
+                  title="Reenviar email"
+                >
+                  <Mail size={15} />
+                </button>
                 <button
                   onClick={() => revocar(inv)}
                   className="rounded-lg p-2 text-ink-faint transition hover:bg-sand hover:text-crit"

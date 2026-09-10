@@ -70,7 +70,8 @@ Reemplazar los datos ficticios por una base de datos real con identidad de usuar
 - [x] Políticas RLS por rol.
 - [x] Guardas de UI derivadas del rol real (`useAdminRol`); el `AdminRoleSwitcher`
       queda sólo para demo.
-- [x] Invitaciones de administradores por comunidad.
+- [x] Invitaciones de administradores por comunidad (con envío de email vía
+      Edge Function + Resend — ver [`docs/EMAIL.md`](EMAIL.md)).
 - **Entregable:** matriz de roles y permisos.
 
 ### Fase 3 — Seguridad del control de acceso · M (2–3 sesiones)
