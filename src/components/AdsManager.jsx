@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Store, Plus, Trash2, MapPin, Percent } from 'lucide-react';
 import { useNodoStore } from '../store/useNodoStore';
+import { usePublicidades } from '../hooks/usePublicidades';
+import ErrorRemoto from './ui/ErrorRemoto';
+import { SkeletonList } from './ui/Skeleton';
 
 const colores = ['#059669', '#0D9488', '#06B6D4', '#F59E0B', '#1E293B', '#7C3AED'];
 
 export default function AdsManager() {
-  const ads = useNodoStore((s) => s.ads);
-  const addAd = useNodoStore((s) => s.addAd);
-  const removeAd = useNodoStore((s) => s.removeAd);
+  const { ads, cargando, error, recargar, crear, eliminar } = usePublicidades();
   const addToast = useNodoStore((s) => s.addToast);
 
   const [form, setForm] = useState({
@@ -21,23 +22,31 @@ export default function AdsManager() {
     destacada: false,
   });
 
-  const crear = (e) => {
+  const enviar = async (e) => {
     e.preventDefault();
     if (!form.negocio.trim() || !form.descripcion.trim()) {
       addToast('Completá negocio y descripción.', 'error');
       return;
     }
-    addAd({ ...form, negocio: form.negocio.trim(), rubro: form.rubro.trim() || 'Comercio local' });
-    addToast(`Publicidad de ${form.negocio} activada.`, 'success');
-    setForm({
-      negocio: '',
-      rubro: '',
-      descuento: '10% OFF',
-      descripcion: '',
-      barrio: '',
-      color: colores[0],
-      destacada: false,
-    });
+    try {
+      await crear({
+        ...form,
+        negocio: form.negocio.trim(),
+        rubro: form.rubro.trim() || 'Comercio local',
+      });
+      addToast(`Publicidad de ${form.negocio.trim()} activada.`, 'success');
+      setForm({
+        negocio: '',
+        rubro: '',
+        descuento: '10% OFF',
+        descripcion: '',
+        barrio: '',
+        color: colores[0],
+        destacada: false,
+      });
+    } catch (err) {
+      addToast(err?.message || 'No se pudo activar la publicidad.', 'error');
+    }
   };
 
   return (
@@ -53,7 +62,7 @@ export default function AdsManager() {
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-5">
         <form
-          onSubmit={crear}
+          onSubmit={enviar}
           className="space-y-3 rounded-2xl bg-white p-5 shadow-card ring-1 ring-line lg:col-span-2"
         >
           <h3 className="flex items-center gap-2 font-extrabold text-ink">
@@ -125,6 +134,8 @@ export default function AdsManager() {
         </form>
 
         <div className="lg:col-span-3">
+          {error && ads.length === 0 && <ErrorRemoto error={error} onReintentar={recargar} />}
+          {!error && cargando && ads.length === 0 && <SkeletonList rows={3} />}
           <AnimatePresence>
             {ads.map((ad) => (
               <motion.div
@@ -159,9 +170,13 @@ export default function AdsManager() {
                   </p>
                 </div>
                 <button
-                  onClick={() => {
-                    removeAd(ad.id);
-                    addToast(`Publicidad de ${ad.negocio} retirada.`, 'info');
+                  onClick={async () => {
+                    try {
+                      await eliminar(ad.id);
+                      addToast(`Publicidad de ${ad.negocio} retirada.`, 'info');
+                    } catch {
+                      addToast('No se pudo retirar la publicidad.', 'error');
+                    }
                   }}
                   className="rounded-xl p-2.5 text-ink-faint transition hover:bg-crit-soft hover:text-crit"
                   title="Retirar publicidad"

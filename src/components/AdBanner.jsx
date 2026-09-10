@@ -1,11 +1,13 @@
 import { motion } from 'framer-motion';
 import { Store, MapPin, Percent } from 'lucide-react';
-import { useNodoStore } from '../store/useNodoStore';
+import { usePublicidades } from '../hooks/usePublicidades';
 import Chip from './ui/Chip';
 
 export default function AdBanner() {
-  const ads = useNodoStore((s) => s.ads);
+  const { ads, cargando } = usePublicidades();
   const orden = [...ads].sort((a, b) => Number(b.destacada) - Number(a.destacada));
+
+  if (!cargando && orden.length === 0) return null;
 
   return (
     <section className="mx-auto max-w-5xl px-4 sm:px-6">

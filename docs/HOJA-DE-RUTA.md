@@ -54,7 +54,8 @@ Reemplazar los datos ficticios por una base de datos real con identidad de usuar
 - Migraciones versionadas (`supabase/migrations`) + seed con los datos demo.
 - Modo demo conservado como fallback explícito.
 - Contra la base real: auth, comunidades + membresías, socios, novedades,
-  espacios + reservas, actividades + inscripciones. Falta: publicidades, Drive.
+  espacios + reservas, actividades + inscripciones, publicidades y NODO Drive
+  (archivos en Storage). Todo el modelo de datos migrado.
 - [x] Alta de institución desde la app (RPC `crear_comunidad`, migración 0008):
       registrarse → crear el club → quedar superadmin.
 - [x] Import de socios por CSV (subir archivo o pegar de Excel, previsualización,

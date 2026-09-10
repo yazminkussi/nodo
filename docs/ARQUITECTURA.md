@@ -160,9 +160,12 @@ Config en [`docs/SEGURIDAD-QR.md`](SEGURIDAD-QR.md) y [`docs/EMAIL.md`](EMAIL.md
 ## 8. Estado
 
 **Contra la base real:** auth, comunidades + membresías, socios, novedades,
-espacios + reservas, actividades / talleres + inscripciones.
+espacios + reservas, actividades / talleres + inscripciones, publicidades y
+NODO Drive (archivos en Storage privado). Onboarding, invitaciones por email y
+firma del QR con Edge Functions.
 
-**Todavía en demo:** publicidades, NODO Drive.
+**Todavía en demo:** nada del modelo de datos — el modo demo se conserva sólo
+como _fallback_ sin conexión.
 
-**Hoja de ruta:** firma del QR server-side, roles reales + invitaciones, tests
-(Vitest + Playwright) + TypeScript incremental, service worker → Workbox.
+**Hoja de ruta:** cuotas con historial de pagos, migración de componentes a
+`.tsx`, presupuesto Lighthouse en CI, cobro B2B.

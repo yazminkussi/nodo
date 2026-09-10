@@ -19,9 +19,12 @@ import {
 } from 'lucide-react';
 import { useNodoStore } from '../store/useNodoStore';
 import { useAdminRol } from '../hooks/useAdminRol';
-import { driveFolders, todayISO, formatFechaCorta, ROLES_ADMIN } from '../data/mockData';
+import { useDrive } from '../hooks/useDrive';
+import { driveFolders, formatFechaCorta, ROLES_ADMIN } from '../data/mockData';
 import NodoSheet from './NodoSheet';
 import NodoDoc from './NodoDoc';
+import ErrorRemoto from './ui/ErrorRemoto';
+import { SkeletonList } from './ui/Skeleton';
 
 const iconosCarpeta = { scroll: ScrollText, sheet: Table2, receipt: Receipt, template: FileText };
 
@@ -35,10 +38,18 @@ const formatearBytes = (n) => {
 const MAX_ARCHIVO = 4 * 1024 * 1024;
 
 export default function NodoDrive() {
-  const driveItems = useNodoStore((s) => s.driveItems);
-  const addDriveItem = useNodoStore((s) => s.addDriveItem);
-  const updateDriveItem = useNodoStore((s) => s.updateDriveItem);
-  const removeDriveItem = useNodoStore((s) => s.removeDriveItem);
+  const {
+    items: driveItems,
+    cargando,
+    error,
+    recargar,
+    crearDoc: apiCrearDoc,
+    crearSheet: apiCrearSheet,
+    subirArchivo: apiSubirArchivo,
+    actualizar: apiActualizar,
+    eliminar: apiEliminar,
+    urlDescarga,
+  } = useDrive();
   const addToast = useNodoStore((s) => s.addToast);
   const adminRole = useAdminRol();
 
@@ -56,83 +67,78 @@ export default function NodoDrive() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  const subirArchivo = (file) => {
+  const subirArchivo = async (file) => {
     if (!file) return;
     if (file.size > MAX_ARCHIVO) {
       addToast('Máximo 4 MB por archivo en NODO Drive.', 'error');
       return;
     }
-    const reader = new FileReader();
-    reader.onerror = () => addToast('No se pudo leer el archivo.', 'error');
-    reader.onload = () => {
-      addDriveItem({
-        carpetaId,
-        tipo: 'archivo',
-        nombre: file.name,
-        fecha: todayISO(),
-        autor,
-        mime: file.type || 'application/octet-stream',
-        tamano: file.size,
-        dataUrl: reader.result,
-      });
+    try {
+      await apiSubirArchivo({ carpetaId, file, autor });
       addToast(`"${file.name}" guardado en ${carpeta.nombre}.`, 'success');
-    };
-    reader.readAsDataURL(file);
+    } catch (e) {
+      addToast(e?.message || 'No se pudo subir el archivo.', 'error');
+    }
   };
 
-  const crearSheet = () => {
-    const id = Date.now();
-    const item = {
-      id,
-      carpetaId,
-      tipo: 'sheet',
-      nombre: 'Nueva planilla',
-      fecha: todayISO(),
-      autor,
-      contenido: { columnas: ['N°', 'Nombre', 'Detalle'], filas: [['', '', '']] },
-    };
-    addDriveItem(item);
-    setEditando(item);
+  const crearSheet = async () => {
+    try {
+      const item = await apiCrearSheet({ carpetaId, nombre: 'Nueva planilla', autor });
+      setEditando({ ...item });
+    } catch (e) {
+      addToast(e?.message || 'No se pudo crear la planilla.', 'error');
+    }
   };
 
-  const crearDoc = () => {
-    const id = Date.now();
-    const item = {
-      id,
-      carpetaId,
-      tipo: 'doc',
-      nombre: 'Nuevo documento',
-      fecha: todayISO(),
-      autor,
-      contenido: '',
-    };
-    addDriveItem(item);
-    setEditando(item);
+  const crearDoc = async () => {
+    try {
+      const item = await apiCrearDoc({ carpetaId, nombre: 'Nuevo documento', autor });
+      setEditando({ ...item });
+    } catch (e) {
+      addToast(e?.message || 'No se pudo crear el documento.', 'error');
+    }
   };
 
-  const guardarEdicion = () => {
+  const guardarEdicion = async () => {
     if (!editando) return;
     if (!editando.nombre.trim()) {
       addToast('Poné un nombre al documento.', 'error');
       return;
     }
-    updateDriveItem(editando.id, { nombre: editando.nombre.trim(), contenido: editando.contenido });
-    addToast('Cambios guardados en el Drive.', 'success');
-    setEditando(null);
+    try {
+      await apiActualizar(editando.id, editando.tipo, {
+        nombre: editando.nombre.trim(),
+        contenido: editando.contenido,
+      });
+      addToast('Cambios guardados en el Drive.', 'success');
+      setEditando(null);
+    } catch (e) {
+      addToast(e?.message || 'No se pudieron guardar los cambios.', 'error');
+    }
   };
 
-  const descargar = (item) => {
-    if (!item.dataUrl) return;
+  const descargar = async (item) => {
+    const url = await urlDescarga(item);
+    if (!url) {
+      addToast('No se pudo generar la descarga.', 'error');
+      return;
+    }
     const a = document.createElement('a');
-    a.href = item.dataUrl;
+    a.href = url;
     a.download = item.nombre;
+    a.target = '_blank';
+    a.rel = 'noopener';
     a.click();
     addToast(`Descargando ${item.nombre}.`, 'info');
   };
 
-  const eliminar = (item) => {
-    removeDriveItem(item.id);
-    addToast(`"${item.nombre}" eliminado del Drive.`, 'info');
+  const eliminar = async (item) => {
+    try {
+      await apiEliminar(item);
+      addToast(`"${item.nombre}" eliminado del Drive.`, 'info');
+    } catch (e) {
+      addToast(e?.message || 'No se pudo eliminar.', 'error');
+    }
   };
 
   return (
@@ -239,7 +245,9 @@ export default function NodoDrive() {
       />
 
       <div className="space-y-2.5">
-        {items.length === 0 && (
+        {error && driveItems.length === 0 && <ErrorRemoto error={error} onReintentar={recargar} />}
+        {!error && cargando && driveItems.length === 0 && <SkeletonList rows={3} />}
+        {!error && !cargando && items.length === 0 && (
           <div className="rounded-2xl border-2 border-dashed border-line bg-white p-10 text-center">
             <Folder size={28} className="mx-auto text-slate-300" />
             <p className="mt-2 text-sm font-bold text-ink">Carpeta vacía</p>

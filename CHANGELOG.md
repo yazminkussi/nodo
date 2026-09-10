@@ -39,6 +39,11 @@ y el proyecto usa [versionado semántico](https://semver.org/lang/es/).
 - Selector de comunidad en la app real para quien tiene más de una membresía.
 - El rol de administración en la UI ahora sale de la membresía real
   (`useAdminRol`); el selector local queda sólo para el modo demo.
+- Publicidades de comercios reales (migración 0010): tabla + RLS, alta y baja
+  desde el panel, las ve el socio en su portal.
+- NODO Drive real (migración 0010): documentos, planillas (NODO Sheet) y textos
+  (NODO Doc) en la base; archivos en un bucket privado de Storage con acceso por
+  comunidad. Descarga por URL firmada.
 - Estados de carga y error en las vistas que leen de Supabase: skeleton
   mientras carga y una tarjeta con "Reintentar" si falla (componente
   `ErrorRemoto`). Antes esas pantallas quedaban en blanco o mostraban ceros.
