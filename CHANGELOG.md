@@ -24,6 +24,9 @@ y el proyecto usa [versionado semántico](https://semver.org/lang/es/).
 - Migración a TypeScript de la capa de datos (`src/lib/api`), la máquina de
   sesión (`useSesion`), el store demo (`useNodoStore`) y todos los hooks.
   `tsc --noEmit` corre en CI.
+- Alta de institución (onboarding): una cuenta registrada crea su club desde
+  la app y queda como superadmin (RPC `crear_comunidad`, migración 0008).
+  Al entrar sin institución aparece el formulario de alta en vez del portal.
 - Seguridad del carnet QR: firma y verificación en Edge Functions
   (`carnet-token`, `verificar-carnet`) con el secreto sólo en el servidor. El
   panel de control de acceso valida el ingreso contra la base (cuota + reserva)

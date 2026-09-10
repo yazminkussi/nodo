@@ -55,6 +55,8 @@ Reemplazar los datos ficticios por una base de datos real con identidad de usuar
 - Modo demo conservado como fallback explícito.
 - Contra la base real: auth, comunidades + membresías, socios, novedades,
   espacios + reservas, actividades + inscripciones. Falta: publicidades, Drive.
+- [x] Alta de institución desde la app (RPC `crear_comunidad`, migración 0008):
+      registrarse → crear el club → quedar superadmin. Falta: import de socios (CSV).
 - **Entregable:** diagrama entidad-relación + documento de arquitectura (24/9).
 
 ### Fase 2 — Roles y permisos real · M (2–3 sesiones)

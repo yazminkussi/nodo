@@ -26,6 +26,8 @@ interface SesionState {
   membresias: Membresia[];
   comunidadActivaId: string | null;
   miSocio: SocioUI | null;
+  /** true mientras se cargan perfil + membresías tras iniciar sesión. */
+  cargandoContexto: boolean;
 
   init: () => Promise<void>;
   _aplicarSession: (session: Session | null) => Promise<void>;
@@ -43,6 +45,7 @@ const VACIO = {
   membresias: [] as Membresia[],
   comunidadActivaId: null,
   miSocio: null,
+  cargandoContexto: false,
 };
 
 export const useSesion = create<SesionState>((set, get) => ({
@@ -73,7 +76,7 @@ export const useSesion = create<SesionState>((set, get) => ({
       set({ estado: 'anonimo', ...VACIO });
       return;
     }
-    set({ session, estado: 'activo' });
+    set({ session, estado: 'activo', cargandoContexto: true });
     // Vincula la ficha de socio por email (si corresponde) antes de leer roles.
     await Promise.all([reclamarSocio(), aceptarInvitaciones()]);
     await get()._cargarContexto();
@@ -83,7 +86,7 @@ export const useSesion = create<SesionState>((set, get) => ({
     const [perfil, membresias] = await Promise.all([cargarPerfil(), cargarMembresias()]);
     const comunidadActivaId = get().comunidadActivaId || membresias[0]?.comunidad?.id || null;
     const miSocio = comunidadActivaId ? await miSocioDe(comunidadActivaId) : null;
-    set({ perfil, membresias, comunidadActivaId, miSocio });
+    set({ perfil, membresias, comunidadActivaId, miSocio, cargandoContexto: false });
   },
 
   /** Recarga perfil + membresías + ficha propia (p. ej. después de correr el seed). */
