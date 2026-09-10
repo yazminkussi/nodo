@@ -15,10 +15,11 @@ import {
   crearSociosLote,
   actualizarSocio,
   eliminarSocio,
-  registrarPagoSocio,
   cambiarEstadoCuota,
 } from '../lib/api/socios';
 import type { SocioUI } from '../lib/api/socios';
+import { registrarPago as registrarPagoApi } from '../lib/api/pagos';
+import type { DetallePago } from '../lib/api/pagos';
 import type { Socio } from '../data/mockData';
 
 type SocioVista = SocioUI | Socio;
@@ -29,7 +30,7 @@ export interface UseSociosResult {
   cargando: boolean;
   error: unknown;
   recargar: () => void;
-  registrarPago: (id: string | number) => void | Promise<void>;
+  registrarPago: (id: string | number, detalle?: DetallePago) => void | Promise<void>;
   toggleCuota: (id: string | number) => void | Promise<void>;
   crear: ((socio: Partial<SocioUI>) => Promise<SocioUI>) | null;
   importar: ((socios: Partial<SocioUI>[]) => Promise<SocioUI[]>) | null;
@@ -83,6 +84,10 @@ export function useSocios(): UseSociosResult {
   }
 
   const reemplazar = (s: SocioUI) => setSocios((prev) => prev.map((x) => (x.id === s.id ? s : x)));
+  const hoyDMY = () => {
+    const d = new Date();
+    return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+  };
 
   return {
     modo: 'remoto',
@@ -90,7 +95,12 @@ export function useSocios(): UseSociosResult {
     cargando,
     error,
     recargar,
-    registrarPago: async (id) => reemplazar(await registrarPagoSocio(String(id))),
+    registrarPago: async (id, detalle) => {
+      await registrarPagoApi(String(id), detalle);
+      setSocios((prev) =>
+        prev.map((x) => (x.id === id ? { ...x, cuotaAlDia: true, ultimaCuota: hoyDMY() } : x))
+      );
+    },
     toggleCuota: async (id) => {
       const actual = socios.find((x) => x.id === id);
       reemplazar(await cambiarEstadoCuota(String(id), !actual?.cuotaAlDia));

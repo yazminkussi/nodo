@@ -18,6 +18,7 @@ import { StatusBadge } from './StatusBadge';
 import { formatARS } from '../data/mockData';
 import SocioFormModal from './SocioFormModal';
 import SocioImport from './SocioImport';
+import PagoModal from './PagoModal';
 import Modal from './ui/Modal';
 import Field from './ui/Field';
 import SectionTitle from './ui/SectionTitle';
@@ -61,6 +62,7 @@ export default function MemberTable() {
   const [aVincular, setAVincular] = useState(null); // socio sin cuenta
   const [emailVinc, setEmailVinc] = useState('');
   const [vinculando, setVinculando] = useState(false);
+  const [socioPago, setSocioPago] = useState(null);
 
   const numerosExistentes = useMemo(() => new Set(members.map((m) => String(m.numero))), [members]);
 
@@ -97,13 +99,13 @@ export default function MemberTable() {
     }
   };
 
-  const marcarPago = async (m) => {
-    try {
-      await registrarPago(m.id);
+  const marcarPago = (m) => {
+    if (modo === 'demo') {
+      registrarPago(m.id);
       addToast(`Pago registrado para ${m.nombre} ${m.apellido}.`, 'success');
-    } catch {
-      addToast('No se pudo registrar el pago.', 'error');
+      return;
     }
+    setSocioPago(m);
   };
 
   const verCarnet = (m) => {
@@ -360,6 +362,20 @@ export default function MemberTable() {
               return creados;
             }}
             onClose={() => setImportAbierto(false)}
+          />
+        )}
+        {socioPago && (
+          <PagoModal
+            socio={socioPago}
+            modo={modo}
+            onRegistrar={async (detalle) => {
+              await registrarPago(socioPago.id, detalle);
+              addToast(
+                `Pago registrado para ${socioPago.nombre} ${socioPago.apellido}.`,
+                'success'
+              );
+            }}
+            onClose={() => setSocioPago(null)}
           />
         )}
         {aVincular && (

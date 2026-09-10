@@ -62,6 +62,9 @@ erDiagram
 | `reservas`         | Turno de un socio en un espacio. Índice único evita doble reserva.                  |
 | `actividades`      | Talleres / cursos de la comunidad. `dias` es JSON; `cupo_maximo` limita inscriptos. |
 | `inscripciones`    | Socio anotado en una actividad. Índice único + trigger de cupo en la base.          |
+| `pagos`            | Historial de pagos de cuota. RPC `registrar_pago_socio` inserta + pone al día.      |
+| `publicidades`     | Comercios del barrio con descuento para socios.                                     |
+| `drive_items`      | Documentos internos de la comisión (doc/sheet en jsonb, archivos en Storage).       |
 | `novedades`        | Comunicados de la comunidad.                                                        |
 | `comunidad_config` | Logo + nombre "en vivo", sincronizados por Realtime.                                |
 | `registros_acceso` | Historial de escaneos de QR en la puerta.                                           |
@@ -167,5 +170,5 @@ firma del QR con Edge Functions.
 **Todavía en demo:** nada del modelo de datos — el modo demo se conserva sólo
 como _fallback_ sin conexión.
 
-**Hoja de ruta:** cuotas con historial de pagos, migración de componentes a
-`.tsx`, presupuesto Lighthouse en CI, cobro B2B.
+**Hoja de ruta:** migración de componentes a `.tsx`, presupuesto Lighthouse en
+CI, nonce de un solo uso para el QR, cobro B2B.
