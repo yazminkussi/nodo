@@ -25,7 +25,7 @@ function PantallaCarga({ oscura = false }) {
   );
 }
 
-const OnboardingComunidad = lazy(() => import('./components/onboarding/OnboardingComunidad'));
+const SinInstitucion = lazy(() => import('./components/onboarding/SinInstitucion'));
 
 export default function App() {
   const role = useNodoStore((s) => s.role);
@@ -76,14 +76,14 @@ export default function App() {
     );
   }
 
-  // Sesión activa sin ninguna institución → alta de institución (onboarding).
+  // Sesión activa sin ninguna institución → vincularse como socio o crear un club.
   if (estado === 'activo' && sinInstitucion) {
     return (
       <>
         {banner}
         <Toasts />
         <Suspense fallback={<PantallaCarga oscura />}>
-          <OnboardingComunidad />
+          <SinInstitucion />
         </Suspense>
       </>
     );

@@ -58,15 +58,19 @@ Reemplazar los datos ficticios por una base de datos real con identidad de usuar
 - [x] Alta de institución desde la app (RPC `crear_comunidad`, migración 0008):
       registrarse → crear el club → quedar superadmin.
 - [x] Import de socios por CSV (subir archivo o pegar de Excel, previsualización,
-      validación y alta en lote).
+      validación y alta en lote) + plantilla descargable.
+- [x] Vinculación ficha↔cuenta: por email (existente), por N° socio + DNI, o a
+      mano por el admin (migración 0009).
+- [x] Selector de comunidad en la app real (multi-membresía).
 - **Entregable:** diagrama entidad-relación + documento de arquitectura (24/9).
 
 ### Fase 2 — Roles y permisos real · M (2–3 sesiones)
 
-- Tabla `membresias(usuario, comunidad, rol, categorias)` como fuente del rol.
-- Políticas RLS por rol.
-- Guardas de UI derivadas del rol real.
-- Invitaciones de administradores por comunidad.
+- [x] Tabla `membresias(usuario, comunidad, rol, categorias)` como fuente del rol.
+- [x] Políticas RLS por rol.
+- [x] Guardas de UI derivadas del rol real (`useAdminRol`); el `AdminRoleSwitcher`
+      queda sólo para demo.
+- [x] Invitaciones de administradores por comunidad.
 - **Entregable:** matriz de roles y permisos.
 
 ### Fase 3 — Seguridad del control de acceso · M (2–3 sesiones)

@@ -6,11 +6,12 @@ import { useSesion, useComunidadActiva } from '../store/useSesion';
 import { QrSvg } from '../utils/qr';
 import { createQrPayload } from '../utils/qrPayload';
 import { pedirTokenCarnet } from '../lib/api/carnet';
+import { vincularSocioPorDatos } from '../lib/api/socios';
 import { formatFechaLarga, formatARS, mesesAdeudados } from '../data/mockData';
 import { NodoLogo } from './Navbar';
 import Chip from './ui/Chip';
 import Button from './ui/Button';
-import EmptyState from './ui/EmptyState';
+import Field from './ui/Field';
 
 const iniciales = (nombre, apellido) => `${nombre.charAt(0)}${apellido.charAt(0)}`.toUpperCase();
 
@@ -18,7 +19,12 @@ export default function DigitalCard() {
   const estado = useSesion((s) => s.estado);
   const miSocio = useSesion((s) => s.miSocio);
   const refrescarSesion = useSesion((s) => s.refrescar);
+  const setComunidadActiva = useSesion((s) => s.setComunidadActiva);
+  const addToast = useNodoStore((s) => s.addToast);
   const [buscando, setBuscando] = useState(false);
+  const [vincDatos, setVincDatos] = useState({ numero: '', dni: '' });
+  const [vinculando, setVinculando] = useState(false);
+  const [vincError, setVincError] = useState('');
   const socioDemo = useNodoStore((s) => s.members.find((m) => m.id === s.socioActualId));
   const comunidadDemo = useComunidadActual();
   const comunidadReal = useComunidadActiva();
@@ -59,31 +65,78 @@ export default function DigitalCard() {
     };
   }, [socioId, communityId, socio?.numero, remoto]);
 
+  const vincularPorDatos = async (e) => {
+    e.preventDefault();
+    setVincError('');
+    if (!vincDatos.numero.trim() || !vincDatos.dni.trim()) {
+      return setVincError('Completá tu número de socio y tu DNI.');
+    }
+    setVinculando(true);
+    try {
+      const slug = await vincularSocioPorDatos(vincDatos.numero.trim(), vincDatos.dni.trim());
+      await setComunidadActiva(slug);
+      await refrescarSesion();
+      addToast('¡Listo! Vinculamos tu ficha de socio.', 'success');
+    } catch (err) {
+      setVincError(err?.message || 'No se pudo vincular tu ficha.');
+    } finally {
+      setVinculando(false);
+    }
+  };
+
   if (!socio) {
     if (remoto) {
       return (
-        <section className="mx-auto max-w-5xl px-4 sm:px-6">
-          <EmptyState
-            icon={IdCard}
-            title="Tu cuenta todavía no está vinculada a una ficha de socio"
-            action={
-              <Button
-                variant="lav"
-                loading={buscando}
-                onClick={async () => {
-                  setBuscando(true);
-                  await refrescarSesion();
-                  setBuscando(false);
-                }}
-              >
-                {!buscando && <RefreshCw size={15} />}
-                Buscar mi ficha
+        <section className="mx-auto max-w-md px-4 sm:px-6">
+          <div className="rounded-3xl bg-cloud p-6 shadow-card">
+            <div className="mb-4 flex flex-col items-center gap-2 text-center">
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-lav-soft text-lav">
+                <IdCard size={22} />
+              </span>
+              <h2 className="font-display text-lg font-bold text-ink">Vinculá tu ficha de socio</h2>
+              <p className="text-sm text-ink-soft">
+                Ingresá tu número de socio y tu DNI, como figuran en tu carnet de{' '}
+                {comunidad?.nombre || 'tu club'}.
+              </p>
+            </div>
+
+            <form onSubmit={vincularPorDatos} className="space-y-3">
+              <Field
+                label="Número de socio"
+                placeholder="Ej. 0142"
+                value={vincDatos.numero}
+                onChange={(e) => setVincDatos((v) => ({ ...v, numero: e.target.value }))}
+              />
+              <Field
+                label="DNI"
+                placeholder="Sin puntos"
+                inputMode="numeric"
+                value={vincDatos.dni}
+                onChange={(e) => setVincDatos((v) => ({ ...v, dni: e.target.value }))}
+              />
+              {vincError && (
+                <p className="rounded-lg bg-crit-soft px-3 py-2 text-xs font-semibold text-crit">
+                  {vincError}
+                </p>
+              )}
+              <Button type="submit" variant="lav" loading={vinculando} className="w-full">
+                Vincular mi ficha
               </Button>
-            }
-          >
-            Pedile a la administración de {comunidad?.nombre || 'tu comunidad'} que registre tu
-            ficha con este mismo email. Una vez cargada, tocá “Buscar mi ficha”.
-          </EmptyState>
+            </form>
+
+            <button
+              type="button"
+              onClick={async () => {
+                setBuscando(true);
+                await refrescarSesion();
+                setBuscando(false);
+              }}
+              className="mx-auto mt-3 flex items-center gap-1.5 text-xs font-semibold text-ink-faint transition hover:text-ink"
+            >
+              <RefreshCw size={12} className={buscando ? 'animate-spin' : ''} />
+              Ya me cargaron con mi email · buscar de nuevo
+            </button>
+          </div>
         </section>
       );
     }

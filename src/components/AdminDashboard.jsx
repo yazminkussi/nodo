@@ -24,9 +24,10 @@ import CommunitySettings from './CommunitySettings';
 import NodoDrive from './NodoDrive';
 import AdminRoleSwitcher from './AdminRoleSwitcher';
 import QrAccessControl from './qr/QrAccessControl';
-import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
-import { useComunidadActiva, useSesion, useRolActivo } from '../store/useSesion';
+import { useComunidadActual } from '../store/useNodoStore';
+import { useComunidadActiva, useSesion } from '../store/useSesion';
 import { useSocios } from '../hooks/useSocios';
+import { useAdminRol } from '../hooks/useAdminRol';
 import { ROLES_ADMIN } from '../data/mockData';
 
 const seccionesBase = [
@@ -44,18 +45,13 @@ const seccionesBase = [
 
 export default function AdminDashboard() {
   const { socios: members } = useSocios();
-  const adminRoleDemo = useNodoStore((s) => s.adminRole);
   const comunidadDemo = useComunidadActual();
   const comunidad = useComunidadActiva() || comunidadDemo;
   const perfil = useSesion((s) => s.perfil);
   const estadoSesion = useSesion((s) => s.estado);
-  const rolReal = useRolActivo();
+  const adminRole = useAdminRol();
   const morosos = members.filter((m) => !m.cuotaAlDia);
   const saludo = perfil?.nombre ? perfil.nombre : 'Carlos';
-
-  // Con sesión real, el rol viene de la membresía; en demo, del selector local.
-  const adminRole =
-    estadoSesion === 'activo' && rolReal && rolReal !== 'socio' ? rolReal : adminRoleDemo;
 
   const permitidas = useMemo(() => ROLES_ADMIN[adminRole]?.secciones || [], [adminRole]);
   const secciones = seccionesBase.filter((s) => permitidas.includes(s.key));

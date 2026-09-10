@@ -133,6 +133,25 @@ export async function eliminarSocio(id: string): Promise<void> {
   if (error) throw error;
 }
 
+/** El socio vincula su cuenta con su N° de socio + DNI. Devuelve el slug de la comunidad. */
+export async function vincularSocioPorDatos(numero: string, dni: string): Promise<string> {
+  const { data, error } = await requireSupabase().rpc('vincular_socio_por_datos', {
+    p_numero: numero,
+    p_dni: dni,
+  });
+  if (error) throw new Error(error.message);
+  return data as string;
+}
+
+/** El admin vincula una ficha a una cuenta ya registrada, por email. */
+export async function vincularSocioACuenta(socioId: string, email: string): Promise<void> {
+  const { error } = await requireSupabase().rpc('vincular_socio_a_cuenta', {
+    p_socio_id: socioId,
+    p_email: email,
+  });
+  if (error) throw new Error(error.message);
+}
+
 /** Marca la cuota al día y actualiza la fecha de última cuota a hoy. */
 export async function registrarPagoSocio(id: string): Promise<SocioUI> {
   const hoy = new Date().toISOString().slice(0, 10);

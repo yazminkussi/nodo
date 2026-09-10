@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Trash2, CalendarDays, UserRound, Filter, CalendarX2 } from 'lucide-react';
 import { useNodoStore } from '../store/useNodoStore';
+import { useAdminRol } from '../hooks/useAdminRol';
 import { useReservasData } from '../hooks/useReservasData';
 import { useSocios } from '../hooks/useSocios';
 import {
@@ -27,7 +28,7 @@ export default function ReservationManager() {
   } = useReservasData();
   const { socios: members } = useSocios();
   const addToast = useNodoStore((s) => s.addToast);
-  const adminRole = useNodoStore((s) => s.adminRole);
+  const adminRole = useAdminRol();
 
   const categoriasPermitidas = ROLES_ADMIN[adminRole]?.categorias;
   const espaciosVisibles = categoriasPermitidas

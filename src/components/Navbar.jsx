@@ -70,6 +70,8 @@ export function CommunityBadge() {
   const comunidadDemo = useComunidadActual();
   const comunidadReal = useComunidadActiva();
   const esRemoto = useSesion((s) => s.estado === 'activo');
+  const membresias = useSesion((s) => s.membresias);
+  const setComunidadActiva = useSesion((s) => s.setComunidadActiva);
   const comunidad = comunidadReal || comunidadDemo;
   const setComunidadActual = useNodoStore((s) => s.setComunidadActual);
   const addToast = useNodoStore((s) => s.addToast);
@@ -91,11 +93,11 @@ export function CommunityBadge() {
     };
   }, []);
 
-  // En modo remoto (sesión real) la comunidad viene de la membresía: no hay
-  // selector de demo, se muestra fija.
+  // En modo remoto (sesión real) la comunidad viene de la membresía.
   if (esRemoto) {
-    return (
-      <div className="flex min-w-0 items-center gap-2 rounded-full border border-white/15 bg-white/5 py-1.5 pl-2 pr-3">
+    const multi = membresias.length > 1;
+    const contenido = (
+      <>
         {comunidad.logo_url || comunidad.logo ? (
           <img
             src={comunidad.logo_url || comunidad.logo}
@@ -115,6 +117,88 @@ export function CommunityBadge() {
             {barrio || comunidad.tipo} · {comunidad.plan}
           </span>
         </span>
+        {multi && (
+          <ChevronDown
+            size={14}
+            className={`shrink-0 text-cream/55 transition-transform ${abierto ? 'rotate-180' : ''}`}
+          />
+        )}
+      </>
+    );
+
+    if (!multi) {
+      return (
+        <div className="flex min-w-0 items-center gap-2 rounded-full border border-white/15 bg-white/5 py-1.5 pl-2 pr-3">
+          {contenido}
+        </div>
+      );
+    }
+
+    return (
+      <div ref={ref} className="relative min-w-0">
+        <button
+          onClick={() => setAbierto((v) => !v)}
+          aria-expanded={abierto}
+          aria-haspopup="listbox"
+          className="flex min-w-0 items-center gap-2 rounded-full border border-white/15 bg-white/5 py-1.5 pl-2 pr-2.5 transition hover:bg-white/10"
+        >
+          {contenido}
+        </button>
+        <AnimatePresence>
+          {abierto && (
+            <motion.ul
+              initial={{ opacity: 0, y: 8, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 6, scale: 0.97 }}
+              transition={{ duration: 0.15 }}
+              role="listbox"
+              aria-label="Cambiar de comunidad"
+              className="absolute left-0 top-full z-50 mt-2 w-72 overflow-hidden rounded-2xl bg-white p-1.5 shadow-lift ring-1 ring-nodo-border"
+            >
+              <li className="px-3 py-2 text-[10px] font-extrabold uppercase tracking-widest text-ink-faint">
+                Tus comunidades
+              </li>
+              {membresias.map((m) => {
+                const c = m.comunidad;
+                if (!c) return null;
+                const activa = c.id === comunidad.id;
+                return (
+                  <li key={m.id}>
+                    <button
+                      role="option"
+                      aria-selected={activa}
+                      onClick={() => {
+                        setAbierto(false);
+                        if (!activa) {
+                          setComunidadActiva(c.id);
+                          addToast(`Cambiaste a ${c.nombre}.`, 'info');
+                        }
+                      }}
+                      className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left transition ${
+                        activa ? 'bg-lav-soft ring-1 ring-inset ring-lav/25' : 'hover:bg-slate-50'
+                      }`}
+                    >
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-nodo-navy text-white">
+                        <Building2 size={15} />
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block truncate text-sm font-extrabold text-nodo-navy">
+                          {c.nombre}
+                        </span>
+                        <span className="block text-[11px] font-semibold capitalize text-slate-500">
+                          {m.rol === 'socio' ? 'Socio' : 'Administración'}
+                        </span>
+                      </span>
+                      {activa && (
+                        <span className="ml-auto h-2 w-2 shrink-0 rounded-full bg-nodo-green" />
+                      )}
+                    </button>
+                  </li>
+                );
+              })}
+            </motion.ul>
+          )}
+        </AnimatePresence>
       </div>
     );
   }
