@@ -27,6 +27,9 @@ y el proyecto usa [versionado semántico](https://semver.org/lang/es/).
 - Alta de institución (onboarding): una cuenta registrada crea su club desde
   la app y queda como superadmin (RPC `crear_comunidad`, migración 0008).
   Al entrar sin institución aparece el formulario de alta en vez del portal.
+- Import de socios por CSV: subir un archivo o pegar desde Excel, con
+  detección de columnas, previsualización, validación y alta en lote
+  (detecta faltantes y números repetidos). Botón en Gestión de socios.
 - Seguridad del carnet QR: firma y verificación en Edge Functions
   (`carnet-token`, `verificar-carnet`) con el secreto sólo en el servidor. El
   panel de control de acceso valida el ingreso contra la base (cuota + reserva)

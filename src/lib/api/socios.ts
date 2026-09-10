@@ -100,6 +100,23 @@ export async function crearSocio(comunidadId: string, socio: Partial<SocioUI>): 
   return filaASocio(data);
 }
 
+/** Alta en lote (import de CSV). Inserta de a 200 para no pasarse de tamaño. */
+export async function crearSociosLote(
+  comunidadId: string,
+  socios: Partial<SocioUI>[]
+): Promise<SocioUI[]> {
+  const sb = requireSupabase();
+  const filas = socios.map((s) => ({ ...socioAFila(s), comunidad_id: comunidadId }));
+  const creados: SocioUI[] = [];
+  for (let i = 0; i < filas.length; i += 200) {
+    const lote = filas.slice(i, i + 200);
+    const { data, error } = await sb.from('socios').insert(lote).select();
+    if (error) throw error;
+    (data ?? []).forEach((f) => creados.push(filaASocio(f)));
+  }
+  return creados;
+}
+
 export async function actualizarSocio(id: string, patch: Partial<SocioUI>): Promise<SocioUI> {
   const { data, error } = await requireSupabase()
     .from('socios')

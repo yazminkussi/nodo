@@ -1,12 +1,21 @@
 import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, MessageCircle, Eye, RefreshCcw, UserPlus, AlertCircle } from 'lucide-react';
+import {
+  Search,
+  MessageCircle,
+  Eye,
+  RefreshCcw,
+  UserPlus,
+  AlertCircle,
+  FileSpreadsheet,
+} from 'lucide-react';
 import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
 import { useComunidadActiva } from '../store/useSesion';
 import { useSocios } from '../hooks/useSocios';
 import { StatusBadge } from './StatusBadge';
 import { formatARS } from '../data/mockData';
 import SocioFormModal from './SocioFormModal';
+import SocioImport from './SocioImport';
 import SectionTitle from './ui/SectionTitle';
 import Button from './ui/Button';
 import { SkeletonList } from './ui/Skeleton';
@@ -30,6 +39,7 @@ export default function MemberTable() {
     registrarPago,
     toggleCuota,
     crear,
+    importar,
     actualizar,
   } = useSocios();
   const addToast = useNodoStore((s) => s.addToast);
@@ -42,7 +52,10 @@ export default function MemberTable() {
   const [busqueda, setBusqueda] = useState('');
   const [filtro, setFiltro] = useState('todos');
   const [formAbierto, setFormAbierto] = useState(false);
+  const [importAbierto, setImportAbierto] = useState(false);
   const [enEdicion, setEnEdicion] = useState(null);
+
+  const numerosExistentes = useMemo(() => new Set(members.map((m) => String(m.numero))), [members]);
 
   const filtrados = useMemo(() => {
     const q = busqueda.trim().toLowerCase();
@@ -125,9 +138,16 @@ export default function MemberTable() {
           modo === 'demo' ? ' · datos de demostración' : ''
         }`}
         action={
-          <Button variant="lav" onClick={abrirAlta}>
-            <UserPlus size={16} /> Alta de socio
-          </Button>
+          <div className="flex gap-2">
+            {modo === 'remoto' && (
+              <Button variant="ghost" onClick={() => setImportAbierto(true)}>
+                <FileSpreadsheet size={16} /> Importar CSV
+              </Button>
+            )}
+            <Button variant="lav" onClick={abrirAlta}>
+              <UserPlus size={16} /> Alta de socio
+            </Button>
+          </div>
         }
       />
 
@@ -295,6 +315,17 @@ export default function MemberTable() {
             socio={enEdicion}
             onGuardar={guardar}
             onCerrar={() => setFormAbierto(false)}
+          />
+        )}
+        {importAbierto && (
+          <SocioImport
+            numerosExistentes={numerosExistentes}
+            onImportar={async (nuevos) => {
+              const creados = await importar(nuevos);
+              addToast(`${creados.length} socios importados.`, 'success');
+              return creados;
+            }}
+            onClose={() => setImportAbierto(false)}
           />
         )}
       </AnimatePresence>
