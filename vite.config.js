@@ -8,7 +8,14 @@ export default defineConfig({
     VitePWA({
       // El usuario decide cuándo actualizar (banner "Actualizar" en la app).
       registerType: 'prompt',
-      includeAssets: ['favicon.svg', 'nodo-mark.svg', 'icons/*.png', 'imagenes/*.png'],
+      includeAssets: [
+        'favicon.svg',
+        'favicon-32.png',
+        'favicon-180.png',
+        'nodo-mark.svg',
+        'icons/*.png',
+        'imagenes/*.png',
+      ],
       manifest: {
         name: 'NODO — Experiencia Digital para Comunidades',
         short_name: 'NODO',
