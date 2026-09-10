@@ -63,6 +63,20 @@ export async function crearInvitacion(
   return data;
 }
 
+/** Envía por email una invitación ya creada (Edge Function). No falla si el
+    email no está configurado: devuelve { enviado: false }. */
+export async function enviarInvitacion(invitacionId: string): Promise<{ enviado: boolean }> {
+  try {
+    const { data, error } = await requireSupabase().functions.invoke('enviar-invitacion', {
+      body: { invitacionId },
+    });
+    if (error) return { enviado: false };
+    return { enviado: Boolean((data as { enviado?: boolean })?.enviado) };
+  } catch {
+    return { enviado: false };
+  }
+}
+
 export async function revocarInvitacion(id: string): Promise<void> {
   const { error } = await requireSupabase()
     .from('invitaciones')

@@ -126,6 +126,17 @@ Los componentes no hablan con Supabase directamente:
   banner de "versión nueva" al detectar un build más reciente. Detalle en
   [`docs/PWA.md`](PWA.md).
 
+### Edge Functions (`supabase/functions/`)
+
+| Función             | Para qué                                                    |
+| ------------------- | ----------------------------------------------------------- |
+| `carnet-token`      | firma el payload del carnet del socio (secreto server-side) |
+| `verificar-carnet`  | valida el escaneo + cuota + reserva y registra el ingreso   |
+| `enviar-invitacion` | manda por email la invitación de administrador (Resend)     |
+
+Archivos autocontenidos, se deployan pegándolos en el editor del panel.
+Config en [`docs/SEGURIDAD-QR.md`](SEGURIDAD-QR.md) y [`docs/EMAIL.md`](EMAIL.md).
+
 ## 6. Despliegue
 
 | Etapa           | Qué pasa                                                                                     |
