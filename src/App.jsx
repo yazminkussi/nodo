@@ -25,9 +25,13 @@ function PantallaCarga({ oscura = false }) {
   );
 }
 
+const OnboardingComunidad = lazy(() => import('./components/onboarding/OnboardingComunidad'));
+
 export default function App() {
   const role = useNodoStore((s) => s.role);
   const estado = useSesion((s) => s.estado);
+  const cargandoContexto = useSesion((s) => s.cargandoContexto);
+  const sinInstitucion = useSesion((s) => s.membresias.length === 0);
   const init = useSesion((s) => s.init);
 
   useEffect(() => {
@@ -58,6 +62,29 @@ export default function App() {
         {banner}
         <Toasts />
         <LoginScreen />
+      </>
+    );
+  }
+
+  // Sesión activa pero todavía cargando perfil + membresías.
+  if (estado === 'activo' && cargandoContexto) {
+    return (
+      <>
+        {banner}
+        <PantallaCarga />
+      </>
+    );
+  }
+
+  // Sesión activa sin ninguna institución → alta de institución (onboarding).
+  if (estado === 'activo' && sinInstitucion) {
+    return (
+      <>
+        {banner}
+        <Toasts />
+        <Suspense fallback={<PantallaCarga oscura />}>
+          <OnboardingComunidad />
+        </Suspense>
       </>
     );
   }
