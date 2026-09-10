@@ -94,9 +94,10 @@ Reemplazar los datos ficticios por una base de datos real con identidad de usuar
 
 ### Fase 5 — Design system y UX · M–L (4–6 sesiones)
 
-- Tokens de diseño desde el manual de marca → `tailwind.config` + CSS vars.
-- Componentes base unificados: `Button, Card, Badge, Modal, Input, EmptyState, Skeleton`.
-- Estados de carga, vacío y error en cada vista con datos remotos.
+- [x] Tokens de diseño desde el manual de marca → `tailwind.config` + CSS vars.
+- [x] Componentes base unificados: `Button, Card, Chip, Modal, Field, EmptyState, Skeleton, ErrorRemoto`.
+- [x] Estados de carga, vacío y error en las vistas con datos remotos
+      (socios, novedades, reservas, espacios, talleres, métricas).
 - Accesibilidad AA.
 - Onboarding del admin (primer login).
 - Auditoría con usuarios reales → informe.

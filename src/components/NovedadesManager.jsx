@@ -9,6 +9,7 @@ import Button from './ui/Button';
 import Field from './ui/Field';
 import SectionTitle from './ui/SectionTitle';
 import EmptyState from './ui/EmptyState';
+import ErrorRemoto from './ui/ErrorRemoto';
 
 const CATEGORIAS = ['Institucional', 'Evento', 'Comunicado', 'Comunidad'];
 const EMOJIS = ['📣', '🏛️', '⚽', '🏺', '📋', '🛍️', '🎉', '🏆', '🎭', '💪', '📢', '⚠️'];
@@ -23,7 +24,8 @@ const vacio = {
 };
 
 export default function NovedadesManager() {
-  const { modo, novedades, cargando, error, crear, actualizar, eliminar } = useNovedades();
+  const { modo, novedades, cargando, error, recargar, crear, actualizar, eliminar } =
+    useNovedades();
   const addToast = useNodoStore((s) => s.addToast);
   const [abierto, setAbierto] = useState(false);
   const [enEdicion, setEnEdicion] = useState(null);
@@ -77,16 +79,21 @@ export default function NovedadesManager() {
         }
       />
 
-      {error && (
-        <div className="mb-4 flex items-center gap-2 rounded-xl bg-crit-soft px-4 py-3 text-sm font-semibold text-[#9c372f]">
-          <AlertCircle size={16} /> {error.message}
-        </div>
-      )}
-
-      {cargando && novedades.length === 0 && (
-        <p className="flex items-center justify-center gap-2 py-10 text-sm text-ink-faint">
-          <Loader2 size={16} className="animate-spin" /> Cargando…
-        </p>
+      {error && novedades.length === 0 ? (
+        <ErrorRemoto error={error} onReintentar={recargar} />
+      ) : (
+        <>
+          {error && (
+            <div className="mb-4 flex items-center gap-2 rounded-xl bg-crit-soft px-4 py-3 text-sm font-semibold text-[#9c372f]">
+              <AlertCircle size={16} /> {error.message}
+            </div>
+          )}
+          {cargando && novedades.length === 0 && (
+            <p className="flex items-center justify-center gap-2 py-10 text-sm text-ink-faint">
+              <Loader2 size={16} className="animate-spin" /> Cargando…
+            </p>
+          )}
+        </>
       )}
 
       <div className="space-y-3">

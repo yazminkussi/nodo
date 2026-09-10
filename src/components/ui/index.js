@@ -4,6 +4,7 @@ export { default as Chip } from './Chip';
 export { default as Field } from './Field';
 export { default as Modal } from './Modal';
 export { default as EmptyState } from './EmptyState';
+export { default as ErrorRemoto } from './ErrorRemoto';
 export { default as SectionTitle } from './SectionTitle';
 export { default as Knot } from './Knot';
 export { Skeleton, SkeletonList } from './Skeleton';

@@ -15,6 +15,8 @@ import {
 } from '../data/mockData';
 import SpaceIcon from './SpaceIcon';
 import { StatusBadge } from './StatusBadge';
+import ErrorRemoto from './ui/ErrorRemoto';
+import { SkeletonList } from './ui/Skeleton';
 
 const mismoId = (a, b) => String(a) === String(b);
 
@@ -25,6 +27,9 @@ export default function ReservationManager() {
     cancelReservation,
     addReservation,
     isSlotTaken,
+    cargando,
+    error,
+    recargar,
   } = useReservasData();
   const { socios: members } = useSocios();
   const addToast = useNodoStore((s) => s.addToast);
@@ -116,6 +121,9 @@ export default function ReservationManager() {
           <Plus size={16} /> Nueva reserva
         </button>
       </div>
+
+      {error && espacios.length === 0 && <ErrorRemoto error={error} onReintentar={recargar} />}
+      {!error && cargando && espacios.length === 0 && <SkeletonList rows={4} />}
 
       <div className="mb-4 flex gap-2 overflow-x-auto pb-2">
         {dias.map((d) => {

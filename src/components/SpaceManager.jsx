@@ -12,6 +12,8 @@ import {
   HORARIO_DEFECTO,
 } from '../data/mockData';
 import SpaceIcon, { ICONOS_ESPACIO } from './SpaceIcon';
+import ErrorRemoto from './ui/ErrorRemoto';
+import { SkeletonList } from './ui/Skeleton';
 
 const categorias = ['Deportivo', 'Cultural', 'Recreativo'];
 const colores = [
@@ -30,7 +32,8 @@ const campo =
 const etiqueta = 'mb-1 block text-xs font-bold text-ink-soft';
 
 export default function SpaceManager() {
-  const { espacios, addEspacio, updateEspacio, removeEspacio } = useReservasData();
+  const { espacios, addEspacio, updateEspacio, removeEspacio, cargando, error, recargar } =
+    useReservasData();
   const addToast = useNodoStore((s) => s.addToast);
   const adminRole = useAdminRol();
 
@@ -102,6 +105,9 @@ export default function SpaceManager() {
           <Plus size={16} /> Nuevo espacio
         </button>
       </div>
+
+      {error && espacios.length === 0 && <ErrorRemoto error={error} onReintentar={recargar} />}
+      {!error && cargando && espacios.length === 0 && <SkeletonList rows={3} />}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <AnimatePresence>

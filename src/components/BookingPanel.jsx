@@ -5,11 +5,13 @@ import { useReservasData } from '../hooks/useReservasData';
 import { formatARS, nombreDias } from '../data/mockData';
 import SpaceIcon from './SpaceIcon';
 import BookingModal from './BookingModal';
+import EmptyState from './ui/EmptyState';
+import ErrorRemoto from './ui/ErrorRemoto';
 
 const categorias = ['Todos', 'Deportivo', 'Cultural', 'Recreativo'];
 
 export default function BookingPanel() {
-  const { espacios, cargando } = useReservasData();
+  const { espacios, cargando, error, recargar } = useReservasData();
   const [filtro, setFiltro] = useState('Todos');
   const [seleccionado, setSeleccionado] = useState(null);
 
@@ -28,11 +30,15 @@ export default function BookingPanel() {
         </span>
       </div>
 
-      {cargando && espacios.length === 0 && (
+      {error && espacios.length === 0 ? (
+        <ErrorRemoto error={error} onReintentar={recargar} />
+      ) : cargando && espacios.length === 0 ? (
         <p className="flex items-center justify-center gap-2 py-10 text-sm text-ink-faint">
           <Loader2 size={16} className="animate-spin" /> Cargando espacios…
         </p>
-      )}
+      ) : !cargando && espacios.length === 0 ? (
+        <EmptyState icon={CalendarRange} title="No hay espacios para reservar todavía" />
+      ) : null}
 
       <div className="mb-4 flex flex-wrap gap-2">
         {categorias.map((c) => (
