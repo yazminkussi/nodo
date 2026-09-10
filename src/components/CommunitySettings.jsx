@@ -16,6 +16,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
+import { useAdminRol } from '../hooks/useAdminRol';
 import { NodoLogo } from './Navbar';
 import { redimensionarLogo } from '../utils/image';
 import { ROLES_ADMIN } from '../data/mockData';
@@ -307,7 +308,7 @@ const tabsBase = [
 
 export default function CommunitySettings() {
   const comunidad = useComunidadActual();
-  const adminRole = useNodoStore((s) => s.adminRole);
+  const adminRole = useAdminRol();
 
   const permitidas =
     adminRole === 'superadmin'

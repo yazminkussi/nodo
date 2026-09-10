@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { CalendarDays, Save, Building2, Sparkles, ListChecks } from 'lucide-react';
 import { useNodoStore } from '../store/useNodoStore';
+import { useAdminRol } from '../hooks/useAdminRol';
 import { useReservasData } from '../hooks/useReservasData';
 import { ROLES_ADMIN, nombreDias, slotsDeHorario, duracionLabel } from '../data/mockData';
 import SpaceIcon from './SpaceIcon';
@@ -15,7 +16,7 @@ export default function ScheduleManager() {
   const actividades = useNodoStore((s) => s.actividades);
   const updateActividad = useNodoStore((s) => s.updateActividad);
   const addToast = useNodoStore((s) => s.addToast);
-  const adminRole = useNodoStore((s) => s.adminRole);
+  const adminRole = useAdminRol();
 
   const categoriasPermitidas = ROLES_ADMIN[adminRole]?.categorias;
   const espaciosVisibles = categoriasPermitidas

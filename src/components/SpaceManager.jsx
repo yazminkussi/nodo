@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Pencil, Trash2, Users, Clock, CalendarDays, Power, X } from 'lucide-react';
 import { useNodoStore } from '../store/useNodoStore';
+import { useAdminRol } from '../hooks/useAdminRol';
 import { useReservasData } from '../hooks/useReservasData';
 import {
   ROLES_ADMIN,
@@ -31,7 +32,7 @@ const etiqueta = 'mb-1 block text-xs font-bold text-ink-soft';
 export default function SpaceManager() {
   const { espacios, addEspacio, updateEspacio, removeEspacio } = useReservasData();
   const addToast = useNodoStore((s) => s.addToast);
-  const adminRole = useNodoStore((s) => s.adminRole);
+  const adminRole = useAdminRol();
 
   const categoriasPermitidas = ROLES_ADMIN[adminRole]?.categorias;
   const visibles = categoriasPermitidas

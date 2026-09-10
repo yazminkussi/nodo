@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Pencil, Trash2, Users, Clock, UserRound, X, ChevronDown, Power } from 'lucide-react';
 import { useNodoStore } from '../store/useNodoStore';
+import { useAdminRol } from '../hooks/useAdminRol';
 import { useActividadesData } from '../hooks/useActividadesData';
 import { useReservasData } from '../hooks/useReservasData';
 import { ROLES_ADMIN, formatARS, nombreDias, duracionLabel } from '../data/mockData';
@@ -35,7 +36,7 @@ export default function ActivityManager() {
   } = useActividadesData();
   const { espacios } = useReservasData();
   const addToast = useNodoStore((s) => s.addToast);
-  const adminRole = useNodoStore((s) => s.adminRole);
+  const adminRole = useAdminRol();
 
   const categoriasPermitidas = ROLES_ADMIN[adminRole]?.categorias;
   const visibles = categoriasPermitidas

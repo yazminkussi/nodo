@@ -8,14 +8,18 @@ import {
   UserPlus,
   AlertCircle,
   FileSpreadsheet,
+  Link2,
 } from 'lucide-react';
 import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
 import { useComunidadActiva } from '../store/useSesion';
 import { useSocios } from '../hooks/useSocios';
+import { vincularSocioACuenta } from '../lib/api/socios';
 import { StatusBadge } from './StatusBadge';
 import { formatARS } from '../data/mockData';
 import SocioFormModal from './SocioFormModal';
 import SocioImport from './SocioImport';
+import Modal from './ui/Modal';
+import Field from './ui/Field';
 import SectionTitle from './ui/SectionTitle';
 import Button from './ui/Button';
 import { SkeletonList } from './ui/Skeleton';
@@ -54,6 +58,9 @@ export default function MemberTable() {
   const [formAbierto, setFormAbierto] = useState(false);
   const [importAbierto, setImportAbierto] = useState(false);
   const [enEdicion, setEnEdicion] = useState(null);
+  const [aVincular, setAVincular] = useState(null); // socio sin cuenta
+  const [emailVinc, setEmailVinc] = useState('');
+  const [vinculando, setVinculando] = useState(false);
 
   const numerosExistentes = useMemo(() => new Set(members.map((m) => String(m.numero))), [members]);
 
@@ -128,6 +135,21 @@ export default function MemberTable() {
       addToast('Socio dado de alta.', 'success');
     }
     setFormAbierto(false);
+  };
+
+  const confirmarVinculo = async () => {
+    if (!emailVinc.trim()) return;
+    setVinculando(true);
+    try {
+      await vincularSocioACuenta(aVincular.id, emailVinc.trim());
+      addToast(`Ficha de ${aVincular.nombre} vinculada a ${emailVinc.trim()}.`, 'success');
+      setAVincular(null);
+      setEmailVinc('');
+    } catch (e) {
+      addToast(e?.message || 'No se pudo vincular la cuenta.', 'error');
+    } finally {
+      setVinculando(false);
+    }
   };
 
   return (
@@ -262,6 +284,18 @@ export default function MemberTable() {
                               <Eye size={16} />
                             </button>
                           )}
+                          {modo === 'remoto' && !m.perfilId && (
+                            <button
+                              onClick={() => {
+                                setAVincular(m);
+                                setEmailVinc(m.email || '');
+                              }}
+                              title="Vincular a una cuenta"
+                              className="rounded-lg p-2 text-ink-faint transition hover:bg-sand hover:text-ink"
+                            >
+                              <Link2 size={16} />
+                            </button>
+                          )}
                           {!m.cuotaAlDia && (
                             <a
                               href={waLink(m, comunidad.nombre)}
@@ -327,6 +361,39 @@ export default function MemberTable() {
             }}
             onClose={() => setImportAbierto(false)}
           />
+        )}
+        {aVincular && (
+          <Modal title="Vincular a una cuenta" icon={Link2} onClose={() => setAVincular(null)}>
+            <div className="space-y-3 p-5">
+              <p className="text-sm text-ink-soft">
+                Ficha de{' '}
+                <strong>
+                  {aVincular.nombre} {aVincular.apellido}
+                </strong>{' '}
+                (N° {aVincular.numero}). Ingresá el email con el que <strong>ya se registró</strong>{' '}
+                en NODO.
+              </p>
+              <Field
+                label="Email de la cuenta"
+                type="email"
+                placeholder="socio@email.com"
+                value={emailVinc}
+                onChange={(e) => setEmailVinc(e.target.value)}
+              />
+              <Button
+                variant="lav"
+                loading={vinculando}
+                onClick={confirmarVinculo}
+                className="w-full"
+              >
+                Vincular
+              </Button>
+              <p className="text-xs text-ink-faint">
+                Si el socio todavía no se registró, contale que se cree la cuenta con ese email y la
+                ficha se engancha sola.
+              </p>
+            </div>
+          </Modal>
         )}
       </AnimatePresence>
     </section>

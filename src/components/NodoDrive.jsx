@@ -18,6 +18,7 @@ import {
   Pencil,
 } from 'lucide-react';
 import { useNodoStore } from '../store/useNodoStore';
+import { useAdminRol } from '../hooks/useAdminRol';
 import { driveFolders, todayISO, formatFechaCorta, ROLES_ADMIN } from '../data/mockData';
 import NodoSheet from './NodoSheet';
 import NodoDoc from './NodoDoc';
@@ -39,7 +40,7 @@ export default function NodoDrive() {
   const updateDriveItem = useNodoStore((s) => s.updateDriveItem);
   const removeDriveItem = useNodoStore((s) => s.removeDriveItem);
   const addToast = useNodoStore((s) => s.addToast);
-  const adminRole = useNodoStore((s) => s.adminRole);
+  const adminRole = useAdminRol();
 
   const [carpetaId, setCarpetaId] = useState(driveFolders[0].id);
   const [editando, setEditando] = useState(null);

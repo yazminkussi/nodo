@@ -1,10 +1,38 @@
 import { useMemo, useState } from 'react';
-import { Upload, FileSpreadsheet, CheckCircle2, AlertTriangle, Copy } from 'lucide-react';
+import { Upload, FileSpreadsheet, CheckCircle2, AlertTriangle, Copy, Download } from 'lucide-react';
 import Modal from './ui/Modal';
 import Button from './ui/Button';
 import { parsearCSV } from '../utils/csv';
 
 const CATEGORIAS = ['Activo', 'Adherente', 'Juvenil', 'Honorario'];
+
+const COLUMNAS = [
+  ['numero', 'obligatorio · N° de socio, como figura en el club'],
+  ['nombre', 'obligatorio'],
+  ['apellido', 'obligatorio'],
+  ['dni', 'sin puntos (sirve para que el socio vincule su cuenta)'],
+  ['email', 'con este email el socio engancha su cuenta al registrarse'],
+  ['celular', 'para los recordatorios por WhatsApp'],
+  ['categoria', 'Activo · Adherente · Juvenil · Honorario (si falta, queda Activo)'],
+  ['cuota', 'si / no  (al día o adeuda)'],
+];
+
+function descargarPlantilla() {
+  const filas = [
+    'numero,nombre,apellido,dni,email,celular,categoria,cuota',
+    '0001,María,González,20111222,maria.gonzalez@email.com,1145551234,Activo,si',
+    '0002,Juan,Pérez,25333444,juanperez@email.com,1156667788,Juvenil,no',
+  ];
+  const blob = new Blob(['﻿' + filas.join('\r\n') + '\r\n'], {
+    type: 'text/csv;charset=utf-8',
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'plantilla-socios-nodo.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 const norm = (s) =>
   String(s || '')
@@ -170,6 +198,30 @@ export default function SocioImport({ onClose, onImportar, numerosExistentes }) 
               directamente desde Excel. La primera fila tiene que ser el encabezado con los nombres
               de columna.
             </p>
+
+            <div className="rounded-xl bg-lav-soft/60 p-3">
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <p className="text-xs font-bold text-lav-deep">Columnas que reconoce</p>
+                <button
+                  type="button"
+                  onClick={descargarPlantilla}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-white px-2.5 py-1.5 text-xs font-bold text-lav-deep shadow-card transition hover:bg-cream"
+                >
+                  <Download size={13} /> Descargar plantilla
+                </button>
+              </div>
+              <ul className="space-y-0.5 text-[11px] text-ink-soft">
+                {COLUMNAS.map(([campo, nota]) => (
+                  <li key={campo}>
+                    <span className="font-mono font-bold text-ink">{campo}</span> — {nota}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-2 text-[11px] text-ink-faint">
+                El orden no importa y podés omitir columnas. Si tu archivo es <strong>.xlsx</strong>
+                , guardalo primero como “CSV UTF-8”.
+              </p>
+            </div>
 
             <label className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-dashed border-line bg-paper px-4 py-6 text-sm font-semibold text-ink-soft transition hover:border-lav hover:bg-lav-soft">
               <Upload size={16} />
