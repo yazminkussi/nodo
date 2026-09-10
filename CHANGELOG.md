@@ -39,6 +39,10 @@ y el proyecto usa [versionado semántico](https://semver.org/lang/es/).
 - Selector de comunidad en la app real para quien tiene más de una membresía.
 - El rol de administración en la UI ahora sale de la membresía real
   (`useAdminRol`); el selector local queda sólo para el modo demo.
+- Cuotas con historial de pagos (migración 0011): tabla `pagos` + RPC
+  `registrar_pago_socio` (inserta el pago y deja la cuota al día en una
+  transacción). Al registrar un pago se abre un formulario (monto, método,
+  período) y se ve el historial del socio. El socio ve sus propios pagos.
 - Publicidades de comercios reales (migración 0010): tabla + RLS, alta y baja
   desde el panel, las ve el socio en su portal.
 - NODO Drive real (migración 0010): documentos, planillas (NODO Sheet) y textos

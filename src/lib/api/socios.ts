@@ -152,18 +152,8 @@ export async function vincularSocioACuenta(socioId: string, email: string): Prom
   if (error) throw new Error(error.message);
 }
 
-/** Marca la cuota al día y actualiza la fecha de última cuota a hoy. */
-export async function registrarPagoSocio(id: string): Promise<SocioUI> {
-  const hoy = new Date().toISOString().slice(0, 10);
-  const { data, error } = await requireSupabase()
-    .from('socios')
-    .update({ cuota_al_dia: true, ultima_cuota: hoy })
-    .eq('id', id)
-    .select()
-    .single();
-  if (error) throw error;
-  return filaASocio(data);
-}
+/* El alta de un pago pasa por la RPC `registrar_pago_socio` (ver src/lib/api/pagos.ts):
+   inserta en `pagos` y deja la cuota al día en una sola transacción. */
 
 export async function cambiarEstadoCuota(id: string, alDia: boolean): Promise<SocioUI> {
   const patch: Fila = { cuota_al_dia: alDia };
