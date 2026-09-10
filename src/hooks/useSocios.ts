@@ -12,6 +12,7 @@ import { useSesion } from '../store/useSesion';
 import {
   listarSocios,
   crearSocio,
+  crearSociosLote,
   actualizarSocio,
   eliminarSocio,
   registrarPagoSocio,
@@ -31,6 +32,7 @@ export interface UseSociosResult {
   registrarPago: (id: string | number) => void | Promise<void>;
   toggleCuota: (id: string | number) => void | Promise<void>;
   crear: ((socio: Partial<SocioUI>) => Promise<SocioUI>) | null;
+  importar: ((socios: Partial<SocioUI>[]) => Promise<SocioUI[]>) | null;
   actualizar: ((id: string, patch: Partial<SocioUI>) => Promise<void>) | null;
   eliminar: ((id: string) => Promise<void>) | null;
 }
@@ -74,6 +76,7 @@ export function useSocios(): UseSociosResult {
       registrarPago: (id) => demoRegistrarPago(Number(id)),
       toggleCuota: (id) => demoToggle(Number(id)),
       crear: null,
+      importar: null,
       actualizar: null,
       eliminar: null,
     };
@@ -96,6 +99,11 @@ export function useSocios(): UseSociosResult {
       const nuevo = await crearSocio(comunidadId as string, socio);
       setSocios((prev) => [...prev, nuevo]);
       return nuevo;
+    },
+    importar: async (nuevos) => {
+      const creados = await crearSociosLote(comunidadId as string, nuevos);
+      setSocios((prev) => [...prev, ...creados]);
+      return creados;
     },
     actualizar: async (id, patch) => reemplazar(await actualizarSocio(id, patch)),
     eliminar: async (id) => {
