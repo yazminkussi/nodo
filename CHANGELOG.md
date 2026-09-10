@@ -39,6 +39,8 @@ y el proyecto usa [versionado semántico](https://semver.org/lang/es/).
 - Selector de comunidad en la app real para quien tiene más de una membresía.
 - El rol de administración en la UI ahora sale de la membresía real
   (`useAdminRol`); el selector local queda sólo para el modo demo.
+- Nonce de un solo uso para el carnet QR (migración 0012): un QR ya escaneado
+  no se puede volver a usar dentro de su ventana de validez.
 - Cuotas con historial de pagos (migración 0011): tabla `pagos` + RPC
   `registrar_pago_socio` (inserta el pago y deja la cuota al día en una
   transacción). Al registrar un pago se abre un formulario (monto, método,
