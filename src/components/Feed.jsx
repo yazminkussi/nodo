@@ -7,6 +7,7 @@ import { formatFechaCorta } from '../data/mockData';
 import { stagger, staggerItem } from './ui/motion';
 import Chip from './ui/Chip';
 import EmptyState from './ui/EmptyState';
+import ErrorRemoto from './ui/ErrorRemoto';
 
 const colorCategoria = {
   Institucional: 'bg-lav text-cream',
@@ -16,7 +17,7 @@ const colorCategoria = {
 };
 
 export default function Feed() {
-  const { novedades, cargando } = useNovedades();
+  const { novedades, cargando, error, recargar } = useNovedades();
   const comunidadDemo = useComunidadActual();
   const comunidadReal = useComunidadActiva();
   const comunidad = comunidadReal || comunidadDemo;
@@ -33,12 +34,15 @@ export default function Feed() {
         </Chip>
       </div>
 
-      {cargando && orden.length === 0 && (
+      {error && !cargando && orden.length === 0 && (
+        <ErrorRemoto error={error} onReintentar={recargar} />
+      )}
+      {!error && cargando && orden.length === 0 && (
         <p className="flex items-center justify-center gap-2 py-10 text-sm text-ink-faint">
           <Loader2 size={16} className="animate-spin" /> Cargando novedades…
         </p>
       )}
-      {!cargando && orden.length === 0 && (
+      {!error && !cargando && orden.length === 0 && (
         <EmptyState icon={Newspaper} title="Todavía no hay novedades publicadas" />
       )}
 

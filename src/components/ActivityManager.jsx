@@ -8,6 +8,8 @@ import { useReservasData } from '../hooks/useReservasData';
 import { ROLES_ADMIN, formatARS, nombreDias, duracionLabel } from '../data/mockData';
 import SpaceIcon, { ICONOS_ESPACIO } from './SpaceIcon';
 import DiasActivosPicker from './DiasActivosPicker';
+import ErrorRemoto from './ui/ErrorRemoto';
+import { SkeletonList } from './ui/Skeleton';
 
 const categorias = ['Deportivo', 'Cultural', 'Recreativo'];
 const colores = [
@@ -33,6 +35,9 @@ export default function ActivityManager() {
     updateActividad,
     removeActividad,
     cancelInscripcion,
+    cargando,
+    error,
+    recargar,
   } = useActividadesData();
   const { espacios } = useReservasData();
   const addToast = useNodoStore((s) => s.addToast);
@@ -120,6 +125,9 @@ export default function ActivityManager() {
           <Plus size={16} /> Nueva actividad
         </button>
       </div>
+
+      {error && actividades.length === 0 && <ErrorRemoto error={error} onReintentar={recargar} />}
+      {!error && cargando && actividades.length === 0 && <SkeletonList rows={3} />}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <AnimatePresence>

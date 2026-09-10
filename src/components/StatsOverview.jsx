@@ -6,6 +6,8 @@ import { useComunidadActiva } from '../store/useSesion';
 import { useSocios } from '../hooks/useSocios';
 import { stagger, staggerItem } from './ui/motion';
 import { formatARS, todayISO, slotsDeHorario, diaActivo } from '../data/mockData';
+import ErrorRemoto from './ui/ErrorRemoto';
+import { Skeleton } from './ui/Skeleton';
 
 const sinMovimiento =
   typeof window !== 'undefined' &&
@@ -37,7 +39,7 @@ function Contador({ valor, format = (n) => n.toLocaleString('es-AR') }) {
 }
 
 export default function StatsOverview() {
-  const { socios: members } = useSocios();
+  const { socios: members, cargando, error, recargar } = useSocios();
   const reservations = useNodoStore((s) => s.reservations);
   const espacios = useNodoStore((s) => s.espacios);
   const comunidadDemo = useComunidadActual();
@@ -89,6 +91,30 @@ export default function StatsOverview() {
       tint: 'text-warn bg-sun-soft',
     },
   ];
+
+  if (error && members.length === 0) {
+    return (
+      <section className="mx-auto max-w-7xl px-4 sm:px-6">
+        <ErrorRemoto
+          error={error}
+          onReintentar={recargar}
+          titulo="No pudimos cargar las métricas"
+        />
+      </section>
+    );
+  }
+
+  if (cargando && members.length === 0) {
+    return (
+      <section className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-28 rounded-2xl" />
+          ))}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6">

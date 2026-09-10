@@ -6,11 +6,22 @@ import { useSesion } from '../store/useSesion';
 import { useActividadesData } from '../hooks/useActividadesData';
 import { formatARS, nombreDias, duracionLabel } from '../data/mockData';
 import SpaceIcon from './SpaceIcon';
+import EmptyState from './ui/EmptyState';
+import ErrorRemoto from './ui/ErrorRemoto';
+import { SkeletonList } from './ui/Skeleton';
 
 const categorias = ['Todos', 'Deportivo', 'Cultural', 'Recreativo'];
 
 export default function ActivitiesPanel() {
-  const { actividades, inscripciones, addInscripcion, cancelInscripcion } = useActividadesData();
+  const {
+    actividades,
+    inscripciones,
+    addInscripcion,
+    cancelInscripcion,
+    cargando,
+    error,
+    recargar,
+  } = useActividadesData();
   const socioDemo = useNodoStore((s) => s.members.find((m) => m.id === s.socioActualId));
   const miSocio = useSesion((s) => s.miSocio);
   const sesionActiva = useSesion((s) => s.estado) === 'activo';
@@ -65,6 +76,12 @@ export default function ActivitiesPanel() {
             </button>
           ))}
         </div>
+
+        {error && actividades.length === 0 && <ErrorRemoto error={error} onReintentar={recargar} />}
+        {!error && cargando && actividades.length === 0 && <SkeletonList rows={3} />}
+        {!error && !cargando && actividades.length === 0 && (
+          <EmptyState icon={Sparkles} title="Todavía no hay talleres publicados" />
+        )}
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <AnimatePresence>
