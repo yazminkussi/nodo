@@ -15,6 +15,14 @@ import Field from './ui/Field';
 
 const iniciales = (nombre, apellido) => `${nombre.charAt(0)}${apellido.charAt(0)}`.toUpperCase();
 
+// La cuota es mensual: con la cuota al día el carnet rige hasta el último día del mes.
+const finDeMesISO = () => {
+  const hoy = new Date();
+  const ultimo = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
+  const mm = String(ultimo.getMonth() + 1).padStart(2, '0');
+  return `${ultimo.getFullYear()}-${mm}-${String(ultimo.getDate()).padStart(2, '0')}`;
+};
+
 export default function DigitalCard() {
   const estado = useSesion((s) => s.estado);
   const miSocio = useSesion((s) => s.miSocio);
@@ -235,9 +243,11 @@ export default function DigitalCard() {
                   {socio.localidad}
                 </Chip>
               )}
-              <Chip tono="paper" icon={CalendarClock}>
-                Válido hasta {formatFechaLarga('2026-08-31')}
-              </Chip>
+              {socio.cuotaAlDia && (
+                <Chip tono="paper" icon={CalendarClock}>
+                  Válido hasta {formatFechaLarga(finDeMesISO())}
+                </Chip>
+              )}
             </div>
 
             {proxima && (
