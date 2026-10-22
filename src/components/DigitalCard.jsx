@@ -275,7 +275,7 @@ export default function DigitalCard() {
               }}
               transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
             >
-              <QrSvg value={qrPayload || `NODO|v1|pending`} size={132} />
+              <QrSvg value={qrPayload || `NODO|v1|pending`} size={176} />
             </motion.div>
             <p className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-widest text-cream/50">
               {qrPayload ? (

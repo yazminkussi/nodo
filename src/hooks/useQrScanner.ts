@@ -23,12 +23,20 @@ function cargarModulo(): Promise<Html5QrcodeCtor> {
 }
 
 const configBasica = {
-  fps: 10,
+  fps: 15,
   qrbox: (w: number, h: number) => {
-    const lado = Math.floor(Math.min(w, h) * 0.7);
+    const lado = Math.floor(Math.min(w, h) * 0.85);
     return { width: lado, height: lado };
   },
 };
+
+// Sin esto el celular entrega video de baja resolución y un QR denso mostrado en otra
+// pantalla no se llega a leer.
+const videoConstraints = (facing: Facing): MediaTrackConstraints => ({
+  facingMode: { ideal: facing === 'environment' ? 'environment' : 'user' },
+  width: { ideal: 1280 },
+  height: { ideal: 720 },
+});
 
 function normalizarError(err: unknown): string {
   const msg = (err as { message?: string } | null)?.message || String(err || '');
@@ -108,7 +116,7 @@ export function useQrScanner(elementId: string) {
 
         await scanner.start(
           { facingMode: facing === 'environment' ? 'environment' : 'user' },
-          configBasica,
+          { ...configBasica, videoConstraints: videoConstraints(facing) },
           (texto: string) => {
             if (detenidoRef.current || !onResultRef.current) return;
             onResultRef.current(texto);

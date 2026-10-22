@@ -69,7 +69,8 @@ function QrCanvas({
     if (!canvas || !value) return undefined;
 
     QRCode.toCanvas(canvas, value, {
-      errorCorrectionLevel: 'H',
+      // 'M' (no 'H'): con el payload firmado, 'H' llega a 85x85 módulos y el celular no lo lee.
+      errorCorrectionLevel: 'M',
       margin: logo ? 1 : 2,
       width: size,
       color: { dark: color, light: bg },
