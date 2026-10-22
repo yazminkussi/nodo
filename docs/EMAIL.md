@@ -69,7 +69,7 @@ Si no fuiste vos, no hace falta que hagas nada.
 ```
 
 En **Authentication → URL Configuration** poné como _Site URL_ la de producción
-(`https://nodo-yazminkussi-8286s-projects.vercel.app`) para que los enlaces
+(`https://nodo-wheat.vercel.app`) para que los enlaces
 apunten bien.
 
 ## 2. Email de invitación (Edge Function)
