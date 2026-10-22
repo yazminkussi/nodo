@@ -9,15 +9,20 @@ documento describe la amenaza y cómo se mitiga.
 ## Formato del QR
 
 ```
-NODO|v1|<data-base64url>|<firma>
-data = { memberId, communityId, qrToken, ts }   (JSON)
-firma = HMAC-SHA256(data-base64url, SECRETO)
+NODO|2|<memberId>|<communityId>|<qrToken>|<ts en base36>|<firma>
+firma = primeros 16 bytes de HMAC-SHA256("2|" + los cuatro campos), en base64url
 ```
 
 - `ts` marca cuándo se generó → un código vale **15 minutos** (TTL).
 - `qrToken` es un nonce aleatorio por generación.
 - La firma autentica el contenido: sin el secreto no se puede producir una
-  firma válida.
+  firma válida. 128 bits alcanzan con una ventana de 15 minutos.
+- **Por qué compacto:** el formato anterior (`v1`, JSON en base64url + HMAC en
+  hex) tenía ~250 caracteres y daba un QR de 85×85 módulos, ilegible para la
+  cámara de un celular apuntando a otra pantalla. El `v2` ronda los 125
+  caracteres (49×49 módulos con corrección de errores M).
+- `verificar-carnet` sigue aceptando `v1` mientras queden QR vigentes; el modo
+  demo (`src/utils/qrPayload.js`) conserva el `v1` local.
 
 ## La amenaza
 

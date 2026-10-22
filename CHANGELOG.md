@@ -39,6 +39,12 @@ y el proyecto usa [versionado semántico](https://semver.org/lang/es/).
 - Selector de comunidad en la app real para quien tiene más de una membresía.
 - El rol de administración en la UI ahora sale de la membresía real
   (`useAdminRol`); el selector local queda sólo para el modo demo.
+- QR del carnet legible desde el celular: formato compacto `v2` (de ~250 a ~125
+  caracteres, 49×49 módulos), corrección de errores M, tamaño mayor y lector
+  con video 1280×720. Las Edge Functions aceptan `v1` y `v2`.
+- Lector de QR compatible con iOS Safari: ya no abre un segundo stream de
+  cámara (dejaba el video en gris).
+- Carnet: "Válido hasta" muestra el fin del mes en curso en vez de una fecha fija.
 - Nonce de un solo uso para el carnet QR (migración 0012): un QR ya escaneado
   no se puede volver a usar dentro de su ventana de validez.
 - Cuotas con historial de pagos (migración 0011): tabla `pagos` + RPC

@@ -11,7 +11,6 @@
 
 import { createClient } from 'jsr:@supabase/supabase-js@2';
 
-const VERSION = 'v1';
 const TTL_MIN = 15;
 const enc = new TextEncoder();
 
@@ -36,13 +35,7 @@ function b64url(bytes: Uint8Array): string {
   return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
-function hex(bytes: Uint8Array): string {
-  return Array.from(bytes)
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
-}
-
-async function hmacHex(secret: string, msg: string): Promise<string> {
+async function hmacBytes(secret: string, msg: string): Promise<Uint8Array> {
   const key = await crypto.subtle.importKey(
     'raw',
     enc.encode(secret),
@@ -50,23 +43,27 @@ async function hmacHex(secret: string, msg: string): Promise<string> {
     false,
     ['sign']
   );
-  const sig = await crypto.subtle.sign('HMAC', key, enc.encode(msg));
-  return hex(new Uint8Array(sig));
+  return new Uint8Array(await crypto.subtle.sign('HMAC', key, enc.encode(msg)));
 }
 
+/* Formato v2 (compacto, para que el QR sea chico y legible desde el celular):
+     NODO|2|<memberId>|<communityId>|<qrToken>|<ts en base36>|<firma>
+   firma = primeros 16 bytes de HMAC-SHA256("2|" + <los cuatro campos>), en base64url.
+   Con el TTL de 15 min, 128 bits de firma son más que suficientes. */
 async function firmarCarnet(
   secret: string,
   payload: { memberId: string | number; communityId: string }
 ): Promise<string> {
-  const data = {
-    memberId: payload.memberId,
-    communityId: payload.communityId,
-    qrToken: b64url(crypto.getRandomValues(new Uint8Array(8))),
-    ts: Date.now(),
-  };
-  const dataB64 = b64url(enc.encode(JSON.stringify(data)));
-  const sig = await hmacHex(secret, dataB64);
-  return `NODO|${VERSION}|${dataB64}|${sig}`;
+  const memberId = String(payload.memberId);
+  const communityId = String(payload.communityId);
+  if (memberId.includes('|') || communityId.includes('|')) {
+    throw new Error('Identificador inválido');
+  }
+  const qrToken = b64url(crypto.getRandomValues(new Uint8Array(8)));
+  const ts = Date.now().toString(36);
+  const cuerpo = `${memberId}|${communityId}|${qrToken}|${ts}`;
+  const sig = b64url((await hmacBytes(secret, `2|${cuerpo}`)).slice(0, 16));
+  return `NODO|2|${cuerpo}|${sig}`;
 }
 
 Deno.serve(async (req) => {
