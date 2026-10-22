@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Download, WifiOff, Building2, ChevronDown, LogOut, UserCircle2 } from 'lucide-react';
 import RoleToggle from './RoleToggle';
+import { useVista } from '../hooks/useVista';
 import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
 import { useSesion, useComunidadActiva } from '../store/useSesion';
 import NodoMark from './ui/NodoMark';
@@ -382,6 +383,7 @@ export function CuentaMenu() {
 }
 
 export function Header() {
+  const { puedeCambiar: puedeCambiarVista } = useVista();
   return (
     <header className="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-lav-deep/95 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 sm:px-6">
@@ -398,7 +400,7 @@ export function Header() {
 
         <div className="ml-auto flex shrink-0 items-center gap-2">
           <PWAInstallButton />
-          <RoleToggle />
+          {puedeCambiarVista && <RoleToggle />}
           <CuentaMenu />
         </div>
       </div>

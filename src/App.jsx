@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
-import { useNodoStore } from './store/useNodoStore';
+import { useVista } from './hooks/useVista';
 import { useSesion } from './store/useSesion';
 import LoginScreen from './components/auth/LoginScreen';
 import Toasts from './components/Toast';
@@ -28,7 +28,7 @@ function PantallaCarga({ oscura = false }) {
 const SinInstitucion = lazy(() => import('./components/onboarding/SinInstitucion'));
 
 export default function App() {
-  const role = useNodoStore((s) => s.role);
+  const { vista: role } = useVista();
   const estado = useSesion((s) => s.estado);
   const cargandoContexto = useSesion((s) => s.cargandoContexto);
   const sinInstitucion = useSesion((s) => s.membresias.length === 0);

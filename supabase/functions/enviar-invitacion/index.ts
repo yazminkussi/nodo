@@ -121,8 +121,7 @@ Deno.serve(async (req) => {
     .eq('id', inv.comunidad_id)
     .maybeSingle();
 
-  const appUrl =
-    Deno.env.get('NODO_APP_URL') ?? 'https://nodo-yazminkussi-8286s-projects.vercel.app';
+  const appUrl = Deno.env.get('NODO_APP_URL') ?? 'https://nodo-wheat.vercel.app';
   const from = Deno.env.get('NODO_EMAIL_FROM') ?? 'NODO <onboarding@resend.dev>';
   const club = comunidad?.nombre ?? 'tu club';
   const rolLindo = ROLES[inv.rol] ?? inv.rol;
