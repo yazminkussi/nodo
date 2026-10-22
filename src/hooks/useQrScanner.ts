@@ -123,15 +123,15 @@ export function useQrScanner(elementId: string) {
 
         setEstado('escaneando');
 
-        try {
-          Html5Qrcode.getCameras()
-            .then((camaras) => {
-              setNCamaras(camaras?.length || 0);
-            })
-            .catch(() => setNCamaras(0));
-        } catch {
-          setNCamaras(0);
-        }
+        // Se cuentan las cámaras con enumerateDevices (el permiso ya está dado). No usar
+        // Html5Qrcode.getCameras(): abre y cierra un segundo stream, y en iOS Safari
+        // eso apaga el video que acabamos de iniciar (queda gris).
+        navigator.mediaDevices
+          .enumerateDevices()
+          .then((dispositivos) =>
+            setNCamaras(dispositivos.filter((d) => d.kind === 'videoinput').length)
+          )
+          .catch(() => setNCamaras(0));
 
         // Sólo se consultan las capacidades de la cámara: probar la linterna con
         // applyVideoConstraints puede dejar el video en gris en iOS Safari.
@@ -159,21 +159,13 @@ export function useQrScanner(elementId: string) {
     [elementId, detener]
   );
 
+  // Se reinicia el lector con la otra cámara: cambiar facingMode en caliente con
+  // applyVideoConstraints no es confiable en iOS.
   const alternarCamara = useCallback(async () => {
-    const scanner = scannerRef.current;
-    const siguienteFrontal = !camaraFrontal;
-    if (!scanner || !scanner.isScanning) return;
-    try {
-      await scanner.applyVideoConstraints({
-        facingMode: siguienteFrontal ? 'user' : 'environment',
-        advanced: [{ torch: linternaEncendida }],
-      } as unknown as MediaTrackConstraints);
-      setCamaraFrontal(siguienteFrontal);
-      setLinternaEncendida(false);
-    } catch {
-      /* constraint no soportada en este dispositivo */
-    }
-  }, [camaraFrontal, linternaEncendida]);
+    const onResult = onResultRef.current;
+    if (!scannerRef.current?.isScanning || !onResult) return;
+    await iniciar(onResult, camaraFrontal ? 'environment' : 'user');
+  }, [camaraFrontal, iniciar]);
 
   const alternarLinterna = useCallback(async () => {
     const scanner = scannerRef.current;
