@@ -47,18 +47,6 @@ function hex(bytes: Uint8Array): string {
     .join('');
 }
 
-async function hmacHex(secret: string, msg: string): Promise<string> {
-  const key = await crypto.subtle.importKey(
-    'raw',
-    enc.encode(secret),
-    { name: 'HMAC', hash: 'SHA-256' },
-    false,
-    ['sign']
-  );
-  const sig = await crypto.subtle.sign('HMAC', key, enc.encode(msg));
-  return hex(new Uint8Array(sig));
-}
-
 /** Comparación en tiempo constante (evita timing attacks sobre la firma). */
 function igualdadSegura(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
@@ -74,31 +62,71 @@ type Verificacion =
     }
   | { ok: false; error: string; expirado?: boolean };
 
-async function verificarCarnet(secret: string, raw: string): Promise<Verificacion> {
-  const partes = String(raw || '')
-    .trim()
-    .split('|');
-  if (partes.length !== 4 || partes[0] !== 'NODO' || partes[1] !== VERSION) {
-    return { ok: false, error: 'Formato no reconocido' };
-  }
-  const [, , dataB64, sig] = partes;
+async function hmacBytes(secret: string, msg: string): Promise<Uint8Array> {
+  const key = await crypto.subtle.importKey(
+    'raw',
+    enc.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  return new Uint8Array(await crypto.subtle.sign('HMAC', key, enc.encode(msg)));
+}
 
-  const esperada = await hmacHex(secret, dataB64);
-  if (!igualdadSegura(esperada, sig)) return { ok: false, error: 'Firma inválida' };
+function b64url(bytes: Uint8Array): string {
+  let bin = '';
+  bytes.forEach((b) => {
+    bin += String.fromCharCode(b);
+  });
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
 
-  let data: { memberId: string | number; communityId: string; ts: number; qrToken: string };
-  try {
-    data = JSON.parse(new TextDecoder().decode(unb64url(dataB64)));
-  } catch {
-    return { ok: false, error: 'Contenido ilegible' };
-  }
+type DatosCarnet = { memberId: string | number; communityId: string; ts: number; qrToken: string };
 
+/** Valida vencimiento y completitud. Compartido por los dos formatos. */
+function validarDatos(data: DatosCarnet): Verificacion {
   const edadMs = Date.now() - data.ts;
   if (!(edadMs >= 0) || edadMs > TTL_MIN * 60 * 1000) {
     return { ok: false, error: 'Código vencido', expirado: true };
   }
   if (!data.memberId || !data.communityId) return { ok: false, error: 'Datos incompletos' };
   return { ok: true, data };
+}
+
+async function verificarCarnet(secret: string, raw: string): Promise<Verificacion> {
+  const partes = String(raw || '')
+    .trim()
+    .split('|');
+  if (partes[0] !== 'NODO') return { ok: false, error: 'Formato no reconocido' };
+
+  // v2 (compacto): NODO|2|<memberId>|<communityId>|<qrToken>|<ts base36>|<firma>
+  if (partes[1] === '2' && partes.length === 7) {
+    const [, , memberId, communityId, qrToken, tsB36, sig] = partes;
+    const esperada = b64url(
+      (await hmacBytes(secret, `2|${[memberId, communityId, qrToken, tsB36].join('|')}`)).slice(
+        0,
+        16
+      )
+    );
+    if (!igualdadSegura(esperada, sig)) return { ok: false, error: 'Firma inválida' };
+    return validarDatos({ memberId, communityId, qrToken, ts: parseInt(tsB36, 36) });
+  }
+
+  // v1 (anterior, JSON en base64url). Se acepta mientras queden QR vigentes (15 min).
+  if (partes[1] === VERSION && partes.length === 4) {
+    const [, , dataB64, sig] = partes;
+    const esperada = hex(await hmacBytes(secret, dataB64));
+    if (!igualdadSegura(esperada, sig)) return { ok: false, error: 'Firma inválida' };
+    let data: DatosCarnet;
+    try {
+      data = JSON.parse(new TextDecoder().decode(unb64url(dataB64)));
+    } catch {
+      return { ok: false, error: 'Contenido ilegible' };
+    }
+    return validarDatos(data);
+  }
+
+  return { ok: false, error: 'Formato no reconocido' };
 }
 
 const hoyISO = () => new Date().toISOString().slice(0, 10);
