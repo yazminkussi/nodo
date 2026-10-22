@@ -28,7 +28,6 @@ const configBasica = {
     const lado = Math.floor(Math.min(w, h) * 0.7);
     return { width: lado, height: lado };
   },
-  aspectRatio: 1.0,
 };
 
 function normalizarError(err: unknown): string {
@@ -134,11 +133,13 @@ export function useQrScanner(elementId: string) {
           setNCamaras(0);
         }
 
+        // Sólo se consultan las capacidades de la cámara: probar la linterna con
+        // applyVideoConstraints puede dejar el video en gris en iOS Safari.
         try {
-          await scanner.applyVideoConstraints({
-            advanced: [{ torch: false }],
-          } as unknown as MediaTrackConstraints);
-          setLinternaDisponible(true);
+          const caps = scanner.getRunningTrackCapabilities() as MediaTrackCapabilities & {
+            torch?: boolean;
+          };
+          setLinternaDisponible(Boolean(caps.torch));
         } catch {
           setLinternaDisponible(false);
         }
