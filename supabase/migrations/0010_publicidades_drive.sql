@@ -108,6 +108,7 @@ from (
     ('Panadería El Trigal', 'Gastronomía', '10% OFF', '10% en panificados artesanales de lunes a viernes.', '#F59E0B', 'Villa Crespo', false),
     ('Barbería Corte Noble', 'Estética', '20% OFF', 'Servicio completo con descuento para socios activos.', '#1E293B', 'Boedo', false)
 ) as v(negocio, rubro, descuento, descripcion, color, barrio, destacada)
-where not exists (select 1 from public.publicidades where comunidad_id = 'la-union');
+where exists (select 1 from public.comunidades where id = 'la-union')
+  and not exists (select 1 from public.publicidades where comunidad_id = 'la-union');
 
 notify pgrst, 'reload schema';

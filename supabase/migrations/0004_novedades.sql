@@ -60,6 +60,7 @@ from (
      'Este sábado el club abre sus puertas a la Feria de Comercios del barrio. 20 locales con descuentos exclusivos para socios. Entrada libre con carnet digital.',
      'Comunidad', '🛍️', false)
 ) as v(comunidad_id, titulo, contenido, categoria, emoji, destacada)
-where not exists (select 1 from public.novedades where comunidad_id = 'la-union');
+where exists (select 1 from public.comunidades where id = 'la-union')
+  and not exists (select 1 from public.novedades where comunidad_id = 'la-union');
 
 notify pgrst, 'reload schema';
