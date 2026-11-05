@@ -108,6 +108,7 @@ from (
     ('Parrilla y Quincho', 'Quincho techado con parrilla, mesadas y heladera.', 25, 10000, 'parrilla', '#C56A46', 'Recreativo', '{"apertura":"09:00","cierre":"22:00","duracionTurno":3,"dias":[5,6,0]}'),
     ('Aula de Talleres', 'Aula equipada con tablero, proyector y bancos.', 20, 7000, 'aula', '#5E52C4', 'Cultural', '{"apertura":"09:00","cierre":"22:00","duracionTurno":1,"dias":[1,2,3,4,5,6]}')
 ) as v(nombre, descripcion, capacidad, precio_hora, icono, color, categoria, horario)
-where not exists (select 1 from public.espacios where comunidad_id = 'la-union');
+where exists (select 1 from public.comunidades where id = 'la-union')
+  and not exists (select 1 from public.espacios where comunidad_id = 'la-union');
 
 notify pgrst, 'reload schema';

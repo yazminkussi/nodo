@@ -147,6 +147,7 @@ from (
     ('Natación infantil', 'Escuelita de natación para menores de 12 años.', 'Deportivo', 'Ramiro Vega', 25, '[2,4,6]', '16:00', 1, 7000, '#06B6D4', 'pileta'),
     ('Pádel recreativo', 'Clínicas mensuales y torneos de parejas mixtas.', 'Deportivo', 'Diego Correa', 16, '[1,5]', '20:00', 1.5, 6500, '#0EA5E9', 'padel')
 ) as v(nombre, descripcion, categoria, instructor, cupo_maximo, dias, inicio, duracion, costo_mensual, color, icono)
-where not exists (select 1 from public.actividades where comunidad_id = 'la-union');
+where exists (select 1 from public.comunidades where id = 'la-union')
+  and not exists (select 1 from public.actividades where comunidad_id = 'la-union');
 
 notify pgrst, 'reload schema';
