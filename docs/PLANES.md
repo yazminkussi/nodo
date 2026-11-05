@@ -35,8 +35,10 @@ eventos y torneos como **"Próximamente"** (todavía no existen en la app).
 ## Cambiar de plan (versión de entrega: sin cobro)
 
 En "Planes NODO" el superadmin toca **Mejorar / Cambiar a este plan** y se aplica
-al instante (RPC `cambiar_plan`). No cobra nada. Si el club tiene más socios,
-espacios o publicidades de los que entran en el plan nuevo, no deja bajar.
+al instante (RPC `cambiar_plan`, migración 0015). No cobra nada. Se puede subir y
+bajar libremente: si el club tiene más socios, espacios o publicidades de los que
+entran en el plan nuevo, **conserva lo que ya tiene** y sólo se bloquean las altas
+nuevas por encima del tope.
 
 > Cuando exista el cobro online, `cambiar_plan` pasa a ser interna (la llamará el
 > webhook de pago) y se le quita el permiso a `authenticated`.
@@ -53,4 +55,3 @@ update public.comunidades set plan_id = 'plan-250' where id = 'slug-del-club';
 - Cobro online (Mercado Pago / Stripe) y cambio de plan automático.
 - Bloqueo en la base de las funciones por plan (hoy es sólo de interfaz).
 - Multisede, integración con facturación y eventos y torneos (Plan 400+).
-- Un club que baja de plan conserva lo que ya tiene si cabe; sólo se bloquean altas nuevas.
