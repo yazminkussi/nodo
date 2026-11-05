@@ -5,7 +5,6 @@ import { useSesion } from '../../store/useSesion';
 import { useNodoStore } from '../../store/useNodoStore';
 import { crearComunidad } from '../../lib/api/onboarding';
 import { vincularSocioPorDatos } from '../../lib/api/socios';
-import { planesB2B } from '../../data/mockData';
 import NodoMark from '../ui/NodoMark';
 import Field from '../ui/Field';
 import Button from '../ui/Button';
@@ -98,7 +97,6 @@ function FormClub() {
     tipo: TIPOS[0],
     ciudad: '',
     barrio: '',
-    plan: planesB2B[0].nombre,
   });
   const [error, setError] = useState('');
   const [cargando, setCargando] = useState(false);
@@ -151,19 +149,6 @@ function FormClub() {
         />
         <Field label="Barrio" placeholder="Barrio" value={form.barrio} onChange={set('barrio')} />
       </div>
-      <label className="block">
-        <span className="mb-1 block text-xs font-bold text-ink-soft">Plan</span>
-        <select className={campoSelect} value={form.plan} onChange={set('plan')}>
-          {planesB2B.map((p) => (
-            <option key={p.id} value={p.nombre}>
-              {p.nombre} · {p.socios}
-            </option>
-          ))}
-        </select>
-        <span className="mt-1 block text-xs text-ink-faint">
-          Podés cambiarlo después desde Personalización.
-        </span>
-      </label>
       {error && (
         <p className="rounded-lg bg-crit-soft px-3 py-2 text-xs font-semibold text-crit">{error}</p>
       )}

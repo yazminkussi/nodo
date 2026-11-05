@@ -9,10 +9,18 @@ import {
   AlertCircle,
   FileSpreadsheet,
   Link2,
+  Lock,
 } from 'lucide-react';
 import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
 import { useComunidadActiva } from '../store/useSesion';
 import { useSocios } from '../hooks/useSocios';
+import { useMediaQuery } from '../hooks/useMediaQuery';
+import {
+  usePlan,
+  irAPlanes,
+  mensajeFuncionBloqueada,
+  mensajeTopeAlcanzado,
+} from '../hooks/usePlan';
 import { vincularSocioACuenta } from '../lib/api/socios';
 import { StatusBadge } from './StatusBadge';
 import { formatARS } from '../data/mockData';
@@ -53,6 +61,8 @@ export default function MemberTable() {
   const comunidadDemo = useComunidadActual();
   const comunidadReal = useComunidadActiva();
   const comunidad = comunidadReal || comunidadDemo;
+  const { plan, puede, alcanzoTope } = usePlan();
+  const esPantallaAncha = useMediaQuery('(min-width: 768px)');
 
   const [busqueda, setBusqueda] = useState('');
   const [filtro, setFiltro] = useState('todos');
@@ -119,6 +129,11 @@ export default function MemberTable() {
       addToast('El alta de socios se habilita con la cuenta conectada a Supabase.', 'info');
       return;
     }
+    if (alcanzoTope('socios', members.length)) {
+      addToast(mensajeTopeAlcanzado('socios', plan), 'error');
+      irAPlanes();
+      return;
+    }
     setEnEdicion(null);
     setFormAbierto(true);
   };
@@ -153,6 +168,76 @@ export default function MemberTable() {
       setVinculando(false);
     }
   };
+
+  const avisoRecordatorios = () => {
+    addToast(mensajeFuncionBloqueada('recordatorios', 'Los recordatorios por WhatsApp'), 'info');
+    irAPlanes();
+  };
+
+  const acciones = (m) => (
+    <div className="flex items-center justify-end gap-1.5">
+      {modo === 'demo' && (
+        <button
+          onClick={() => verCarnet(m)}
+          title="Ver carnet digital"
+          className="rounded-lg p-2 text-lav transition hover:bg-lav-soft"
+        >
+          <Eye size={16} />
+        </button>
+      )}
+      {modo === 'remoto' && !m.perfilId && (
+        <button
+          onClick={() => {
+            setAVincular(m);
+            setEmailVinc(m.email || '');
+          }}
+          title="Vincular a una cuenta"
+          className="rounded-lg p-2 text-ink-faint transition hover:bg-sand hover:text-ink"
+        >
+          <Link2 size={16} />
+        </button>
+      )}
+      {!m.cuotaAlDia &&
+        (puede('recordatorios') ? (
+          <a
+            href={waLink(m, comunidad.nombre)}
+            target="_blank"
+            rel="noreferrer"
+            title="Recordatorio por WhatsApp"
+            aria-label="Recordatorio por WhatsApp"
+            className="rounded-lg p-2 text-ok transition hover:bg-ok-soft"
+          >
+            <MessageCircle size={16} />
+          </a>
+        ) : (
+          <button
+            onClick={avisoRecordatorios}
+            title="Recordatorios por WhatsApp: plan superior"
+            aria-label="Recordatorios por WhatsApp: plan superior"
+            className="rounded-lg p-2 text-ink-faint transition hover:bg-sand"
+          >
+            <Lock size={16} />
+          </button>
+        ))}
+      {!m.cuotaAlDia ? (
+        <button
+          onClick={() => marcarPago(m)}
+          title="Registrar pago de cuota"
+          className="rounded-lg p-2 text-ok transition hover:bg-ok-soft"
+        >
+          <RefreshCcw size={16} />
+        </button>
+      ) : (
+        <button
+          onClick={() => cambiarEstado(m)}
+          title="Marcar como adeuda"
+          className="rounded-lg p-2 text-warn transition hover:bg-sun-soft"
+        >
+          <RefreshCcw size={16} />
+        </button>
+      )}
+    </div>
+  );
 
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -219,121 +304,112 @@ export default function MemberTable() {
         <SkeletonList rows={5} />
       ) : (
         <div className="overflow-hidden rounded-2xl border border-line bg-cloud shadow-card">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[760px] text-left text-sm">
-              <thead>
-                <tr className="border-b border-line bg-paper text-[11px] font-bold uppercase tracking-wider text-ink-faint">
-                  <th className="px-4 py-3">Socio</th>
-                  <th className="px-4 py-3">N° Socio</th>
-                  <th className="px-4 py-3">Categoría</th>
-                  <th className="px-4 py-3">Última cuota</th>
-                  <th className="px-4 py-3">Cuota</th>
-                  <th className="px-4 py-3">Estado</th>
-                  <th className="px-4 py-3 text-right">Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                <AnimatePresence>
-                  {filtrados.map((m) => (
-                    <motion.tr
-                      key={m.id}
-                      layout
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="border-b border-line last:border-0 hover:bg-paper"
+          {!esPantallaAncha && (
+            <ul className="divide-y divide-line">
+              {filtrados.map((m) => (
+                <li key={m.id} className="space-y-3 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <button
+                      onClick={() => modo === 'remoto' && abrirEdicion(m)}
+                      className="flex min-w-0 items-center gap-3 text-left"
                     >
-                      <td className="px-4 py-3">
-                        <button
-                          onClick={() => modo === 'remoto' && abrirEdicion(m)}
-                          className="flex items-center gap-3 text-left"
-                        >
-                          <div
-                            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-display text-xs font-bold text-white"
-                            style={{ background: m.color }}
+                      <span
+                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full font-display text-xs font-bold text-white"
+                        style={{ background: m.color }}
+                      >
+                        {iniciales(m.nombre, m.apellido)}
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block truncate font-bold text-ink">
+                          {m.nombre} {m.apellido}
+                        </span>
+                        <span className="block truncate text-[11px] text-ink-faint">
+                          N° {m.numero} · {m.categoria}
+                          {m.localidad ? ` · ${m.localidad}` : ''}
+                        </span>
+                      </span>
+                    </button>
+                    <span className="shrink-0 [&>*]:whitespace-nowrap">
+                      <StatusBadge estado={m.cuotaAlDia ? 'alDia' : 'moroso'} />
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-xs text-ink-soft">
+                      <span className="font-bold tabular-nums">{formatARS(m.plan)}</span>
+                      <span className="text-ink-faint"> · Última cuota {m.ultimaCuota || '—'}</span>
+                    </p>
+                    {acciones(m)}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {esPantallaAncha && (
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[760px] text-left text-sm">
+                <thead>
+                  <tr className="border-b border-line bg-paper text-[11px] font-bold uppercase tracking-wider text-ink-faint">
+                    <th className="px-4 py-3">Socio</th>
+                    <th className="px-4 py-3">N° Socio</th>
+                    <th className="px-4 py-3">Categoría</th>
+                    <th className="px-4 py-3">Última cuota</th>
+                    <th className="px-4 py-3">Cuota</th>
+                    <th className="px-4 py-3">Estado</th>
+                    <th className="px-4 py-3 text-right">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <AnimatePresence>
+                    {filtrados.map((m) => (
+                      <motion.tr
+                        key={m.id}
+                        layout
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="border-b border-line last:border-0 hover:bg-paper"
+                      >
+                        <td className="px-4 py-3">
+                          <button
+                            onClick={() => modo === 'remoto' && abrirEdicion(m)}
+                            className="flex items-center gap-3 text-left"
                           >
-                            {iniciales(m.nombre, m.apellido)}
-                          </div>
-                          <div>
-                            <p className="font-bold text-ink">
-                              {m.nombre} {m.apellido}
-                            </p>
-                            <p className="text-[11px] text-ink-faint">{m.localidad}</p>
-                          </div>
-                        </button>
-                      </td>
-                      <td className="px-4 py-3 text-xs font-bold tabular-nums text-ink-soft">
-                        N° {m.numero}
-                      </td>
-                      <td className="px-4 py-3 text-xs font-semibold text-ink-soft">
-                        {m.categoria}
-                      </td>
-                      <td className="px-4 py-3 text-xs text-ink-soft">{m.ultimaCuota || '—'}</td>
-                      <td className="px-4 py-3 text-xs font-bold tabular-nums text-ink-soft">
-                        {formatARS(m.plan)}
-                      </td>
-                      <td className="px-4 py-3">
-                        <StatusBadge estado={m.cuotaAlDia ? 'alDia' : 'moroso'} />
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center justify-end gap-1.5">
-                          {modo === 'demo' && (
-                            <button
-                              onClick={() => verCarnet(m)}
-                              title="Ver carnet digital"
-                              className="rounded-lg p-2 text-lav transition hover:bg-lav-soft"
+                            <div
+                              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-display text-xs font-bold text-white"
+                              style={{ background: m.color }}
                             >
-                              <Eye size={16} />
-                            </button>
-                          )}
-                          {modo === 'remoto' && !m.perfilId && (
-                            <button
-                              onClick={() => {
-                                setAVincular(m);
-                                setEmailVinc(m.email || '');
-                              }}
-                              title="Vincular a una cuenta"
-                              className="rounded-lg p-2 text-ink-faint transition hover:bg-sand hover:text-ink"
-                            >
-                              <Link2 size={16} />
-                            </button>
-                          )}
-                          {!m.cuotaAlDia && (
-                            <a
-                              href={waLink(m, comunidad.nombre)}
-                              target="_blank"
-                              rel="noreferrer"
-                              title="Recordatorio por WhatsApp"
-                              className="rounded-lg p-2 text-ok transition hover:bg-ok-soft"
-                            >
-                              <MessageCircle size={16} />
-                            </a>
-                          )}
-                          {!m.cuotaAlDia ? (
-                            <button
-                              onClick={() => marcarPago(m)}
-                              title="Registrar pago de cuota"
-                              className="rounded-lg p-2 text-ok transition hover:bg-ok-soft"
-                            >
-                              <RefreshCcw size={16} />
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => cambiarEstado(m)}
-                              title="Marcar como adeuda"
-                              className="rounded-lg p-2 text-warn transition hover:bg-sun-soft"
-                            >
-                              <RefreshCcw size={16} />
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                    </motion.tr>
-                  ))}
-                </AnimatePresence>
-              </tbody>
-            </table>
-          </div>
+                              {iniciales(m.nombre, m.apellido)}
+                            </div>
+                            <div>
+                              <p className="font-bold text-ink">
+                                {m.nombre} {m.apellido}
+                              </p>
+                              <p className="text-[11px] text-ink-faint">{m.localidad}</p>
+                            </div>
+                          </button>
+                        </td>
+                        <td className="px-4 py-3 text-xs font-bold tabular-nums text-ink-soft">
+                          N° {m.numero}
+                        </td>
+                        <td className="px-4 py-3 text-xs font-semibold text-ink-soft">
+                          {m.categoria}
+                        </td>
+                        <td className="px-4 py-3 text-xs text-ink-soft">{m.ultimaCuota || '—'}</td>
+                        <td className="px-4 py-3 text-xs font-bold tabular-nums text-ink-soft">
+                          {formatARS(m.plan)}
+                        </td>
+                        <td className="px-4 py-3">
+                          <StatusBadge estado={m.cuotaAlDia ? 'alDia' : 'moroso'} />
+                        </td>
+                        <td className="px-4 py-3">{acciones(m)}</td>
+                      </motion.tr>
+                    ))}
+                  </AnimatePresence>
+                </tbody>
+              </table>
+            </div>
+          )}
 
           {!cargando && filtrados.length === 0 && (
             <p className="px-4 py-10 text-center text-sm text-ink-faint">

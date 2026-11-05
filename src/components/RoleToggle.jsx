@@ -25,7 +25,9 @@ export default function RoleToggle() {
             role="tab"
             aria-selected={activo}
             onClick={() => setRole(key)}
-            className={`relative z-10 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors sm:px-4 sm:text-sm ${
+            aria-label={label}
+            title={label}
+            className={`relative z-10 flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold transition-colors sm:px-4 sm:text-sm ${
               activo ? 'text-ink' : 'text-cream/60 hover:text-cream'
             }`}
           >
@@ -38,7 +40,6 @@ export default function RoleToggle() {
             )}
             <Icon size={16} strokeWidth={2.2} />
             <span className="hidden sm:inline">{label}</span>
-            <span className="sm:hidden">{key === 'socio' ? 'Socio' : 'Admin'}</span>
           </button>
         );
       })}

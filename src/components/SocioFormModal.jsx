@@ -3,6 +3,7 @@ import { UserPlus, Save } from 'lucide-react';
 import Modal from './ui/Modal';
 import Button from './ui/Button';
 import Field from './ui/Field';
+import { esErrorLimitePlan } from '../lib/api/planes';
 
 const CATEGORIAS = ['Activo', 'Adherente', 'Juvenil', 'Honorario'];
 const COLORES = [
@@ -66,9 +67,11 @@ export default function SocioFormModal({ socio, onGuardar, onCerrar }) {
     } catch (err) {
       const msg = err?.message || '';
       setError(
-        msg.includes('duplicate') || msg.includes('unique')
-          ? 'Ya existe un socio con ese número.'
-          : 'No se pudo guardar. Revisá los datos e intentá de nuevo.'
+        esErrorLimitePlan(err)
+          ? msg
+          : msg.includes('duplicate') || msg.includes('unique')
+            ? 'Ya existe un socio con ese número.'
+            : 'No se pudo guardar. Revisá los datos e intentá de nuevo.'
       );
       setGuardando(false);
     }

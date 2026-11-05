@@ -24,10 +24,12 @@ import CommunitySettings from './CommunitySettings';
 import NodoDrive from './NodoDrive';
 import AdminRoleSwitcher from './AdminRoleSwitcher';
 import QrAccessControl from './qr/QrAccessControl';
+import PlanBloqueado from './ui/PlanBloqueado';
 import { useComunidadActual } from '../store/useNodoStore';
 import { useComunidadActiva, useSesion } from '../store/useSesion';
 import { useSocios } from '../hooks/useSocios';
 import { useAdminRol } from '../hooks/useAdminRol';
+import { usePlan } from '../hooks/usePlan';
 import { ROLES_ADMIN } from '../data/mockData';
 
 const seccionesBase = [
@@ -50,6 +52,7 @@ export default function AdminDashboard() {
   const perfil = useSesion((s) => s.perfil);
   const estadoSesion = useSesion((s) => s.estado);
   const adminRole = useAdminRol();
+  const { puede } = usePlan();
   const morosos = members.filter((m) => !m.cuotaAlDia);
   const saludo = perfil?.nombre ? perfil.nombre : 'Carlos';
 
@@ -60,6 +63,13 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (!permitidas.includes(seccion)) setSeccion('resumen');
   }, [seccion, permitidas]);
+
+  // Los botones "Ver planes" de las funciones bloqueadas abren esta sección.
+  useEffect(() => {
+    const irAPlanes = () => setSeccion('planes');
+    window.addEventListener('nodo:ir-a-planes', irAPlanes);
+    return () => window.removeEventListener('nodo:ir-a-planes', irAPlanes);
+  }, []);
 
   const rol = ROLES_ADMIN[adminRole];
 
@@ -85,7 +95,8 @@ export default function AdminDashboard() {
               </span>
               {morosos.length > 0 && (
                 <span className="inline-flex items-center gap-1.5 rounded-lg bg-crit-soft px-3 py-1.5 text-xs font-bold text-[#9c372f]">
-                  {morosos.length} socios adeudan · enviá recordatorios por WhatsApp
+                  {morosos.length} socios adeudan
+                  {puede('recordatorios') && ' · enviá recordatorios por WhatsApp'}
                 </span>
               )}
             </div>
@@ -112,8 +123,26 @@ export default function AdminDashboard() {
             {seccion === 'novedades' && <NovedadesManager />}
             {seccion === 'publicidades' && <AdsManager />}
             {seccion === 'planes' && <B2BOverview />}
-            {seccion === 'equipo' && <EquipoManager />}
-            {seccion === 'drive' && <NodoDrive />}
+            {seccion === 'equipo' &&
+              (puede('panelCompleto') ? (
+                <EquipoManager />
+              ) : (
+                <PlanBloqueado
+                  funcion="panelCompleto"
+                  titulo="Equipo con roles de administración"
+                  descripcion="Sumá a tu comisión con permisos por área: deportes, talleres y cultura, tesorería."
+                />
+              ))}
+            {seccion === 'drive' &&
+              (puede('panelCompleto') ? (
+                <NodoDrive />
+              ) : (
+                <PlanBloqueado
+                  funcion="panelCompleto"
+                  titulo="Drive interno de la comisión"
+                  descripcion="Actas, balances, comprobantes y planillas del club en un solo lugar, compartidas con tu equipo."
+                />
+              ))}
             {seccion === 'personalizacion' && <CommunitySettings />}
           </motion.main>
         </div>

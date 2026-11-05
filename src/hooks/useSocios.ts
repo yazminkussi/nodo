@@ -18,6 +18,7 @@ import {
   cambiarEstadoCuota,
 } from '../lib/api/socios';
 import type { SocioUI } from '../lib/api/socios';
+import { usoPlan, mensajeLoteExcedido } from '../lib/api/planes';
 import { registrarPago as registrarPagoApi } from '../lib/api/pagos';
 import type { DetallePago } from '../lib/api/pagos';
 import type { Socio } from '../data/mockData';
@@ -111,6 +112,10 @@ export function useSocios(): UseSociosResult {
       return nuevo;
     },
     importar: async (nuevos) => {
+      // Todo o nada: si no entran todas las filas en el plan, no se importa ninguna.
+      const uso = await usoPlan(comunidadId as string);
+      const excedido = uso ? mensajeLoteExcedido(uso, nuevos.length) : null;
+      if (excedido) throw new Error(excedido);
       const creados = await crearSociosLote(comunidadId as string, nuevos);
       setSocios((prev) => [...prev, ...creados]);
       return creados;

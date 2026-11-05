@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Wallet, TrendingUp, CalendarCheck2 } from 'lucide-react';
+import { Users, Wallet, TrendingUp, CalendarCheck2, Lock } from 'lucide-react';
 import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
 import { useComunidadActiva } from '../store/useSesion';
 import { useSocios } from '../hooks/useSocios';
+import { usePlan, planMinimoPara, irAPlanes } from '../hooks/usePlan';
 import { stagger, staggerItem } from './ui/motion';
 import { formatARS, todayISO, slotsDeHorario, diaActivo } from '../data/mockData';
 import ErrorRemoto from './ui/ErrorRemoto';
@@ -44,6 +45,7 @@ export default function StatsOverview() {
   const espacios = useNodoStore((s) => s.espacios);
   const comunidadDemo = useComunidadActual();
   const comunidad = useComunidadActiva() || comunidadDemo;
+  const { puede } = usePlan();
 
   const total = members.length;
   const alDia = members.filter((m) => m.cuotaAlDia).length;
@@ -75,6 +77,7 @@ export default function StatsOverview() {
       detalle: 'Estimada, cuotas al día',
       icon: Wallet,
       tint: 'text-ok bg-ok-soft',
+      soloConMetricas: true,
     },
     {
       titulo: 'Cuotas al día',
@@ -89,6 +92,7 @@ export default function StatsOverview() {
       detalle: `${reservasHoy} reservas hoy · ${slotsTotales} turnos`,
       icon: CalendarCheck2,
       tint: 'text-warn bg-sun-soft',
+      soloConMetricas: true,
     },
   ];
 
@@ -124,50 +128,74 @@ export default function StatsOverview() {
         animate="animate"
         className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
       >
-        {tarjetas.map((t) => (
-          <motion.div
-            key={t.titulo}
-            variants={staggerItem}
-            whileHover={{ y: -3 }}
-            className={`relative overflow-hidden rounded-2xl p-4 shadow-card ${
-              t.hero ? 'bg-lav-deep text-cream' : 'border border-line bg-cloud text-ink'
-            }`}
-          >
-            {t.hero && (
-              <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-sun/20 blur-2xl" />
-            )}
-            <div className="flex items-center justify-between">
-              <p
-                className={`text-[11px] font-bold uppercase tracking-wider ${
-                  t.hero ? 'text-cream/70' : 'text-ink-faint'
-                }`}
-              >
-                {t.titulo}
-              </p>
-              <span
-                className={`flex h-7 w-7 items-center justify-center rounded-lg ${
-                  t.hero ? 'bg-white/10 text-cream' : t.tint
-                }`}
-              >
-                <t.icon size={15} strokeWidth={2.2} />
+        {tarjetas.map((t) =>
+          t.soloConMetricas && !puede('metricas') ? (
+            <motion.button
+              key={t.titulo}
+              type="button"
+              variants={staggerItem}
+              whileHover={{ y: -3 }}
+              onClick={irAPlanes}
+              className="flex flex-col items-start rounded-2xl border border-dashed border-line bg-paper p-4 text-left shadow-card"
+            >
+              <span className="flex w-full items-center justify-between">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-ink-faint">
+                  {t.titulo}
+                </span>
+                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-lav-soft text-lav-deep">
+                  <Lock size={14} strokeWidth={2.2} />
+                </span>
               </span>
-            </div>
-            <p
-              className={`mt-2 font-display text-[1.75rem] font-bold tracking-tight ${
-                t.hero ? 'text-sun' : 'text-ink'
+              <span className="mt-3 text-sm font-bold text-ink-soft">
+                Desde el {planMinimoPara('metricas').nombre}
+              </span>
+              <span className="mt-1 text-[11px] font-bold text-lav-deep">Ver planes →</span>
+            </motion.button>
+          ) : (
+            <motion.div
+              key={t.titulo}
+              variants={staggerItem}
+              whileHover={{ y: -3 }}
+              className={`relative overflow-hidden rounded-2xl p-4 shadow-card ${
+                t.hero ? 'bg-lav-deep text-cream' : 'border border-line bg-cloud text-ink'
               }`}
             >
-              {t.valor}
-            </p>
-            <p
-              className={`mt-1 text-[11px] font-semibold ${
-                t.hero ? 'text-cream/70' : 'text-ink-soft'
-              }`}
-            >
-              {t.detalle}
-            </p>
-          </motion.div>
-        ))}
+              {t.hero && (
+                <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-sun/20 blur-2xl" />
+              )}
+              <div className="flex items-center justify-between">
+                <p
+                  className={`text-[11px] font-bold uppercase tracking-wider ${
+                    t.hero ? 'text-cream/70' : 'text-ink-faint'
+                  }`}
+                >
+                  {t.titulo}
+                </p>
+                <span
+                  className={`flex h-7 w-7 items-center justify-center rounded-lg ${
+                    t.hero ? 'bg-white/10 text-cream' : t.tint
+                  }`}
+                >
+                  <t.icon size={15} strokeWidth={2.2} />
+                </span>
+              </div>
+              <p
+                className={`mt-2 font-display text-[1.75rem] font-bold tracking-tight ${
+                  t.hero ? 'text-sun' : 'text-ink'
+                }`}
+              >
+                {t.valor}
+              </p>
+              <p
+                className={`mt-1 text-[11px] font-semibold ${
+                  t.hero ? 'text-cream/70' : 'text-ink-soft'
+                }`}
+              >
+                {t.detalle}
+              </p>
+            </motion.div>
+          )
+        )}
       </motion.div>
     </section>
   );

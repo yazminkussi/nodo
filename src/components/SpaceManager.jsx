@@ -4,6 +4,8 @@ import { Plus, Pencil, Trash2, Users, Clock, CalendarDays, Power, X } from 'luci
 import { useNodoStore } from '../store/useNodoStore';
 import { useAdminRol } from '../hooks/useAdminRol';
 import { useReservasData } from '../hooks/useReservasData';
+import { usePlan, irAPlanes, mensajeTopeAlcanzado } from '../hooks/usePlan';
+import { esErrorLimitePlan } from '../lib/api/planes';
 import {
   ROLES_ADMIN,
   formatARS,
@@ -36,6 +38,7 @@ export default function SpaceManager() {
     useReservasData();
   const addToast = useNodoStore((s) => s.addToast);
   const adminRole = useAdminRol();
+  const { plan, alcanzoTope } = usePlan();
 
   const categoriasPermitidas = ROLES_ADMIN[adminRole]?.categorias;
   const visibles = categoriasPermitidas
@@ -46,6 +49,11 @@ export default function SpaceManager() {
   const [form, setForm] = useState(null);
 
   const abrirNuevo = () => {
+    if (alcanzoTope('espacios', espacios.length)) {
+      addToast(mensajeTopeAlcanzado('espacios', plan), 'error');
+      irAPlanes();
+      return;
+    }
     setForm({
       nombre: '',
       descripcion: '',
@@ -79,8 +87,8 @@ export default function SpaceManager() {
         addToast(`Espacio ${form.nombre} actualizado.`, 'success');
       }
       setModal(null);
-    } catch {
-      addToast('No se pudo guardar el espacio.', 'error');
+    } catch (err) {
+      addToast(esErrorLimitePlan(err) ? err.message : 'No se pudo guardar el espacio.', 'error');
     }
   };
 
