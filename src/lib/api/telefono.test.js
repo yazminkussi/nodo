@@ -1,8 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  normalizarCelular,
-  formatearMonto,
-} from '../../../supabase/functions/enviar-recordatorio/telefono.ts';
+import { normalizarCelular, formatearMonto } from '../../../supabase/functions/_shared/telefono.ts';
 
 describe('normalizarCelular', () => {
   it.each([

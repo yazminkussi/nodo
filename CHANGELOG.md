@@ -7,6 +7,9 @@ y el proyecto usa [versionado semántico](https://semver.org/lang/es/).
 ## [Sin publicar]
 
 ### Agregado
+- Chatbot de WhatsApp con Twilio (sandbox): la Edge Function `whatsapp-bot` reconoce al
+  socio por su celular y responde con datos reales (cuota, reservas, espacios y
+  horarios, novedades, carnet y contacto). Valida la firma de Twilio. Ver `docs/CHATBOT.md`.
 - Recordatorios de cuota por WhatsApp con Kapso (Plan 250+): la Edge Function
   `enviar-recordatorio` manda el mensaje desde el número del club con plantilla
   aprobada, valida rol, plan y celular, limita a un recordatorio por socio cada

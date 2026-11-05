@@ -24,7 +24,7 @@
    Ver docs/KAPSO.md. */
 
 import { createClient } from 'jsr:@supabase/supabase-js@2';
-import { formatearMonto, normalizarCelular } from './telefono.ts';
+import { formatearMonto, normalizarCelular } from '../_shared/telefono.ts';
 
 const KAPSO_BASE = 'https://api.kapso.ai/meta/whatsapp/v24.0';
 const VENTANA_HORAS = 24;
