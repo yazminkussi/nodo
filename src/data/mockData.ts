@@ -117,13 +117,23 @@ export type Publicidad = {
   destacada: boolean;
 };
 
+/** Qué incluye cada plan. Espeja la tabla `planes` de la base (migraciones 0013 y 0014). */
+export type CapacidadesPlan = {
+  /** null = sin tope */
+  limiteSocios: number | null;
+  limiteEspacios: number | null;
+  limitePublicidades: number | null;
+  metricas: boolean;
+  recordatorios: boolean;
+  panelCompleto: boolean;
+};
+
 export type PlanB2B = {
   id: string;
   nombre: string;
   socios: string;
   precioMensual: number;
-  /** Tope de socios del plan (null = sin tope). Espeja la tabla `planes` de la base. */
-  limiteSocios: number | null;
+  capacidades: CapacidadesPlan;
   destacado: boolean;
   features: string[];
 };
@@ -1099,14 +1109,21 @@ export const planesB2B: PlanB2B[] = [
     nombre: 'Plan Gratis',
     socios: 'Hasta 60 socios',
     precioMensual: 0,
-    limiteSocios: 60,
+    capacidades: {
+      limiteSocios: 60,
+      limiteEspacios: 1,
+      limitePublicidades: 0,
+      metricas: false,
+      recordatorios: false,
+      panelCompleto: false,
+    },
     destacado: false,
     features: [
       'Carnet digital con QR para todos los socios',
       'Control de acceso con escáner QR',
       'Gestión de cuotas y cobranza',
-      'Novedades y reservas de espacios',
-      'Sin tarjeta y sin permanencia',
+      '1 espacio reservable',
+      'Novedades para la comunidad',
     ],
   },
   {
@@ -1114,12 +1131,18 @@ export const planesB2B: PlanB2B[] = [
     nombre: 'Plan 100 Socios',
     socios: 'Hasta 100 socios',
     precioMensual: 89000,
-    limiteSocios: 100,
+    capacidades: {
+      limiteSocios: 100,
+      limiteEspacios: 3,
+      limitePublicidades: 1,
+      metricas: false,
+      recordatorios: false,
+      panelCompleto: false,
+    },
     destacado: false,
     features: [
-      'Carnet digital con QR para todos los socios',
-      'Gestión de cuotas y cobranza',
-      'Reservas de 2 instalaciones',
+      'Todo lo del Plan Gratis',
+      'Hasta 3 espacios reservables',
       '1 publicidad de comercio vecinal',
       'Soporte por WhatsApp',
     ],
@@ -1129,15 +1152,22 @@ export const planesB2B: PlanB2B[] = [
     nombre: 'Plan 250 Socios',
     socios: 'Hasta 250 socios',
     precioMensual: 149000,
-    limiteSocios: 250,
+    capacidades: {
+      limiteSocios: 250,
+      limiteEspacios: null,
+      limitePublicidades: 3,
+      metricas: true,
+      recordatorios: true,
+      panelCompleto: true,
+    },
     destacado: true,
     features: [
       'Todo lo del Plan 100',
-      'Reservas ilimitadas de espacios y talleres',
-      'Gráficos de morosidad y ocupación',
-      'Recordatorios de pago por WhatsApp',
-      '3 publicidades de comercios vecinales',
-      'Panel de administración completo',
+      'Espacios y talleres ilimitados',
+      'Métricas de recaudación y ocupación',
+      'Recordatorios de cuota por WhatsApp',
+      'Hasta 3 publicidades de comercios',
+      'Panel completo: equipo con roles y Drive interno',
     ],
   },
   {
@@ -1145,14 +1175,22 @@ export const planesB2B: PlanB2B[] = [
     nombre: 'Plan 400+ Socios',
     socios: 'Sociedades, polideportivos y municipios',
     precioMensual: 219000,
-    limiteSocios: null,
+    capacidades: {
+      limiteSocios: null,
+      limiteEspacios: null,
+      limitePublicidades: null,
+      metricas: true,
+      recordatorios: true,
+      panelCompleto: true,
+    },
     destacado: false,
     features: [
       'Todo lo del Plan 250',
-      'Multisede y sucursales',
-      'Integración con sistemas de facturación',
-      'Módulo de eventos y torneos',
+      'Socios y publicidades sin tope',
       'Gerente de cuenta dedicado',
+      'Multisede y sucursales · Próximamente',
+      'Integración con facturación · Próximamente',
+      'Módulo de eventos y torneos · Próximamente',
     ],
   },
 ];

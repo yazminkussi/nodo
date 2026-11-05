@@ -7,10 +7,11 @@ y el proyecto usa [versionado semántico](https://semver.org/lang/es/).
 ## [Sin publicar]
 
 ### Agregado
-- Modelo freemium por cantidad de socios (migración 0013): Plan Gratis hasta 60 socios;
-  Plan 100, 250 y 400+ para crecer. El tope lo aplica la base (trigger sobre
-  `socios`), así que alcanza también al import de CSV. Todo club nuevo arranca en
-  Gratis y el cambio de plan sólo lo hace el equipo de NODO. Ver `docs/PLANES.md`.
+- Modelo freemium (migraciones 0013 y 0014): Plan Gratis hasta 60 socios y planes
+  100, 250 y 400+. Los diferenciales son reales: topes de socios, espacios y
+  publicidades aplicados en la base, y métricas, recordatorios por WhatsApp y
+  panel completo (Equipo + Drive) según el plan. En "Planes NODO" el club cambia
+  de plan al instante y sin cobro (versión de entrega). Ver `docs/PLANES.md`.
 - Backend real con Supabase: autenticación (email + magic link), esquema
   multi-tenant con Row Level Security, y capa de datos (`src/lib/api`) con
   fallback a modo demo.
@@ -85,6 +86,10 @@ y el proyecto usa [versionado semántico](https://semver.org/lang/es/).
 - Scripts `format` y `format:check` en `package.json`.
 
 ### Cambiado
+- Con sesión real ya no hay selector Vista Socio / Vista Administración: quien
+  administra ve el panel y el socio ve su portal. El selector queda sólo en modo demo.
+- Responsive en celular: el encabezado ya no se superpone y la gestión de socios
+  pasa a tarjetas con todas las acciones a la vista.
 - Las fuentes de diseño (`.ai`) se movieron a `brand/` y se excluyeron del control de versiones.
 
 ## [1.0.0] — 2026-08

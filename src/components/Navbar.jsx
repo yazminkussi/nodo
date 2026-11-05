@@ -129,7 +129,7 @@ export function CommunityBadge() {
 
     if (!multi) {
       return (
-        <div className="flex min-w-0 items-center gap-2 rounded-full border border-white/15 bg-white/5 py-1.5 pl-2 pr-3">
+        <div className="flex min-w-0 max-w-full items-center gap-2 rounded-full border border-white/15 bg-white/5 py-1.5 pl-2 pr-3">
           {contenido}
         </div>
       );
@@ -141,7 +141,7 @@ export function CommunityBadge() {
           onClick={() => setAbierto((v) => !v)}
           aria-expanded={abierto}
           aria-haspopup="listbox"
-          className="flex min-w-0 items-center gap-2 rounded-full border border-white/15 bg-white/5 py-1.5 pl-2 pr-2.5 transition hover:bg-white/10"
+          className="flex w-full min-w-0 items-center gap-2 rounded-full border border-white/15 bg-white/5 py-1.5 pl-2 pr-2.5 transition hover:bg-white/10 sm:w-auto"
         >
           {contenido}
         </button>
@@ -221,7 +221,7 @@ export function CommunityBadge() {
         onClick={() => setAbierto((v) => !v)}
         aria-expanded={abierto}
         aria-haspopup="listbox"
-        className="flex min-w-0 items-center gap-2 rounded-full border border-white/15 bg-white/5 py-1.5 pl-2 pr-2.5 transition hover:bg-white/10"
+        className="flex w-full min-w-0 items-center gap-2 rounded-full border border-white/15 bg-white/5 py-1.5 pl-2 pr-2.5 transition hover:bg-white/10 sm:w-auto"
       >
         {comunidad.logo ? (
           <img
@@ -330,8 +330,10 @@ export function CuentaMenu() {
         onClick={salirModoDemo}
         className="flex items-center gap-1.5 rounded-full border border-white/20 px-3 py-1.5 text-xs font-semibold text-cream/70 transition hover:bg-white/10"
         title="Salir del modo demo"
+        aria-label="Salir del modo demo"
       >
-        Modo demo
+        <LogOut size={15} className="sm:hidden" />
+        <span className="hidden sm:inline">Modo demo</span>
       </button>
     );
   }
@@ -386,8 +388,8 @@ export function Header() {
   const { puedeCambiar: puedeCambiarVista } = useVista();
   return (
     <header className="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-lav-deep/95 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 sm:px-6">
-        <div className="flex min-w-0 items-center gap-2.5">
+      <div className="mx-auto flex h-16 max-w-7xl items-center gap-2 px-3 sm:gap-3 sm:px-6">
+        <div className="flex shrink-0 items-center gap-2.5">
           <NodoLogo size={30} />
           <p className="hidden font-display text-lg font-bold lowercase leading-none text-cream sm:block">
             nodo
@@ -396,9 +398,12 @@ export function Header() {
 
         <div className="h-7 w-px shrink-0 bg-white/15" />
 
-        <CommunityBadge />
+        {/* En celular el club ocupa el espacio que sobra y recorta el texto. */}
+        <div className="min-w-0 flex-1 sm:flex-none [&>*]:max-w-full">
+          <CommunityBadge />
+        </div>
 
-        <div className="ml-auto flex shrink-0 items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2 sm:ml-auto">
           <PWAInstallButton />
           {puedeCambiarVista && <RoleToggle />}
           <CuentaMenu />

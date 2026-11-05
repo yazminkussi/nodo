@@ -53,3 +53,12 @@ export function mensajeLoteExcedido(uso: UsoPlan, aImportar: number): string | n
       : `Podés importar ${libres} ${libres === 1 ? 'socio' : 'socios'} más.`;
   return `El ${uso.planNombre} permite hasta ${uso.limiteSocios} socios y ya tenés ${uso.sociosUsados}. ${entran} Mejorá el plan o importá menos filas.`;
 }
+
+/** Cambia el plan del club (sólo superadmin). Hoy es inmediato y sin cobro (modo entrega). */
+export async function cambiarPlan(comunidadId: string, planId: string): Promise<void> {
+  const { error } = await requireSupabase().rpc('cambiar_plan', {
+    cid: comunidadId,
+    nuevo: planId,
+  });
+  if (error) throw new Error(error.message);
+}

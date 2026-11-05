@@ -1,19 +1,43 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Check, MessageSquareX, Sheet, FileX2, Rocket, ArrowRight } from 'lucide-react';
+import { Check, MessageSquareX, Sheet, FileX2, Rocket, ArrowRight, Loader2 } from 'lucide-react';
 import { planesB2B, valueProps, formatARS } from '../data/mockData';
 import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
-import { useComunidadActiva } from '../store/useSesion';
+import { useComunidadActiva, useSesion } from '../store/useSesion';
+import { usePlan } from '../hooks/usePlan';
+import { cambiarPlan } from '../lib/api/planes';
 
 const iconosProps = [MessageSquareX, Sheet, FileX2];
 
 export default function B2BOverview() {
   const addToast = useNodoStore((s) => s.addToast);
+  const updateComunidad = useNodoStore((s) => s.updateComunidad);
   const comunidadDemo = useComunidadActual();
   const comunidadReal = useComunidadActiva();
+  const remoto = useSesion((s) => s.estado === 'activo');
+  const comunidadId = useSesion((s) => s.comunidadActivaId);
+  const refrescar = useSesion((s) => s.refrescar);
+  const { planId: planActualId, plan: planActual } = usePlan();
   const ciudad = comunidadReal?.ciudad ?? comunidadDemo.ciudad;
-  // Con sesión real manda `plan_id`; en el modo demo se reconoce por el nombre.
-  const planActualId =
-    comunidadReal?.plan_id ?? planesB2B.find((p) => p.nombre === comunidadDemo.plan)?.id;
+  const [cambiando, setCambiando] = useState(null);
+
+  // Cambio de plan inmediato y sin cobro (modo entrega; el cobro online queda para después).
+  const elegirPlan = async (plan) => {
+    setCambiando(plan.id);
+    try {
+      if (remoto && comunidadId) {
+        await cambiarPlan(comunidadId, plan.id);
+        await refrescar();
+      } else {
+        updateComunidad(comunidadDemo.id, { plan: plan.nombre });
+      }
+      addToast(`Tu club ahora está en el ${plan.nombre}.`, 'success');
+    } catch (err) {
+      addToast(err?.message || 'No se pudo cambiar el plan.', 'error');
+    } finally {
+      setCambiando(null);
+    }
+  };
 
   return (
     <section className="mx-auto max-w-7xl space-y-10 px-4 sm:px-6">
@@ -108,19 +132,21 @@ export default function B2BOverview() {
                     Es el plan de tu club
                   </p>
                 ) : (
-                  !esGratis && (
-                    <button
-                      onClick={() =>
-                        addToast(
-                          `Consulta recibida para el ${plan.nombre}. ¡Nos contactamos!`,
-                          'success'
-                        )
-                      }
-                      className="mt-6 flex items-center justify-center gap-2 rounded-xl bg-paper px-4 py-3 text-sm font-extrabold text-ink ring-1 ring-inset ring-line transition hover:bg-sand"
-                    >
-                      Mejorar a este plan <ArrowRight size={15} />
-                    </button>
-                  )
+                  <button
+                    onClick={() => elegirPlan(plan)}
+                    disabled={cambiando !== null}
+                    className="mt-6 flex items-center justify-center gap-2 rounded-xl bg-paper px-4 py-3 text-sm font-extrabold text-ink ring-1 ring-inset ring-line transition hover:bg-sand disabled:cursor-wait disabled:opacity-60"
+                  >
+                    {cambiando === plan.id ? (
+                      <Loader2 size={15} className="animate-spin" />
+                    ) : plan.precioMensual > planActual.precioMensual ? (
+                      <>
+                        Mejorar a este plan <ArrowRight size={15} />
+                      </>
+                    ) : (
+                      'Cambiar a este plan'
+                    )}
+                  </button>
                 )}
               </motion.div>
             );
@@ -128,7 +154,8 @@ export default function B2BOverview() {
         </div>
         <p className="mt-5 text-center text-xs text-ink-faint">
           Precios expresados en pesos argentinos. {ciudad} · IVA incluido · Sin permanencia. Los
-          socios usan su carnet gratis, siempre.
+          socios usan su carnet gratis, siempre. Versión de entrega: el cambio de plan es inmediato
+          y sin cobro.
         </p>
       </div>
     </section>

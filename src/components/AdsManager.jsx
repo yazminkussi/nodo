@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Store, Plus, Trash2, MapPin, Percent } from 'lucide-react';
 import { useNodoStore } from '../store/useNodoStore';
 import { usePublicidades } from '../hooks/usePublicidades';
+import { usePlan, irAPlanes, mensajeTopeAlcanzado } from '../hooks/usePlan';
 import ErrorRemoto from './ui/ErrorRemoto';
 import { SkeletonList } from './ui/Skeleton';
 
@@ -11,6 +12,8 @@ const colores = ['#059669', '#0D9488', '#06B6D4', '#F59E0B', '#1E293B', '#7C3AED
 export default function AdsManager() {
   const { ads, cargando, error, recargar, crear, eliminar } = usePublicidades();
   const addToast = useNodoStore((s) => s.addToast);
+  const { plan, alcanzoTope } = usePlan();
+  const sinCupo = alcanzoTope('publicidades', ads.length);
 
   const [form, setForm] = useState({
     negocio: '',
@@ -24,6 +27,10 @@ export default function AdsManager() {
 
   const enviar = async (e) => {
     e.preventDefault();
+    if (sinCupo) {
+      addToast(mensajeTopeAlcanzado('publicidades', plan), 'error');
+      return;
+    }
     if (!form.negocio.trim() || !form.descripcion.trim()) {
       addToast('Completá negocio y descripción.', 'error');
       return;
@@ -68,6 +75,14 @@ export default function AdsManager() {
           <h3 className="flex items-center gap-2 font-extrabold text-ink">
             <Plus size={16} className="text-lav" /> Nueva publicidad
           </h3>
+          {sinCupo && (
+            <p className="rounded-xl bg-sun-soft px-3 py-2.5 text-xs font-semibold text-warn">
+              {mensajeTopeAlcanzado('publicidades', plan)}{' '}
+              <button type="button" onClick={irAPlanes} className="font-extrabold underline">
+                Ver planes
+              </button>
+            </p>
+          )}
           <input
             value={form.negocio}
             onChange={(e) => setForm({ ...form, negocio: e.target.value })}
@@ -127,7 +142,8 @@ export default function AdsManager() {
           </label>
           <button
             type="submit"
-            className="w-full rounded-xl bg-lav-deep px-4 py-3 text-sm font-extrabold text-white shadow-card transition hover:bg-lav-deep"
+            disabled={sinCupo}
+            className="w-full rounded-xl bg-lav-deep px-4 py-3 text-sm font-extrabold text-white shadow-card transition hover:bg-lav-deep disabled:cursor-not-allowed disabled:opacity-50"
           >
             Activar publicidad
           </button>

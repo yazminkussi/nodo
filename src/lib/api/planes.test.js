@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { planesB2B } from '../../data/mockData';
 import { esErrorLimitePlan, lugaresLibres, mensajeLoteExcedido } from './planes';
 
 const gratis = (usados) => ({
@@ -63,5 +64,33 @@ describe('esErrorLimitePlan', () => {
   it('ignora otros errores', () => {
     expect(esErrorLimitePlan({ message: 'duplicate key value' })).toBe(false);
     expect(esErrorLimitePlan(null)).toBe(false);
+  });
+});
+
+describe('matriz de planes', () => {
+  const orden = ['gratis', 'plan-100', 'plan-250', 'plan-400'];
+  const tope = (v) => (v === null ? Infinity : v);
+
+  it('mantiene el orden gratis < 100 < 250 < 400+', () => {
+    expect(planesB2B.map((p) => p.id)).toEqual(orden);
+  });
+
+  it('el Plan Gratis es gratis y llega a 60 socios', () => {
+    expect(planesB2B[0].precioMensual).toBe(0);
+    expect(planesB2B[0].capacidades.limiteSocios).toBe(60);
+  });
+
+  it('cada plan incluye al menos lo del anterior', () => {
+    for (let i = 1; i < planesB2B.length; i++) {
+      const a = planesB2B[i - 1];
+      const b = planesB2B[i];
+      expect(b.precioMensual).toBeGreaterThan(a.precioMensual);
+      for (const k of ['limiteSocios', 'limiteEspacios', 'limitePublicidades']) {
+        expect(tope(b.capacidades[k])).toBeGreaterThanOrEqual(tope(a.capacidades[k]));
+      }
+      for (const k of ['metricas', 'recordatorios', 'panelCompleto']) {
+        if (a.capacidades[k]) expect(b.capacidades[k]).toBe(true);
+      }
+    }
   });
 });
