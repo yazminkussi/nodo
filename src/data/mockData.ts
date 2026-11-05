@@ -122,6 +122,8 @@ export type PlanB2B = {
   nombre: string;
   socios: string;
   precioMensual: number;
+  /** Tope de socios del plan (null = sin tope). Espeja la tabla `planes` de la base. */
+  limiteSocios: number | null;
   destacado: boolean;
   features: string[];
 };
@@ -1093,10 +1095,26 @@ export const publicidadesIniciales: Publicidad[] = [
 
 export const planesB2B: PlanB2B[] = [
   {
+    id: 'gratis',
+    nombre: 'Plan Gratis',
+    socios: 'Hasta 60 socios',
+    precioMensual: 0,
+    limiteSocios: 60,
+    destacado: false,
+    features: [
+      'Carnet digital con QR para todos los socios',
+      'Control de acceso con escáner QR',
+      'Gestión de cuotas y cobranza',
+      'Novedades y reservas de espacios',
+      'Sin tarjeta y sin permanencia',
+    ],
+  },
+  {
     id: 'plan-100',
     nombre: 'Plan 100 Socios',
     socios: 'Hasta 100 socios',
     precioMensual: 89000,
+    limiteSocios: 100,
     destacado: false,
     features: [
       'Carnet digital con QR para todos los socios',
@@ -1111,6 +1129,7 @@ export const planesB2B: PlanB2B[] = [
     nombre: 'Plan 250 Socios',
     socios: 'Hasta 250 socios',
     precioMensual: 149000,
+    limiteSocios: 250,
     destacado: true,
     features: [
       'Todo lo del Plan 100',
@@ -1126,6 +1145,7 @@ export const planesB2B: PlanB2B[] = [
     nombre: 'Plan 400+ Socios',
     socios: 'Sociedades, polideportivos y municipios',
     precioMensual: 219000,
+    limiteSocios: null,
     destacado: false,
     features: [
       'Todo lo del Plan 250',

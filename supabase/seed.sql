@@ -18,11 +18,11 @@ declare
 begin
   -- comunidad demo -------------------------------------------------
   insert into public.comunidades
-    (id, nombre, institucion, tipo, direccion, ciudad, barrio, cuit, telefono, email, plan)
+    (id, nombre, institucion, tipo, direccion, ciudad, barrio, cuit, telefono, email, plan_id)
   values
     ('la-union', 'Club Social y Deportivo La Unión', 'Centro Cultural y Deportivo',
      'Club Social y Deportivo', 'Av. Rivadavia 3456, Villa Crespo', 'Ciudad de Buenos Aires',
-     'Villa Crespo', '30-70998877-4', '11 4824-3000', 'contacto@clubunion.com.ar', 'Plan 250 Socios')
+     'Villa Crespo', '30-70998877-4', '11 4824-3000', 'contacto@clubunion.com.ar', 'plan-250')
   on conflict (id) do nothing;
 
   -- socios demo --------------------------------------------------

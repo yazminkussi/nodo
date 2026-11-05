@@ -36,6 +36,7 @@ export interface ComunidadRemota {
   ciudad?: string | null;
   barrio?: string | null;
   plan?: string | null;
+  plan_id?: string | null;
   logo_url?: string | null;
 }
 

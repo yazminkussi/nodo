@@ -7,6 +7,10 @@ y el proyecto usa [versionado semántico](https://semver.org/lang/es/).
 ## [Sin publicar]
 
 ### Agregado
+- Modelo freemium por cantidad de socios (migración 0013): Plan Gratis hasta 60 socios;
+  Plan 100, 250 y 400+ para crecer. El tope lo aplica la base (trigger sobre
+  `socios`), así que alcanza también al import de CSV. Todo club nuevo arranca en
+  Gratis y el cambio de plan sólo lo hace el equipo de NODO. Ver `docs/PLANES.md`.
 - Backend real con Supabase: autenticación (email + magic link), esquema
   multi-tenant con Row Level Security, y capa de datos (`src/lib/api`) con
   fallback a modo demo.

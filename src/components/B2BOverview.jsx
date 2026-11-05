@@ -2,12 +2,18 @@ import { motion } from 'framer-motion';
 import { Check, MessageSquareX, Sheet, FileX2, Rocket, ArrowRight } from 'lucide-react';
 import { planesB2B, valueProps, formatARS } from '../data/mockData';
 import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
+import { useComunidadActiva } from '../store/useSesion';
 
 const iconosProps = [MessageSquareX, Sheet, FileX2];
 
 export default function B2BOverview() {
   const addToast = useNodoStore((s) => s.addToast);
-  const comunidad = useComunidadActual();
+  const comunidadDemo = useComunidadActual();
+  const comunidadReal = useComunidadActiva();
+  const ciudad = comunidadReal?.ciudad ?? comunidadDemo.ciudad;
+  // Con sesión real manda `plan_id`; en el modo demo se reconoce por el nombre.
+  const planActualId =
+    comunidadReal?.plan_id ?? planesB2B.find((p) => p.nombre === comunidadDemo.plan)?.id;
 
   return (
     <section className="mx-auto max-w-7xl space-y-10 px-4 sm:px-6">
@@ -51,69 +57,78 @@ export default function B2BOverview() {
         <h3 className="mb-5 text-center text-xl font-extrabold tracking-tight text-ink">
           Planes comerciales
         </h3>
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-          {planesB2B.map((plan, i) => (
-            <motion.div
-              key={plan.id}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.08 }}
-              whileHover={{ y: -4 }}
-              className={`relative flex flex-col rounded-3xl p-6 ${
-                plan.destacado
-                  ? 'bg-lav-deep text-white shadow-lift ring-2 ring-nodo-cyan'
-                  : 'bg-white text-ink shadow-card ring-1 ring-line'
-              }`}
-            >
-              {plan.destacado && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-nodo-cyan px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-white shadow-card">
-                  Recomendado · El plan actual del club
-                </span>
-              )}
-              <h4 className="text-lg font-extrabold">{plan.nombre}</h4>
-              <p
-                className={`text-xs font-semibold ${plan.destacado ? 'text-ink-faint' : 'text-ink-soft'}`}
-              >
-                {plan.socios}
-              </p>
-              <p className="mt-4 text-3xl font-extrabold tracking-tight">
-                {formatARS(plan.precioMensual)}
-                <span
-                  className={`ml-1 text-xs font-medium ${plan.destacado ? 'text-ink-faint' : 'text-ink-faint'}`}
-                >
-                  / mes
-                </span>
-              </p>
-              <ul className="mt-5 space-y-2.5">
-                {plan.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-sm">
-                    <Check
-                      size={16}
-                      strokeWidth={3}
-                      className={`mt-0.5 shrink-0 ${plan.destacado ? 'text-ok' : 'text-lav'}`}
-                    />
-                    <span className={plan.destacado ? 'text-slate-200' : 'text-ink-soft'}>{f}</span>
-                  </li>
-                ))}
-              </ul>
-              <button
-                onClick={() =>
-                  addToast(`Consulta recibida para el ${plan.nombre}. ¡Nos contactamos!`, 'success')
-                }
-                className={`mt-6 flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-extrabold transition ${
-                  plan.destacado
-                    ? 'bg-nodo-cyan text-white hover:bg-cyan-600'
-                    : 'bg-paper text-ink ring-1 ring-inset ring-line hover:bg-sand'
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+          {planesB2B.map((plan, i) => {
+            const esActual = plan.id === planActualId;
+            const esGratis = plan.precioMensual === 0;
+            return (
+              <motion.div
+                key={plan.id}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.08 }}
+                whileHover={{ y: -4 }}
+                className={`relative flex flex-col rounded-3xl p-6 ${
+                  esActual
+                    ? 'bg-lav-deep text-white shadow-lift ring-2 ring-nodo-cyan'
+                    : 'bg-white text-ink shadow-card ring-1 ring-line'
                 }`}
               >
-                Solicitar demo <ArrowRight size={15} />
-              </button>
-            </motion.div>
-          ))}
+                {(esActual || plan.destacado) && (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-nodo-cyan px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-white shadow-card">
+                    {esActual ? 'Tu plan actual' : 'Más elegido'}
+                  </span>
+                )}
+                <h4 className="text-lg font-extrabold">{plan.nombre}</h4>
+                <p
+                  className={`text-xs font-semibold ${esActual ? 'text-ink-faint' : 'text-ink-soft'}`}
+                >
+                  {plan.socios}
+                </p>
+                <p className="mt-4 text-3xl font-extrabold tracking-tight">
+                  {esGratis ? 'Gratis' : formatARS(plan.precioMensual)}
+                  {!esGratis && (
+                    <span className="ml-1 text-xs font-medium text-ink-faint">/ mes</span>
+                  )}
+                </p>
+                <ul className="mt-5 space-y-2.5">
+                  {plan.features.map((f) => (
+                    <li key={f} className="flex items-start gap-2 text-sm">
+                      <Check
+                        size={16}
+                        strokeWidth={3}
+                        className={`mt-0.5 shrink-0 ${esActual ? 'text-ok' : 'text-lav'}`}
+                      />
+                      <span className={esActual ? 'text-slate-200' : 'text-ink-soft'}>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+                {esActual ? (
+                  <p className="mt-6 rounded-xl bg-white/10 px-4 py-3 text-center text-sm font-extrabold text-white">
+                    Es el plan de tu club
+                  </p>
+                ) : (
+                  !esGratis && (
+                    <button
+                      onClick={() =>
+                        addToast(
+                          `Consulta recibida para el ${plan.nombre}. ¡Nos contactamos!`,
+                          'success'
+                        )
+                      }
+                      className="mt-6 flex items-center justify-center gap-2 rounded-xl bg-paper px-4 py-3 text-sm font-extrabold text-ink ring-1 ring-inset ring-line transition hover:bg-sand"
+                    >
+                      Mejorar a este plan <ArrowRight size={15} />
+                    </button>
+                  )
+                )}
+              </motion.div>
+            );
+          })}
         </div>
         <p className="mt-5 text-center text-xs text-ink-faint">
-          Precios expresados en pesos argentinos. {comunidad.ciudad} · IVA incluido · Sin
-          permanencia.
+          Precios expresados en pesos argentinos. {ciudad} · IVA incluido · Sin permanencia. Los
+          socios usan su carnet gratis, siempre.
         </p>
       </div>
     </section>
