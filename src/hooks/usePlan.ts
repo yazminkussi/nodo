@@ -3,8 +3,9 @@
    nombre del plan de la comunidad demo. La base aplica los topes de verdad
    (triggers); acá se usa para mostrar/bloquear la interfaz y dar buenos mensajes. */
 
+import { useEffect } from 'react';
 import { useComunidadActiva } from '../store/useSesion';
-import { useComunidadActual } from '../store/useNodoStore';
+import { useComunidadActual, useNodoStore } from '../store/useNodoStore';
 import { planesB2B } from '../data/mockData';
 import type { CapacidadesPlan, PlanB2B } from '../data/mockData';
 
@@ -77,4 +78,31 @@ export function mensajeTopeAlcanzado(recurso: RecursoPlan, plan: PlanB2B): strin
   const [sing, plur] = nombres[recurso];
   if (tope === 0) return `El ${plan.nombre} no incluye ${plur}. Mejorá el plan para usarlas.`;
   return `El ${plan.nombre} incluye hasta ${tope} ${tope === 1 ? sing : plur}. Mejorá el plan para sumar más.`;
+}
+
+/** Aviso para el administrador cuando el plan oculta espacios. */
+export function mensajeEspaciosOcultos(plan: PlanB2B, ocultos: number): string {
+  const tope = plan.capacidades.limiteEspacios ?? 0;
+  const incluidos = `${tope} ${tope === 1 ? 'espacio' : 'espacios'}`;
+  const ocultosTxt = `${ocultos} ${ocultos === 1 ? 'espacio está oculto' : 'espacios están ocultos'}`;
+  return `El ${plan.nombre} incluye ${incluidos} y ${ocultosTxt}. Mejorá el plan para volver a verlos.`;
+}
+
+let ultimoAvisoOcultos = '';
+
+/** Toast para el administrador: avisa una vez cuando el plan oculta espacios. */
+export function useAvisoEspaciosOcultos(ocultos: number): void {
+  const { plan } = usePlan();
+  const addToast = useNodoStore((s) => s.addToast);
+
+  useEffect(() => {
+    const clave = `${plan.id}:${ocultos}`;
+    if (ocultos <= 0) {
+      ultimoAvisoOcultos = '';
+      return;
+    }
+    if (clave === ultimoAvisoOcultos) return;
+    ultimoAvisoOcultos = clave;
+    addToast(mensajeEspaciosOcultos(plan, ocultos), 'info');
+  }, [ocultos, plan, addToast]);
 }
