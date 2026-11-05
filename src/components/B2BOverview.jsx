@@ -154,8 +154,7 @@ export default function B2BOverview() {
         </div>
         <p className="mt-5 text-center text-xs text-ink-faint">
           Precios expresados en pesos argentinos. {ciudad} · IVA incluido · Sin permanencia. Los
-          socios usan su carnet gratis, siempre. Versión de entrega: el cambio de plan es inmediato
-          y sin cobro.
+          socios usan su carnet gratis, siempre.
         </p>
       </div>
     </section>
