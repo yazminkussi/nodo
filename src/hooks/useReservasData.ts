@@ -5,6 +5,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNodoStore } from '../store/useNodoStore';
 import { useSesion } from '../store/useSesion';
+import { usePlan } from './usePlan';
 import { horaAmin, minAstring } from '../data/mockData';
 import {
   listarEspacios,
@@ -20,6 +21,11 @@ export function useReservasData() {
   const estado = useSesion((s) => s.estado);
   const comunidadId = useSesion((s) => s.comunidadActivaId);
   const esRemoto = estado === 'activo' && Boolean(comunidadId);
+
+  // Con un plan menor sólo se ven los primeros espacios que entran en el plan
+  // (los más antiguos); el resto queda oculto hasta que se mejore el plan.
+  const { tope } = usePlan();
+  const limiteEspacios = tope('espacios');
 
   // --- demo ---
   const demoEspacios = useNodoStore((s) => s.espacios);
@@ -54,14 +60,23 @@ export function useReservasData() {
     recargar();
   }, [recargar]);
 
+  const limitar = <T>(lista: T[]): T[] =>
+    limiteEspacios === null ? lista : lista.slice(0, limiteEspacios);
+  const reservasVisibles = (lista: ReservaUI[], visibles: { id: string }[]) => {
+    const ids = new Set(visibles.map((e) => e.id));
+    return lista.filter((r) => ids.has(r.espacioId));
+  };
+
   if (!esRemoto) {
+    const visibles = limitar(demoEspacios);
     return {
       modo: 'demo',
       cargando: false,
       error: null,
       recargar: () => {},
-      espacios: demoEspacios,
-      reservas: demoReservas,
+      espacios: visibles,
+      espaciosOcultos: demoEspacios.length - visibles.length,
+      reservas: demoReservas.filter((r) => visibles.some((e) => e.id === r.espacioId)),
       addEspacio: demoAddEspacio,
       updateEspacio: demoUpdateEspacio,
       removeEspacio: demoRemoveEspacio,
@@ -71,8 +86,11 @@ export function useReservasData() {
     };
   }
 
+  const espaciosVisibles = limitar(espacios);
+  const reservasDeVisibles = reservasVisibles(reservas, espaciosVisibles);
+
   const isSlotTaken = (espacioId: string, fecha: string, inicio: string) =>
-    reservas.some(
+    reservasDeVisibles.some(
       (r) => r.espacioId === espacioId && r.fecha === fecha && r.inicio <= inicio && r.fin > inicio
     );
 
@@ -81,8 +99,9 @@ export function useReservasData() {
     cargando,
     error,
     recargar,
-    espacios,
-    reservas,
+    espacios: espaciosVisibles,
+    espaciosOcultos: espacios.length - espaciosVisibles.length,
+    reservas: reservasDeVisibles,
     isSlotTaken,
 
     addEspacio: async (espacio: Partial<EspacioUI>) => {

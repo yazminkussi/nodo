@@ -4,6 +4,7 @@ import { Plus, Trash2, CalendarDays, UserRound, Filter, CalendarX2 } from 'lucid
 import { useNodoStore } from '../store/useNodoStore';
 import { useAdminRol } from '../hooks/useAdminRol';
 import { useReservasData } from '../hooks/useReservasData';
+import { useAvisoEspaciosOcultos } from '../hooks/usePlan';
 import { useSocios } from '../hooks/useSocios';
 import {
   nextDays,
@@ -27,10 +28,12 @@ export default function ReservationManager() {
     cancelReservation,
     addReservation,
     isSlotTaken,
+    espaciosOcultos,
     cargando,
     error,
     recargar,
   } = useReservasData();
+  useAvisoEspaciosOcultos(espaciosOcultos);
   const { socios: members } = useSocios();
   const addToast = useNodoStore((s) => s.addToast);
   const adminRole = useAdminRol();

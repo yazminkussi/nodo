@@ -4,7 +4,13 @@ import { Plus, Pencil, Trash2, Users, Clock, CalendarDays, Power, X } from 'luci
 import { useNodoStore } from '../store/useNodoStore';
 import { useAdminRol } from '../hooks/useAdminRol';
 import { useReservasData } from '../hooks/useReservasData';
-import { usePlan, irAPlanes, mensajeTopeAlcanzado } from '../hooks/usePlan';
+import {
+  usePlan,
+  irAPlanes,
+  mensajeTopeAlcanzado,
+  mensajeEspaciosOcultos,
+  useAvisoEspaciosOcultos,
+} from '../hooks/usePlan';
 import { esErrorLimitePlan } from '../lib/api/planes';
 import {
   ROLES_ADMIN,
@@ -34,8 +40,17 @@ const campo =
 const etiqueta = 'mb-1 block text-xs font-bold text-ink-soft';
 
 export default function SpaceManager() {
-  const { espacios, addEspacio, updateEspacio, removeEspacio, cargando, error, recargar } =
-    useReservasData();
+  const {
+    espacios,
+    espaciosOcultos,
+    addEspacio,
+    updateEspacio,
+    removeEspacio,
+    cargando,
+    error,
+    recargar,
+  } = useReservasData();
+  useAvisoEspaciosOcultos(espaciosOcultos);
   const addToast = useNodoStore((s) => s.addToast);
   const adminRole = useAdminRol();
   const { plan, alcanzoTope } = usePlan();
@@ -115,6 +130,15 @@ export default function SpaceManager() {
       </div>
 
       {error && espacios.length === 0 && <ErrorRemoto error={error} onReintentar={recargar} />}
+      {espaciosOcultos > 0 && (
+        <p className="rounded-xl bg-sun-soft px-3 py-2.5 text-xs font-semibold text-warn">
+          {mensajeEspaciosOcultos(plan, espaciosOcultos)}{' '}
+          <button type="button" onClick={irAPlanes} className="font-extrabold underline">
+            Ver planes
+          </button>
+        </p>
+      )}
+
       {!error && cargando && espacios.length === 0 && <SkeletonList rows={3} />}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
