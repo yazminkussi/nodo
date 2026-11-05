@@ -6,7 +6,7 @@ Quien paga es **el club**; los socios usan su carnet gratis, siempre.
 | ------------------------------ | ------ | -------- | -------- | --------- |
 | Precio / mes (ARS)             | 0      | 89.000   | 149.000  | 219.000   |
 | Socios                         | 60     | 100      | 250      | sin tope  |
-| Espacios reservables           | 1      | 3        | sin tope | sin tope  |
+| Espacios reservables           | 3      | 6        | sin tope | sin tope  |
 | Publicidades de comercios      | 0      | 1        | 3        | sin tope  |
 | Métricas de recaudación/ocup.  | —      | —        | sí       | sí        |
 | Recordatorios por WhatsApp     | —      | —        | sí       | sí        |

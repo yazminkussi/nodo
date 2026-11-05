@@ -1111,7 +1111,7 @@ export const planesB2B: PlanB2B[] = [
     precioMensual: 0,
     capacidades: {
       limiteSocios: 60,
-      limiteEspacios: 1,
+      limiteEspacios: 3,
       limitePublicidades: 0,
       metricas: false,
       recordatorios: false,
@@ -1122,7 +1122,7 @@ export const planesB2B: PlanB2B[] = [
       'Carnet digital con QR para todos los socios',
       'Control de acceso con escáner QR',
       'Gestión de cuotas y cobranza',
-      '1 espacio reservable',
+      'Hasta 3 espacios reservables',
       'Novedades para la comunidad',
     ],
   },
@@ -1133,7 +1133,7 @@ export const planesB2B: PlanB2B[] = [
     precioMensual: 89000,
     capacidades: {
       limiteSocios: 100,
-      limiteEspacios: 3,
+      limiteEspacios: 6,
       limitePublicidades: 1,
       metricas: false,
       recordatorios: false,
@@ -1142,7 +1142,7 @@ export const planesB2B: PlanB2B[] = [
     destacado: false,
     features: [
       'Todo lo del Plan Gratis',
-      'Hasta 3 espacios reservables',
+      'Hasta 6 espacios reservables',
       '1 publicidad de comercio vecinal',
       'Soporte por WhatsApp',
     ],
