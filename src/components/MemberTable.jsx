@@ -10,6 +10,7 @@ import {
   FileSpreadsheet,
   Link2,
   Lock,
+  Loader2,
 } from 'lucide-react';
 import { useNodoStore, useComunidadActual } from '../store/useNodoStore';
 import { useComunidadActiva } from '../store/useSesion';
@@ -22,6 +23,7 @@ import {
   mensajeTopeAlcanzado,
 } from '../hooks/usePlan';
 import { vincularSocioACuenta } from '../lib/api/socios';
+import { enviarRecordatorio } from '../lib/api/recordatorios';
 import { StatusBadge } from './StatusBadge';
 import { formatARS } from '../data/mockData';
 import SocioFormModal from './SocioFormModal';
@@ -73,6 +75,7 @@ export default function MemberTable() {
   const [emailVinc, setEmailVinc] = useState('');
   const [vinculando, setVinculando] = useState(false);
   const [socioPago, setSocioPago] = useState(null);
+  const [enviandoId, setEnviandoId] = useState(null);
 
   const numerosExistentes = useMemo(() => new Set(members.map((m) => String(m.numero))), [members]);
 
@@ -169,6 +172,32 @@ export default function MemberTable() {
     }
   };
 
+  // Manda el recordatorio por WhatsApp (Kapso). Sin sesión real, o si Kapso todavía
+  // no está configurado, abre WhatsApp con el mensaje armado para enviarlo a mano.
+  const abrirWhatsAppManual = (m) =>
+    window.open(waLink(m, comunidad.nombre), '_blank', 'noopener,noreferrer');
+
+  const recordarPorWhatsApp = async (m) => {
+    if (modo === 'demo') {
+      abrirWhatsAppManual(m);
+      return;
+    }
+    setEnviandoId(m.id);
+    try {
+      const r = await enviarRecordatorio(m.id);
+      if (r.enviado) {
+        addToast(`Recordatorio enviado a ${m.nombre} por WhatsApp.`, 'success');
+      } else {
+        abrirWhatsAppManual(m);
+        addToast('Abrimos WhatsApp para que envíes el mensaje a mano.', 'info');
+      }
+    } catch (err) {
+      addToast(err?.message || 'No se pudo enviar el recordatorio.', 'error');
+    } finally {
+      setEnviandoId(null);
+    }
+  };
+
   const avisoRecordatorios = () => {
     addToast(mensajeFuncionBloqueada('recordatorios', 'Los recordatorios por WhatsApp'), 'info');
     irAPlanes();
@@ -199,16 +228,19 @@ export default function MemberTable() {
       )}
       {!m.cuotaAlDia &&
         (puede('recordatorios') ? (
-          <a
-            href={waLink(m, comunidad.nombre)}
-            target="_blank"
-            rel="noreferrer"
-            title="Recordatorio por WhatsApp"
-            aria-label="Recordatorio por WhatsApp"
-            className="rounded-lg p-2 text-ok transition hover:bg-ok-soft"
+          <button
+            onClick={() => recordarPorWhatsApp(m)}
+            disabled={enviandoId === m.id}
+            title="Enviar recordatorio por WhatsApp"
+            aria-label="Enviar recordatorio por WhatsApp"
+            className="rounded-lg p-2 text-ok transition hover:bg-ok-soft disabled:cursor-wait disabled:opacity-60"
           >
-            <MessageCircle size={16} />
-          </a>
+            {enviandoId === m.id ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <MessageCircle size={16} />
+            )}
+          </button>
         ) : (
           <button
             onClick={avisoRecordatorios}
